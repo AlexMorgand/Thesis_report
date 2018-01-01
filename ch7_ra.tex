@@ -1,0 +1,214 @@
+\chapter{Application à la réalité augmentée}
+\label{chapitre:RA}
+\defineHeaderForClassicalChapter
+\graphicspath{{images/Ch6/}}
+
+
+\begin{chapeauChapitre}
+\fix{intro + refs}
+\end{chapeauChapitre}
+
+%===============================================================================
+\section{Introduction}
+\label{sec:introduction_general}
+%===============================================================================
+
+%=============================================================================
+\section{Contexte multi-lumières} 
+\label{sec:contexte_multi_lumieres}
+%=============================================================================
+
+
+\subsection{Suivi de spécularités}
+Une composante additionnelle de notre modèle est sa capacité à prédire plusieurs spécularités provenant de différentes sources de lumière. En effet, sur des surfaces planes, une spécularité est associée à une seule source de lumière. En annotant et en suivant le déplacement de ces éléments, plusieurs quadriques peuvent être reconstruites à la fois. Après le processus de détection de spécularité, nous suivons le mouvement de chaque spécularité pour chaque image. Le suivi de spécularité est essentiel pour compter et distinguer les sources de lumières. Notre suivi est réalisé en calculant l'évolution des contours de spécularité d'une image à l'autre en détectant les intersections entre les contours de l'image courante et la précédente comme illustré dans la figure \ref{fig:synt_multi}. Même si le mouvement de caméra est conséquent, les spécularités suivent naturellement le mouvement de la caméra (plus particulièrement pour les surfaces planes), permettant à notre algorithme d'être robuste à des cas complexes. Ce suivi est réalisé pour chaque image en utilisant l'algorithme de détection de contour de \cite{suzuki1985topological} afin d'avoir des contours précis extraits de l'image binaire produite par notre méthode de détection de spécularité en temps réel. Cependant, suivre des spécularités se chevauchant (lorsque deux sources de lumière ont la même direction d'observation par rapport au point de vue) n'est pas encore géré par notre méthode, bien que ce cas reste relativement rare.
+
+\begin{figure}[!ht]
+\centering	    
+   	  \subfigure[]
+	  {
+       		\includegraphics[width=0.473\linewidth]{real}
+             \label{fig:multi_real}
+      }   
+      \subfigure[]
+	  {
+       		\includegraphics[width=0.473\linewidth]{conic}
+             \label{fig:multi_real}
+      }
+      \subfigure[]
+	  {
+       		\includegraphics[width=0.473\linewidth]{real2}
+             \label{fig:multi_real}
+      }   
+      \subfigure[]
+	  {
+       		\includegraphics[width=0.473\linewidth]{conic2}
+             \label{fig:multi_real}
+      }
+      \caption{Multi-light labeling and tracking of specularities (in blue and red). (a) and (c) represent two viewpoints on a wooden table. (b) and (d) represent the fitted conics associated with each light source (in blue and red).}
+      \label{fig:synt_multi}
+\end{figure}
+
+
+\section{Filtrage multi-vues}
+Pour des images surexposées, notre méthode de détection de spécularité peut confondre les textures blanches avec des spécularités. Afin d'assurer la robustesse de cette détection, un processus multi-vue sur les spécularités candidates s'impose. En détails, à l'opposé des contours 3D d'une texture, les contours 3D d'une spécularité se déplacent sur la surface lorsque la caméra se déplace. Ce phénomène est justifié du fait qu'une spécularité correspond à la réflexion d'une source de lumière qui elle est fixe. La specularité que nous observons correspond à un objet situé en dessous de la surface et non sur la surface, d'où le déplacement. En calculant l'homographie associé au plan où se présente la spécularité entre deux relativement éloignées, nous transformons les contours des spécularités candidates (warping). Si le contours est suffisamment proche, le candidat est une texture. Dans le cas contraire, c'est une spécularité.
+\fix{Illustration ?}
+\fix{CVPR 1 ou TVCG + montrer des résultats de tracking}
+
+
+%=============================================================================
+\section{Gestions de lumières à état changeant}
+\label{sec:etat_changeant} 
+%==============
+Nous adressons ici l'analyse de l'état des spécularité en comparant la détection de spécularité dans une image et la prédiction produite par notre quadrique reconstruite. Cette analyse présente de nombreux intérêts:
+\begin{itemize}
+    \item Si les ellipses associées respectivement avec la prédiction et la détection ont la même forme mais une position différente, cela signifie que la pose de caméra n'est pas assez précise.
+    \item Si les ellipses associées respectivement avec la prédiction et la détection ont la même position mais une forme différente, cela signifie que l'intensité de la lumière a changée ou que la reflectance du matériau est différente.
+    \item Si l'ellipse associée à la détection n'est plus présente, cela signifie que la source de lumière a été éteinte ou occultée.
+\end{itemize} 
+Ce dernier point sera abordé dans cette section. Il est reconnu que dans le domaine de la vision par ordinateur, les sources de lumière à état changeant (allumées et éteintes) car cela provoque des variations d'intensité conséquence dans l'image observée. De plus, une caméra doit également s'adapter au nouveau contexte lumineux ce qui affectera le résultat des différentes applications de vision par ordinateur comme la segmentation, la reconstruction et la localisation. Actuellement, aucune solution n'explicite clairement ce problème. En utilisant la prédiction de spécularité de notre modèle JOLIMAS, nous pouvons suivre la spécularité créée par une source de lumière même si elle est éteinte ou allumée en comparant la prédiction et la détection de spécularité. Nous testons la capacité de notre modèle à prédire les spécularités des sources de lumières à état changeant (allumées et éteintes) dans la figure \ref{fig:realdata_kitchen}. Dans cette séquences, trois sources de lumières sont utilisées (deux lampes de bureau et une lampe néon) sur un comptoir de cuisine. Durant cette séquence, nous allumons et éteignions chaque source de lumière à tour de rôle avant d'éteindre toutes les sources de lumière en une seule fois à la fin de la séquence. Nous illustrons la séquence dans la figure \ref{fig:changing_state}. Les résultats de cette séquence montre la capacité de notre modèle à gérer les changements d'état de lumière rapide tel que les clignotements de la lampe néon lors de l'allumage  dans un contexte multi-lumière.
+\begin{figure}[!ht]
+	\subfigure[]
+	{
+	    \includegraphics[width=0.48\linewidth]{multi_1.png}
+	}
+	\subfigure[]
+	{
+	    \includegraphics[width=0.48\linewidth]{multi_2.png}
+	}
+	\subfigure[]
+	{
+	    \includegraphics[width=0.48\linewidth]{multi_3.png}
+	}
+	\subfigure[]
+	{
+	    \includegraphics[width=0.48\linewidth]{multi_4.png}
+	}
+	\caption{Gestion des changements d'états de plusieurs sources de lumière. Les spécularités prédites sont représentées par des ellipses en bleu quand la lumière est allumée et en ellipses rouges dans le cas échéant. La première lampe de bureau est éteinte en (a) et le néon en (b). Dans (c) la première lampe de bureau et le néon sont allumés alors que la deuxième lampe de bureau est éteinte avant d'être rallumée. Dans (d), toutes les sources de lumière sont éteintes jusqu'à la fin de la séquence.}
+	\label{fig:changing_state}
+\end{figure}
+
+
+%===============================================================================
+\section{Changement de texture sur des objets réels}
+\label{sec:retexturing}
+%===============================================================================
+
+\subsection{Première approche : modélisation par fonction Gaussienne}
+\fix{traduire et remettre en ordre}
+
+It was shown that the human brain takes into account the specularities to understand a scene \cite{blake1990does}. Therefore, specularity rendering could greatly improve the following applications: 
+\begin{itemize}
+    \item Retexturing for augmented reality
+    \item Diminished reality when a specularity is crossing the area to inpaint \cite{kawaidiminished, herling2014high}
+    \item Virtual viewpoint prediction (where the camera physically never went)
+\end{itemize}
+For all these applications, if one wants to render a specularity in the image, one could consider using only the detected specularities in the image and apply them directly on the new texture. However, due to the difficulty of the specularity detection process, this solution does not seem optimal due to unwanted jittering and temporal incoherence affecting the rendering, as shown in figure \ref{fig:temporal_incoherence}. Indeed, the quality of specularity detection cannot be guaranteed for every viewpoint because of light condition changes, specularity detector limitations, imperfections on  the  planar  surface  (roughness)  and  occluding  objects  in  the scene. The temporal coherence of the rendering is important for applications such as diminished reality \cite{kawaidiminished, herling2014high}.
+
+In this context, the JOLIMAS model, by predicting the specularity using the projection of the quadric from the actual viewpoint is a natural solution to ensure the temporal coherence of the rendering.
+ \begin{figure}[!ht]
+ \centering
+     \subfigure[]
+     {
+         \includegraphics[width=0.4\linewidth]{error_conic.png}
+     }
+     \subfigure[]
+     {
+         \includegraphics[width=0.4\linewidth]{error_retext.png}
+     }
+     \subfigure[]
+     {
+         \includegraphics[width=0.9\linewidth]{jittering}
+     }
+     \caption{Temporal incoherences on naive conic fitting and retexturing on the multi-light sequence presented in figure \ref{fig:realdata_kitchen} for three consecutive frames (one frame per row of (a) and (b)). In (a), the jittering of the conic fitting is visible on every specularity when we directly fit ellipses to the specularity detection. This jittering is highlighted in (c) by measuring the evolution of the ellipse's semi-axis ($S_x$ and $S_Y$) of the fitted ellipse (naive approach) compared to the predicted ellipse (our prediction) for each frame of the whiteboard sequence presented in figure \ref{fig:realdata_whiteboard}. In (b), we copy directly the result of specularity detection on the texture resulting in a mismatching in the intensity which is hard to blend with the texture. Moreover, this method is sensitive to the specularity detection quality and cannot predict future or new viewpoints.}
+     \label{fig:temporal_incoherence}    
+ \end{figure}
+To achieve the specularity rendering from JOLIMAS, an intensity function describing the intensity variation within the specularity is needed. We propose an  approximation based on a 2D Gaussian function. Indeed, a specularity is described as a high intensity area. Starting from the center of this specularity, the intensity is progressively decreased by making use of a Gaussian function. The Gaussian intensity function captures the following properties of the specularity: smooth variation of the intensity and ellipticity
+of the isocontours, as detailed in section \ref{sec:theoretical}. The smooth property of the specularity has already been exploited by Kim \etal to separate specular and diffuse reflections in an image \cite{kim2013specular}.
+
+Our retexturing method is divided in three steps. Firstly, from detected specularities in the sequence, a mean of the specularity color is computed to fit the lighting conditions. The appropriate Gaussian function is computed on the red, green and blue color channels to match the specularity detected in the sequences. To correctly draw our synthetic specularity on the texture associated to the plane, two homographies are computed: $\mathtt{H}_2$, the transformation from  the texture to the planar surface and $\mathtt{H}_1$ transforming the unit circle into the predicted conic (the conic is first transformed by $\mathtt{H}_2^{-1}$). Our synthetic texture replaces the scene planar surface by merging the texture with our Gaussian texture using $\mathtt{H}_1$ and transforms the fusion onto the plane using $\mathtt{H}_2$. Four results of retexturing are shown in figure \ref{fig:retexturing}.
+\begin{figure*}[!ht]
+	\subfigure[]
+	{
+		\includegraphics[width=\linewidth]{retext1.png}
+		\label{fig:retexturing_howto}
+	}
+	\subfigure[]
+	{
+		\includegraphics[width=\linewidth]{retext4.png}
+		\label{fig:retexturing_res4}
+	}
+	\subfigure[]
+	{
+		\includegraphics[width=\linewidth]{retext5.png}
+		\label{fig:retexturing_res5}
+	}
+	\subfigure[]
+	{
+		\includegraphics[width=\linewidth]{retext2.png}
+		\label{fig:retexturing_res}
+	}
+	\caption{Comparison of retexturing methods for our implementation of\cite{buteau2015poster} (middle) and our proposed approach (right). Since \cite{buteau2015poster} is a recent method for point light source reconstruction, we manually added the roughness, the color and the intensity of the light source using a Phong illumination model. We only use the specular term. Retexturing is illustrated on the light bulb/steel table sequence (a) using a marble texture, (b) the light bulb/book sequence by switching the book cover, (c) the fluorescent lamp/light spot/wooden table sequence by changing the wooden texture of a table to another and (d) the multi-light/kitchen counter sequence  using a rock texturing. To simulate the specularity, we used a Gaussian function and transformed it onto the plane surface using our specularity prediction to compute the transformation. The color of the specularity is computed from the specularities detected in the images used for the quadric reconstruction. Without considering the diffuse term on the texture, we can realistically change the texture of the planar surface using only the specular term predicted by JOLIMAS. As opposed to \cite{buteau2015poster}, we accurately match the shape, position and intensity of the specularity without relying on a known illumination model. Moreover, the computation of an illumination model such as Phong's cannot be done without priors on the materials and the number of light sources. The retextured sequences using our method can be found in the supplementary material.}
+	\label{fig:retexturing}
+\end{figure*}
+Due to the lack of geometric modeling of specularity such as ours, we additionally implemented Buteau \etal's approach \cite{buteau2015poster} as baseline method for our retexturing. This recent method reconstructs point light sources from specularities on planar images, making it the closest approach to ours. To achieve retexturing for point light sources, we manually compute every Phong's parameters (roughness, intensity and color of the light sources) and apply only the specular part onto the new texture. As seen in figure \ref{fig:retexturing}, our approach accurately matches the intensity, shape and position of the specularities as opposed to \cite{buteau2015poster} which creates  smooth  but misplaced specularities. Moreover, in figures \ref{fig:retexturing_howto} and \ref{fig:retexturing_res4}, local illumination models such as Phong's are unable to model accurately the shape and the intensity variation of the specularity. Using only point light sources, it is difficult to model extended light sources.
+A better rendering quality could be obtained by modeling the diffuse term. The simplicity of our method provides good results with room for improvement with additional parameters such as roughness.
+
+
+\subsection{Synthèse de spécularité}
+\begin{figure*}[!ht]
+   \centering	
+        \includegraphics[width=\linewidth]{retext_pipeline.pdf}
+	  \caption{Pipeline of the retexturing process. The method is divided in three main phases: the specularity reconstruction from frames used for the 3D quadric reconstruction (top part), the diffuse term computation (bottom part) and the blending process between the specularity reconstruction, alignment with the specularity prediction and the diffuse term. The specularity is reconstructed in terms of intensity variation and color empirically from the predicted conics and the specularity detection image. To compute the diffuse term, we consider the center of the 3D quadrics reconstructed as point light sources. We then compute the diffuse component according to \cite{phong1975illumination}. The specularity and the diffuse term are merged to create our retextured object. The addition of the diffuse term and blending of the specularities greatly improve the rendering.}
+	  \label{fig:retexturing}
+\end{figure*}
+
+In augmented reality, it is sometimes useful to switch a previous real texture by a synthetic one in order to display/highlight a new information or cover an unwanted surface. This process is called retexturing. In most cases, retexturing must be achieved seamlessly according to the lighting conditions (intensity, shadows) and the geometry of the scene. To improve the realism, we propose a dynamic retexturing application using our specularity prediction to model the specularities on the new textures. We improve the retexturing of \cite{morgand2016empirical} by adding a diffuse term which is essential to represent self-shadows and intensity variations which often appeared on non-planar surfaces. To further improve the realism, we also compute the intensity and the color of the specularity by learning them on every frame used for the quadric reconstruction.
+\paragraph{Diffuse term computation}
+We consider the input texture as the ambient term commonly used in Phong's model \cite{phong1975illumination}. To add a diffuse term, we use the centers of the reconstructed 3D quadrics as light source position $\mbf{L}$ and compute the diffuse term for each surface point $\mbf{P}$ as:
+\begin{equation}
+I_d = \sum_{i=1}^{k} \left( \hat{\mbf{L}}_i(\mbf{P}) \cdot \hat{\mbf{N}}(\mbf{P}) \right),
+\end{equation}
+with $I_d$ the diffuse image, $k$ the number of light sources and $i$ the index of the light source used.
+
+\paragraph{Specularity learning and blending.}
+For each frame used for the 3D quadric reconstruction, we use the predicted ellipse and the specularity detection to learn the specularity pattern. By matching the shape of the different specularities, we retrieve the intensity evolution and the color of the specularity. To ensure an adequate blending, we interpolate the color of the boundary of the specularities with the diffuse term around it. The full pipeline of the retexturing is illustrated in figure \ref{fig:retexturing}.
+% To emulate rough and smooth surfaces, we respectively sharpen the specularity term or smooth them as illustrated in figure \ref{fig:retexturing_example}.
+
+\begin{figure}[!ht]
+   \centering	  
+        \includegraphics[width=\linewidth]{retexturing_example.png}
+	  \caption{Retexturing example on 3 sequences: the billiard pool, the mug and the yellow vase. We can see that the specularities and the shadows are coherent to the lighting context of the input image.}
+	  \label{fig:retexturing_example}
+\end{figure}
+As illustrated in figure \ref{fig:retexturing_example}, our retexturing application allows us to synthesize the specularity's intensity and color and to create coherent self-shadows in real-time.
+
+%Maybe an advanced intensity function here ?
+%In this document, we mainly focused on a dynamic retexturing application using a new intensity function to fill the inside of the predicted conic. \fix{BP + TODO}.
+
+%Specularity prediction allows several applications in computer vision:
+%\begin{itemize}
+%    \item Detecting the state of a light source (on/off). By comparing the detected specularity and the predicted specularity, if the predicted conic does not match the detected specularity, the light is turned off and reciprocally.
+%    
+%   \item Improve the camera pose estimation by using the prediction as a geometric primitive. Using the 2D distance of \cite{sturm2007conic}, we can compare the predicted and detected specularity and further constrain the camera pose.
+%\end{itemize}
+
+%===============================================================================
+\section{Changements synthétiques de rugosité et de source lumineuses}
+\label{sec:changements_ra}
+%===============================================================================
+
+%===============================================================================
+\section{Résultats}
+\label{sec:resultats_ra}
+%===============================================================================
+
+%===============================================================================
+\section{Perspectives}
+\label{sec:perspectives_ra}
+%===============================================================================
+
+
+%===============================================================================
+\section{Conclusion}
+\label{sec:conclusion_ra}
+%===============================================================================

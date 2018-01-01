@@ -1,0 +1,353 @@
+\RequirePackage{xspace} % pour gérer automatiquement les espaces après les macros de type texte
+\RequirePackage{color} % Pour la définition des couleurs
+\RequirePackage{amsmath} % pour \boldsymbol ...
+\RequirePackage{xargs} % Pour les commandes avec des arguments optionnels
+
+
+
+% ============================================================================
+%     La mise en forme du document
+% ============================================================================
+
+% Version a l'ecran ou sur papier ?
+\newif\ifscreenVersion
+
+% Modification de l'espace entre paragraphes pour "aérer" le texte change l'espacement entre deux lignes
+\AtBeginDocument{ % A définir après le beginDocument
+	\renewcommand{\baselinestretch}{1.05} 
+}
+
+% Les listes à puces
+%\AtBeginDocument{ % A définir après le beginDocument
+%	\renewcommand{\labelitemi}{\bf $\rhd$}
+%	\renewcommand{\labelitemii}{$\bullet$}
+%	\renewcommand{\labelitemiii}{$\ast$}
+%	\renewcommand{\labelitemiv}{$\cdot$}
+%}
+
+% Environnement de début de chapitre
+\newenvironment{chapeauChapitre}{ \itshape}{}
+
+% La mise en page des entêtes et pied de page
+% A gauche pour les pairs et à droite pour les impairs : le numéro de page
+% A gauche pour les impairs, le nom de la section
+% A droite pour les pairs, le nom du chaphitre
+\newcommand{\defineChapterHeadAndFoot}[0]{\fancyhead[LE,RO]{\thepage}
+											\fancyhead[LO]{\footnotesize\rightmark}
+											\fancyhead[RE]{\footnotesize\leftmark}
+											\fancyfoot{} }
+											
+% Definition du contenu des headers pour les chapitres etoiles
+\newcommandx{\defineHeaderForStarredChapter}[1][1={}]{\renewcommand{\chaptermark}[1]{\markboth{\textsc{##1}}{}}
+													  \renewcommand{\sectionmark}[1]{}
+													  \chaptermark{\textsc{#1}}}
+% Definition du contenu des headers pour les chapitres non-etoiles								  
+\newcommandx{\defineHeaderForClassicalChapter}{\renewcommand{\chaptermark}[1]{\markboth{\textsc{Chap. \thechapter\ :\ ##1}}{}} %Le nom du chapitre en cours (et son numéro)
+											  \renewcommand{\sectionmark}[1]{\markright{\thesection\ ##1}}} % Nom de section en minuscules}				
+% Definition du contenu des headers pour les annexes non-etoiles							  
+\newcommandx{\defineHeaderForClassicalAnnexe}{\renewcommand{\chaptermark}[1]{\markboth{\textsc{Annexe \thechapter\ :\ ##1}}{}} %Le nom du chapitre en cours (et son numéro)
+											  \renewcommand{\sectionmark}[1]{\markright{\thesection\ ##1}}} % Nom de section en minuscules}										  
+											  																					  			
+
+% Définit jusqu'à quel niveau les paragraphes sont numérotés
+\setcounter{secnumdepth}{3}
+% Définit jusqu'à quel niveau les paragraphes apparaissent dans la table des matières
+\setcounter{tocdepth}{3} 
+
+% Les algorithmes perso
+\newcommand{\algoPerso}[2]{
+	\centering
+	\fbox{\begin{minipage}{15cm}
+		% Titre
+		\begin{center}
+			\textbf{#1}
+		\end{center}
+		% Contenu
+		 #2
+	\end{minipage}}
+}											  						
+											
+% La mise en page des titres
+% \renewcommand\section{\@startsection {section}{1}{\z@}%^
+%                                    {-3.5ex \@plus -1ex \@minus -.2ex}%^
+%                                    {2.3ex \@plus.2ex}%^
+%                                    {\normalfont\Large\bfseries\flushleft\textcolor{pierre@sectioncolor}}}
+% \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%^
+%                                      {-3.25ex\@plus -1ex \@minus -.2ex}%^
+%                                      {1.5ex \@plus .2ex}%^
+%                                      {\normalfont\large\bfseries\flushleft\textcolor{pierre@subsectioncolor}}}
+% \renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%^
+%                                      {-3.25ex\@plus -1ex \@minus -.2ex}%^
+%                                      {1.5ex \@plus .2ex}%^
+%                                      {\normalfont\normalsize\bfseries\flushleft\textcolor{pierre@subsubsectioncolor}}}
+
+
+
+
+
+% ============================================================================
+%     Les couleurs
+% ============================================================================
+
+% Les couleurs prédéfinies
+\definecolor{BleuEau}{rgb}{0.02, 0.38, 0.55}
+\definecolor{RougeMarron}{rgb}{0.32, 0, 0}
+\definecolor{VertFonce}{rgb}{0, 0.4, 0}
+\definecolor{BleuVert}{rgb}{0, 0.5, 0.5}
+
+% Pour les tableaux
+\definecolor{vertF}{rgb}{0.04,0.57,0.36}
+\definecolor{rougePerso}{rgb}{1,0,0}
+
+% Pour les titres
+\definecolor{pierre@sectioncolor}{rgb}{0,.1,.4}
+\definecolor{pierre@subsectioncolor}{rgb}{0,.1,.4}
+\definecolor{pierre@subsubsectioncolor}{rgb}{0,.1,.4}
+
+
+
+
+
+% ============================================================================
+%     Les macros pour le 'français'
+% ============================================================================
+
+% Pour les latineries
+\newcommand{\etal}{\textit{et~al.}\xspace}
+\newcommand{\apriori}{\textit{a~priori}\xspace}
+\newcommand{\aposteriori}{\textit{a~posteriori}\xspace}
+\newcommand{\eg}{\textit{e.g.}\xspace}
+\newcommand{\ie}{\textit{i.e.}\xspace}
+\newcommand{\etc}{\textit{etc.}\xspace}
+
+% Les références manquantes
+\newcommand{\refNeeded}{\@latex@warning{A reference is needed} \textcolor{red}{référence nécessaire}\xspace}
+
+% Pour les images/figures extraites d'ailleurs
+\newcommand{\courtesy}[1]{\textit{#1}}
+
+
+
+% ============================================================================
+%     Les macros de mise en forme et dessins divers
+% ============================================================================
+
+% Ligne horizontale
+ \newcommand{\wideline}{ \vspace*{3pt}\noindent\rule{\linewidth}{0.4pt}\vspace{-3.4pt}}
+% Théorème
+\newtheorem{theorem}{Théorème}
+% Espace supplémentaire entre des lignes (sans warning)
+ \newcommand{\autoParSpace}{\vspace{12pt}}
+% Espacement entre les equations (à mettre en fin de ligne à la place de \\)
+\newcommand{\autoReturn}{\\[0.3cm]}
+\newcommand{\smallAutoReturn}{\\[0.1cm]}
+
+
+
+
+% ============================================================================
+%     Les macros pour les notations mathématiques
+% ============================================================================
+\def\argmin#1{\mathop{argmin}\limits_{\substack{#1}}}
+\def\argmax#1{\mathop{argmax}\limits_{\substack{#1}}}
+
+
+
+% -------------------- Géométrie 'algébrique' --------------------------
+% Matrices
+\newcommand{\matrice}[1]{\mathsf{#1}}
+% Vecteurs
+\newcommand{\vect}[1]{\mathbf{#1}}
+% Matrice antisymétrique
+\newcommand{\antiSym}[1]{\left[ #1 \right]_{\times}}
+% Vecteurs homogènes
+\newcommand{\vectHom}[1]{{\tilde{\mathbf{#1}}}}
+% Transpose
+\newcommand{\transpose}[1]{{#1}^\mathsf{T}}
+% Transpose inverse
+\newcommand{\invTranspose}[1]{{#1}^\mathsf{-T}}
+% Inverse
+\newcommand{\inv}[1]{{#1}^{-1}}
+% Pseudo inverse
+\newcommand{\pinv}[1]{{#1}^\mathsf{+}}
+
+% --------------------------- Géométrie 3D-------------------------------
+% Point 2D (syntaxe : \pDD{nomVariable}[indiceCam][indicePoint])
+\newcommandx{\pDD}[3][2={}, 3={}]{\mathbf{#1}_{#2}^{#3}}
+% Point 2D homogene
+% Pour eviter les problemes de "double superscript", il faut ajouter "{}" (cf http://newsgroups.derkeiler.com/Archive/Comp/comp.text.tex/2006-03/msg01122.html)
+\newcommandx{\pDDHom}[3][2={}, 3={}]{{}{\tilde{\mathbf{#1}}_{#2}^{#3}}}
+% Point 3D (syntaxe : \pTD{nomVariable}[indicePoint][repere])
+\newcommandx{\pTD}[3][2={}, 3={}]{\mathcal{#1}^{#2}_{#3}}
+% Point 3D homogene
+\newcommandx{\pTDHom}[3][2={}, 3={}]{{{}\tilde{\mathcal{#1}}^{#2}_{#3}}}
+% Droite
+\newcommand{\droite}[1]{\mathbf{#1}}
+% Plan
+\newcommand{\plan}[1]{\boldsymbol{#1}}
+% Modele 3D
+\newcommand{\modele}[1]{\mathcal{#1}}
+% segment carte
+\newcommand{\segCarte}[1]{\boldsymbol{#1}}
+% Carte
+\newcommand{\carte}[1]{\mathcal{#1}}
+
+% ---------------------------- Caméras -------------------------------------
+% Matrice de projection
+\newcommand{\proj}[1]{\tilde{\mathsf{#1}}}
+% Matrice de calibrage
+\newcommand{\calib}[1]{\mathsf{#1}}
+% monde (notation repere)
+\newcommand{\monde}[1]{\mathcal{#1}}
+% camera (notation repere)
+\newcommandx{\cam}[3][2={}, 3={}]{\mathcal{#1}_{#2}^{#3}}
+%\newcommand{\cam}[1]{\mathcal{#1}}
+% camera homogene
+\newcommand{\camHom}[1]{\tilde{\mathcal #1}}
+% Paramètres extrinsèques
+\newcommand{\paramE}[1]{\mathsf{#1}^E}
+% Image
+\newcommandx{\image}[2][2={}]{\mathcal{#1}_{#2}}
+
+% -------------------------- Mathématiques 'analytiques' --------------------------------
+% ensemble
+\newcommand{\ensemble}[1]{\mathcal{#1}}
+% voisinage
+\newcommand{\voisinage}[1]{\mathcal{#1}}
+% Fonction
+\newcommand{\fonction}[1]{\mathcal{#1}}
+% Transformation 3D (similitude ...)
+\newcommand{\transf}[1]{\mathcal{#1}}
+% Espaces (R, P, ...)
+\newcommand{\espace}[2]{\mathbb{#1}^{#2}}
+% Equivalence
+\newcommand{\equi}{\sim}
+
+% ----------------------------- Notations algos internes -------------------------------
+% Fragment (et segment)
+\newcommand{\fragment}[1]{\mathcal{#1}}
+% Acronyme de l'ajustement de faisceaux spécifique
+\newcommand{\acroBundle}{ST-CBA\xspace}
+
+
+
+
+
+
+
+
+
+
+% -----------------------------------------------------------------------------
+% Pour minitoc
+% Pour eviter d'avoir le header en majuscule  
+% -----------------------------------------------------------------------------
+\def\parttoc@[#1]{%
+\global\@parttoc@used@true
+\if@mtc@longext@%
+   \def\@tocfile{ptc\Thepart}%
+\else
+   \def\@tocfile{P\Thepart}%
+\fi
+        \mtc@CkFile{\jobname.\@tocfile}
+        \if@mtc@FE
+        \mtcPackageInfo[I0006]{minitoc}%
+           {\jobname.\@tocfile\space is empty}
+        \@mtc@empty@parttoc@true
+        \else
+        \beforeparttoc
+        \@ifundefined{chapter}{}{%
+        \global\let\mtc@markboth\markboth \global\let\@mkboth\markboth
+        \thispageparttocstyle
+        \mtc@markboth{\textsc{\ptctitle}}{\textsc{\ptctitle}}}%
+        \relax\begin{samepage}%
+        \if #1e\let\do@ptitc\e@pti
+        \else\if #1n\let\do@ptitc\n@pti
+        \else\if #1c\let\do@ptitc\c@pti
+        \else\if #1l\let\do@ptitc\l@pti
+        \else\if #1r\let\do@ptitc\r@pti
+        \else\if #1d\let\do@ptitc\df@ptitc
+        \fi\fi\fi\fi\fi\fi
+        \mtc@CkStr{\ptctitle}\if@mtc@FE \let\do@ptitc\e@pti\relax\fi
+        \raggedright \reset@font\ptcfont \parskip=\z@ \parindent=\z@%
+        \nopagebreak[4]\kern-0.8\baselineskip\nopagebreak[4]%
+        \par\noindent \nopagebreak[4]%
+        \ifx\ptc@rule\relax
+        \begin{tabular}{@{}p{\columnwidth}@{}}
+        \reset@font\ptifont\do@ptitc{\mtc@v\ptctitle}\\
+        \end{tabular}%
+        \else
+        \begin{tabular}{@{}p{\columnwidth}@{}}
+        \reset@font\ptifont\do@ptitc{\mtc@v\ptctitle}\\\hline
+        \end{tabular}%
+        \fi
+        \nopagebreak[4]\null\leavevmode\mtc@zrule\\*[-\baselineskip]\mtc@BBR
+        \leftmargin\ptcindent \rightmargin\ptcindent
+        \itemindent=\z@ \labelwidth=\z@ \labelsep=\z@ \listparindent=\z@%
+        \begin{ptc@verse}{\ptcoffset}\c@tocdepth=\c@parttocdepth%
+        \leavevmode\\\mtc@BBR\vskip -.5\baselineskip
+        \begingroup
+  \makeatletter
+  \@ifundefined{ptc@pgno}%
+    {\let\@dottedtocline\@undottedtocline}{}
+  \@ifundefined{ptc@pgno}%
+    {\let\l@chapter@SVPN\l@chapter%
+     \def\l@chapter##1##2{\l@chapter@SVPN{##1}{\hbox{}}}}{}
+  \@fileswfalse\mtc@hook@beforeinputfile
+  \ptc@setform
+  \openparttoc
+  \vspace{8pt} % Espace ajouté en ligne du haut et premier mot
+  \@input{\jobname.\@tocfile}%
+  \closeparttoc
+  \vspace{-1ex} \vspace{-1\baselineskip}
+  \leavevmode\mtc@strut
+  \global\@nobreakfalse\endgroup
+        \end{ptc@verse}%
+        \kernafterparttoc
+        \nopagebreak[4]\ptc@rule\null\leavevmode\\%
+        \vskip-1.0\baselineskip\mtc@zrule\end{samepage}%
+        \par\@ifundefined{chapter}{\pagebreak[1]\vspace*{-1ex}}%
+        \afterparttoc\fi}%
+
+
+% -----------------------------------------------------------------------------
+% Sommaire
+% Pour eviter d'avoir le header en majuscule
+% -----------------------------------------------------------------------------
+\def\shorttableofcontents#1#2{\bgroup\c@tocdepth=#2\@restonecolfalse
+\if@tightshtoc
+\parsep\z@
+\fi
+\if@twocolumn\@restonecoltrue\onecolumn\fi
+\@ifundefined{chapter}%
+{\section*{{#1}
+\@mkboth{\textsc{#1}}{\textsc{#1}}}}%
+{\chapter*{{#1}
+\@mkboth{\textsc{#1}}{\textsc{#1}}}}%
+\@startshorttoc{toc}\if@restonecol\twocolumn\fi\egroup}
+
+
+
+% -----------------------------------------------------------------------------   
+% La bibliographie
+% Pour eviter d'avoir le header en majuscule
+% -----------------------------------------------------------------------------
+\renewenvironment{thebibliography}[1]
+     {\chapter*{\bibname}%
+      \@mkboth{\textsc{\bibname}}{\textsc{\bibname}}%
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}

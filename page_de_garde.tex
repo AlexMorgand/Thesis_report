@@ -1,0 +1,92 @@
+% =============================================================================
+%		PAGE DE GARDE
+%			Modèle pour école doctorale de Clermont-Ferrand
+% ============================================================================= 
+\def\blurb{%
+  \begin{large}
+  \vspace{5mm}
+  \textsc{
+  \textbf{Université Clermont Auvergne \\}
+  \vspace{5mm}
+  \textit{\'Ecole Doctorale \\
+  Sciences Pour l'Ingénieur de Clermont-Ferrand \\
+  }}
+  \vspace{1cm}
+  Thèse présentée par~: \\
+  \textbf{\large Alexandre \textsc{Morgand}} \\
+  \vspace{5mm}
+  Formation Doctorale : \\ Électronique et Système \\
+  \vspace{5mm}
+  en vue de l'obtention du grade de \\
+  \vspace{1cm}
+  \begin{Large}\textbf{\textit{\textsc{Docteur d'Université \\}}}\end{Large}
+  \vspace{5mm}
+  Spécialité~: Vision pour la Robotique
+  \end{large}
+ }
+\def\clap#1{\hbox to 0pt{\hss #1\hss}}%
+\def\ligne#1{%
+  \hbox to \hsize{%
+    \vbox{\centering #1}}}%
+\def\haut#1#2#3{%
+  \hbox to \hsize{%
+    \rlap{\vtop{\raggedright #1}}%
+    \hss
+    \clap{\vtop{\centering #2}}%
+    \hss
+    \llap{\vtop{\raggedleft #3}}}}%
+\def\bas#1#2#3{%
+  \hbox to \hsize{%
+    \rlap{\vbox{\raggedright #1}}%
+    \hss
+    \clap{\vbox{\centering #2}}%
+    \hss
+    \llap{\vbox{\raggedleft #3}}}}%
+%%%%##########################################################################
+%%%%##########################################################################
+      
+
+%\maketitle
+\thispagestyle{empty}\vbox to .9\vsize{%
+  \vss
+  \vbox to 1\vsize{%
+    \haut{}{
+    \begin{footnotesize}\begin{flushleft}
+    \begin{tabular}{ll}
+     N° d'ordre~: & D.U. ? \\
+     EDSPIC~: & ? \\
+    \end{tabular}
+    \end{flushleft}\end{footnotesize}
+    \blurb
+    }{}
+    \vfill
+    \hrule\vspace{20pt}
+    \ligne{\LARGE  Un modèle géométrique multi-vues  des taches \\ spéculaires basé sur les quadriques  avec \\ application en réalité augmentée}
+    \vspace{20pt}\hrule\vspace{1pt}
+    \vspace{5mm}
+    \vfill
+    \ligne{%
+      \begin{tabular}{l}
+%        Soutenue publiquement le ?? septembre 2010 devant le jury~:\\
+      \end{tabular}
+    }
+    \vspace{5mm}
+    \begin{large}\ligne{%
+      \begin{tabular}{lll}
+      Mme. ? \textsc{?}          & Rapporteur \\
+  	  M. ? \textsc{?}          & Président du jury \\
+      M. ? \textsc{?}           & Rapporteur\\
+      M. Mohamed     \textsc{Tamaazousti} & Encadrant de thèse \\
+      M. Adrien \textsc{Bartoli}       & Directeur de thèse \\
+      \end{tabular}
+      }
+    \end{large}
+    }
+  \vss
+}
+
+
+
+% \vspace{20pt}
+%      \Huge \bfseries #2\par\nobreak
+	 

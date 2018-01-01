@@ -1,0 +1,158 @@
+\chapter{Un modèle général pour les surfaces à courbure variable}
+\label{chapitre:modele_general}
+\defineHeaderForClassicalChapter
+\graphicspath{{images/Ch5/}}
+
+\begin{chapeauChapitre}
+Modéliser les interactions des sources de lumières avec les objets ajoutés virtuellement dans un flux vidéo est essentiel pour une expérience réaliste en RA. En particulier, les spécularités sont essentielles dans la perception humaine du matériau et de la géométrie d'un objet et doivent être prédites afin d'améliorer le rendu en RA. La problématique de prédiction de spécularité dans les images, pour une scène où la pose de caméra et la géométrie sont connues, est complexe et mal-posé. Ceci est due à la dépendance des spécularités aux conditions de lumières, de la géométrie et du matériau de la surface et des paramètres de la caméra. Dans les chapitres précédents \ref{chapitre:primal_jolimas} et \ref{chapitre:dual_jolimas}, nous avons présenté le modèle JOLIMAS qui adresse ce problème en utilisant un modèle géométrique sous l'hypothèse que les spécularités ont une forme elliptique sur des surfaces planaires et convexes. Ce modèle abstrait les propriétés des matériaux (rugosité et reflectance) et la source de lumière en tant que quadrique fixe dans l'espace dont la projection perspective correspond aux contours de la spécularité dans l'image. Nous adressons dans ce chapitre la version duale de JOLIMAS qui est limitée aux surfaces planes et convexes. Pour les surfaces convexes, la courbure de la surface parcourue par la spécularité doit être constante. L'intuition de cette approche vient du domaine de reconstruction multi-vue à partir d'images miroir. Une surface spéculaire a un comportement similaire à celui d'un miroir. Cette propriété nous permet de considérer la spécularité comme étant la réflexion d'un objet 3D qui est fixe dans l'espace (en position et en angle). Cette réflexion est naturellement affectée par la courbure de la surface locale. Afin de reconstruire notre modèle JOLIMAS par l'intermédiaire de notre quadrique, nous utilisons au moins trois ellipses calculées à partir des contours de spécularité détectés et nous appliquons une transformons spécifiques à ces formes pour simuler une surface plane et ainsi simuler un miroir plan qui ne déforme pas l'image de l'objet réfléchi. Après reconstruction, nous projetons la quadrique en perspective et nous transformons l'ellipse pour correspondre à la courbure locale de la surface pour un point de vue nouveau. Nous évaluons notre nouvel approche à la fois sur des séquences synthétiques et réelles et comparons ces résultats avec notre approche précédente JOLIMAS dual.
+
+Ce chapitre a fait l'objet d'une publication internationale VRST \citeyearpar{morgand2017amultiple} et une soumission dans un journal international TVCG 2018.
+
+\end{chapeauChapitre}
+
+%===============================================================================
+\section{Introduction} %%%%%%%%%%
+\label{sec:intro_general}												  %%%%%%%%%%
+%===============================================================================
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=\linewidth]{mirror2.pdf}
+\caption{Images miroir d'une scène 3D dans deux cas: une surface miroir (paire de gauche) et une surface spéculaire (paire de droite). Les objets 3D (une statue en plastique et et un téléphone pour la surface miroir et une source de lumière pour la surface spéculaire) sont déformées en fonction de la courbure locale de la surface. Dans un processus de prédiction de spécularité, ces déformations de surface doivent être prises en compte.}
+\label{fig:mirror}
+\end{figure}
+La RA vise à insérer un objet virtuel de façon réaliste dans un flux vidéo en temps rél afin d'ajouter des nouvelles informations pouvant être utilisé dans un panel d'application large (éducation, sécurité ou les effets spéciaux). Avec l'évolution de la puissance informatique disponible au plus grand public comme par exemple les caméras haute définition, les cartes graphiques/processeurs de plus en plus puissants disponibles dans les ordinateurs portable et smartphones, les applications de SLAM deviennent de plus en plus rapides et robustes. Plusieurs applications en RA tente de capturer les conditions de lumière de l'environnement courant afin de comprendre davantage la scène 3D et améliorer le réalisme. Il est important de simuler des réflexions spéculaires sur des objets ajoutés virtuellement puisque elles sont essentielles dans la perception du matériau et de la géométrie d'un objet. En pratique, ce procédé est difficile à cause de la dépendance de l'apparence visuelle des spécularités au matériau et de la géométrie de la surface, les sources de lumière et des paramètres de caméra (pose, ouverture, temps d'exposition). Selon \cite{blake1990does}, les spécularités jouent un rôle crucial dans la perception et l'interprétation des matériaux d'un objet. En connaissant la géométrie et la pose de la caméra, le problème de prédiction de spécularité est difficile à cause de l'ambiguïté entre l'intensité de la lumière et propriétés des matériaux (reflectance et rugosité) qui peut donner des résultats similaires pour des valeurs différentes. Contrairement aux approches d'illumination globale et des modèles d'illumination locale, le problème de prédiction de spécularité peut être assimilé à un problème de reconstruction multi-vue comme évoqué dans le chapitre précédent \ref{chapitre:dual_jolimas}. Dans le chapitre précédent, nous présentions un méthode qui, à partir des ellipses calculées à partir des contours de spécularités, reconstruit une quadrique dont la projection perspective correspond aux contours de la spécularité pour des nouveaux points de vue. Cette approche est limitée aux surface planes et convexes mais ne permet pas de gérer de changements de courbure locale sur la surface de la spécularité courante. Dans ce chapitre nous détaillons deux contributions majeures à notre modèle de prédiction de spécularités. Premièrement, nous présentons une représentation canonique dans la section \ref{sec:our_approach} de notre modèle qui reconstruit une quadrique à partir des ellipses calculées à partir des spécularités en transformant leurs formes en fonction de la courbure locale. Nous transformons la forme de la spécularité apparaissant sur la surface courbure avant de simuler une spécularité sur une surface plane. Ce procédé est réalisé car l'image réfléchie (ellipse) de notre quadrique sur une surface spéculaire plane n'est pas distordue de la même façon que sur un miroir planaire. Deuxièmement, pour un nouveau point de vue, par projection  perspective de la quadrique, nous obtenons une ellipse que nous transformons à nouveau sur la surface en fonction de la courbure locale. Ces ellipses transformées correspondent à la forme des spécularités dans l'image. Nous évaluons l'efficacité de notre méthode pour des données synthétiques et réelles comparés à notre précédente itération : JOLIMAS dual.
+
+
+%===============================================================================
+\section{Approche proposée} %%%%%%%%%%
+\label{sec:our_approach}										  %%%%%%%%%%
+%===============================================================================
+\begin{figure}[!ht]
+\centering
+\subfigure[]
+{
+    \includegraphics[width=\linewidth]{canonical_jolimas.pdf}
+}
+\caption{Illustration de notre modèle canonique JOLIMAS. Pour chaque poses de caméra réelles ($\Pi_1$, $\Pi_2$ et $\Pi_3$), nous créons des poses de caméra virtuelles ($\Pi_{s, 1}$, $\Pi_{s, 2}$ et $\Pi_{s, 3}$) calculées à partir des points d'intensité maximale de chaque spécularités. En synthétisant la forme des spécularités sur le plan tangent aux points d'intensité maximale, nous sommes capable de reconstruire une quadrique localisée près de la source de lumière $\mbf{L}$ invariant à la courbure de la surface.}
+\label{fig:canonical}
+\end{figure}
+A partir de la méthode de \cite{healey1988local} qui est une application de \textit{Shape from Specularity} qui consiste à récupérer des informations sur la géométrie d'un objet à partir du mouvement d'une spécularité sur une surface, plusieurs idées sont données dans cette méthode afin de trouver un lien encore courbure locale et forme de spécularité. Ce lien est explicité par la formule:
+\begin{equation}
+\kappa_n = \frac{\mathrm{d} \alpha}{\mathrm{d} s}\Bigr|_{\substack{\mbf{P_B}}},
+\label{eq:curvature_link}
+\end{equation}
+avec $\kappa_n$ la courbure locale dans une direction donnée, $\mathrm{d} \alpha$ un léger changement d'angle de la source de lumière réfléchie et $\mathrm{d} s$ la longueur d'arc sur la surface au point d'intensité maximale $\mbf{P_B}$. L'angle $\alpha$ est définie tel que $\alpha = \text{cos}^{-1}(\hat{\mbf{N}} \cdot \hat{\mbf{H}})$ avec $\hat{\mbf{N}}$ la normale et $\hat{\mbf{H}}$ le vecteur de mi-chemin $\hat{\mbf{H}} = \frac{\hat{\mbf{L}} + \hat{\mbf{V}}}{\| \hat{\mbf{L}} + \hat{\mbf{V}} \|}$ entre le rayon de lumière $\hat{\mbf{L}}$ et le rayon d'observation $\hat{\mbf{V}}$. En pratique l'équation \eqref{eq:curvature_link} n'est pas triviale à calculer pour des surfaces non-paramétriques tel que des maillages. Calculer la longueur d'arc implique de calculer une distance géodésique ce qui peut être couteux en temps de calcul et imprécis pour des arrêtes franches ou des surfaces rugueuses ce qui arrive souvent dans le cas d'un maillage.
+
+\subsection{Calcul d'angle limites sur un maillage}
+Afin d'approximer le calcul de la courbure locale, nous calculons les angles limites $\alpha_{max}^i$   à partir des contours de la spécularité ainsi que des normales de la surface associées à ces contours $\hat{\mbf{N}}$ et les vecteurs de mi-chemin $\hat{\mbf{H}}$ avec $i \in  \llbracket0, n\rrbracket$. Le principe de notre approche est que ces angles limites conservent des valeurs identiques pour tout changement courbure locale aux points de contours de la spécularités.
+
+\begin{algorithm}
+\caption{Pseudo-algorithme décrivant la transformation de forme de la spécularité sur la surface $S$ en une représentation canonique sur le plan tangent $T_{\mbf{P_B}}(S)$ au point d'intensité maximale $\mbf{P_B}$.}
+\begin{algorithmic}[1]
+\Procedure{CurvedToPlanar}{$\mbf{P_B}$, $S$, $pose$, $Specu$, $\mbf{L}$}
+\State $T_{\mbf{P_B}}(S) \gets \textit{ComputeTangentPlane}(\mbf{P_B}, S)$
+\State $v \gets \textit{SamplingVectorInPlane}(T_{\mbf{P_B}}(S), \mbf{P_B}, [0, 2\pi[)$
+\For{$i \in \textit{length(v)}$}
+\State $\mbf{P} \gets ReachOutline(Specu, S, v_i)$
+\State $\alpha_{max_i} \gets \textit{AngleWithSurface}(S, \mbf{P}, pose, \mbf{L})$
+\State $\mbf{P_{res_i}} \gets \textit{ReachOutlineAngle}(v_i, T_{\mbf{P_B}}(S), pose, \alpha_{max_i}, \mbf{L})$
+\EndFor
+\Return $\textit{CalculEllipse}(\mbf{P_{res}})$
+\EndProcedure
+\end{algorithmic}
+\label{algo:canonic_algo}
+\end{algorithm}
+Dans notre représentation canonique, afin de transformer l'ellipse courante associée à la spécularité, nous calculons le point d'intensité maximale $\mbf{P_B}$ comme expliquée au chapitre précédent \ref{chapitre:dual_jolimas}, et le plan tangent $T_{\mbf{P_B}}(S)$ au point d'intensité maximale. Nous échantillons $n$ vecteurs $v_i \in T_{\mbf{P_B}}(S)$ en commençant au point $\mbf{P_B}$ dans un intervalle de $[0, 2\pi[$. Le choix de $n$ dépend de la taille de la spécularité et de sa forme. En pratique, nous avons fixé une valeur de 36 pour les séquences présentées à la figure \ref{fig:results}. Lorsque nous atteignons les contours externes de la spécularité, nous calculons un angle limite $\alpha_{max}^i$ en utilisant $\hat{\mbf{H}}$ et $\hat{\mbf{N}}$ au point projeté orthogonalement sur la surface $S$. Par la suite, nous utilisons les mêmes vecteurs $v_i$ sur $T_{\mbf{P_B}}(S)$ jusqu'à ce qu'il atteint un point où son angle atteint l'angle $\alpha_{max}^i$ limite associé au vecteur. L'ellipse transformée est calculée en calculant l'ellipse correspondant aux  nouveaux points de contours obtenus. Ce procédé est illustré à la figure \ref{fig:warping}. La procédure est décrite dans l'algorithme \ref{algo:canonic_algo}.
+\begin{figure}[!ht]
+\centering
+\subfigure[]
+{
+    \includegraphics[width=\linewidth]{schema.pdf}
+}
+\subfigure[]
+{
+    \includegraphics[width=\linewidth, height=2cm]{homography.pdf}
+}
+\vspace{-1.0em}
+\caption{Ellipse transformation from its shape on a curved surface $S$ to the canonical representation onto the tangent plane $T_\mathbf{P_B}(S)$ at the brightest point $\mbf{P_B}$. From the fitted ellipse  to the specularity (blue), we apply the transformation $\mathtt{M}$ to obtain the corrected ellipse (green) in the tangent plane $T_\mathbf{P_B}(S)$.}
+\label{fig:warping}
+\end{figure}
+\vspace{-1.5em}
+
+%===============================================================================
+\section{Lien entre déformation, spécularité et courbure de la surface} %%%%%%%%%%
+\label{sec:deformation_courbure}												  %%%%%%%%%%
+%===============================================================================
+
+\subsection{Utilisation de la courbure gaussienne}
+
+\subsection{Mise en pratique sur un modèle CAO}
+
+%===============================================================================
+\section{Représentation canonique pour la reconstruction 3D de quadrique} %%%%%%%%%%
+\label{sec:canonique}												  %%%%%%%%%%
+%===============================================================================
+
+\subsection{Transformation du cas d'une surface courbe en un cas plan}
+
+\subsection{Angles limites et utilisation sur une spécularité}
+
+%===============================================================================
+\section{Modifications du processus de prédiction de spécularité} %%%%%%%%%%
+\label{sec:modif_prediction}												  %%%%%%%%%%
+%===============================================================================
+
+Dans l'étape de prédiction de spécularité, un processus similaire à la section \ref{sec:our_approach} afin de prédire la forme des spécularités pour un nouveau point de vue. Nous calculons le point d'intensité maximale pour le nouveau point de vue et nous projetons perspectivement la quadrique reconstruite ce qui nous donne la forme de la spécularité sur le plan tangent $T_{\mbf{P_B}}(S)$. Nous calculons les angles limites sur $T_{\mbf{P_B}}(S)$ et nous déplaçons les contours de la spécularité sur $S$ jusqu'à atteindre l'angle limite sur $T_{\mbf{P_B}}(S)$.
+
+%===============================================================================
+\section{Résultats expérimentaux} %%%%%%%%%%
+\label{sec:resultats_experimentaux_general}												  %%%%%%%%%%
+%===============================================================================
+\fix{Faire le test synthétique de JOLIMAS dual et 3, 4 séquences réelles. Séquence du vase aussi mais avec une seule quadrique.}
+Nous montrons deux exemples de prédiction de spécularité sur une séquence synthétique mais également sur une séquence réelle dans la figure \ref{fig:results}. La reconstruction du JOLIMAS en forme canonique à partir de six images. La prédiction est réalisée pour les images suivantes de la séquence. Nous pouvons observer une amélioration notable de la prédiction en terme de position et forme comparée à notre itération précédente de JOLIMAS dans sa forme duale.
+\begin{figure}[!ht]
+\centering
+\subfigure[]
+{
+    \includegraphics[width=0.187\linewidth]{input}
+}
+\subfigure[]
+{
+    \includegraphics[width=0.37\linewidth]{dual_res}
+}
+\subfigure[]
+{
+    \includegraphics[width=0.37\linewidth]{approach_res}
+}
+
+\caption{Specularity predictions on both synthetic and real sequences. (a) presents the object of interest: a synthetic ellipsoid (top) and a real rocket replica (bottom). Image pairs for each sequence showing specularity prediction results (blue ellipse) of \cite{morgand2017multiple} (b) and our approach (c). Our approach estimates the shape and position of the specularity substantially more accurately.}
+\label{fig:results}
+\end{figure}
+
+\subsection{Données de synthèse}
+\subsection{Données réelles}
+
+%===============================================================================
+\section{Résultats} %%%%%%%%%%
+\label{sec:resultats_general}												  %%%%%%%%%%
+%===============================================================================
+\subsection{Prédiction de spécularité}
+
+\subsection{Temps d'exécution}
+
+
+%===============================================================================
+\section{Limites de l'approche} %%%%%%%%%%
+\label{sec:limites_approche_general}												  %%%%%%%%%%
+%===============================================================================
+
+
+%=======================================================================
+\section{Conclusion}					%%%%%%%%%%%%%%%%%%%%%%
+\label{sec:conclusion_general}		%%%%%%%%%%%%%%%%%%%%%%
+%=======================================================================
+We presented a canonical representation of the Dual JOLIMAS model to handle specularity prediction for any surface curvature. An immediate application would be to do retexturing as in \cite{morgand2017multiple}. We could use the improved JOLIMAS model for inverse rendering as a good initialization for local illuminations models such as Blinn-Phong or Cook-Torrance. A study of the impact of the material (roughness, reflectance) on the specularity outline could greatly improve the genericity of the model.
+
+
+
+

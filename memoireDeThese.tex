@@ -1,0 +1,444 @@
+
+% Livre avec impression en recto-verso
+\documentclass{myThesis}
+
+
+% =============================================================================
+%          LES PACKAGES UTILISES
+% =============================================================================
+
+% Packages pour la langue française
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[frenchb]{babel}
+
+% Les fonts
+\usepackage{textcomp}  % Pour utiliser des caractères spéciaux
+\usepackage{color} % Les couleurs personnalisées
+
+% Packages pour les graphiques
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{subfigure}
+\usepackage{adjustbox}
+
+% User package.
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{caption} 
+\captionsetup[table]{singlelinecheck=false}
+\usepackage{diagbox}
+\usepackage{setspace}
+
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+%end
+
+
+\newcommand{\mb}[1]
+{
+ 	\mathbf{#1}
+}
+\newcommand{\fix}[1]
+{
+	\textcolor{red}{#1}
+}
+\newcommand{\specialcell}[2][c]
+{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}
+}
+
+\newcommand{\adj}[1]{\mathop{adj(#1)}}
+
+\newcommand{\mbf}[1]{\mathbf{#1}}
+
+\newcommand{\stk}{\mathop{\text{stk}}}
+
+
+\newcommand{\mathup}[1]{\text{\textup{#1}}}
+
+%\newcommand{\mat}[1]{\boldsymbol{\mathup{#1}}}
+\newcommand{\f}{\fonction}
+\DeclareMathOperator*{\argmin}{arg\!\min}
+\DeclareMathOperator*{\trace}{trace}
+\let\div\relax % Undefine previous div definition
+\DeclareMathOperator{\div}{div}
+\DeclareMathOperator{\Sym}{Sym}
+\DeclareMathOperator{\diag}{diag}
+\newcommand{\diff}{\mathit{d}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\continuous}{\mathcal{C}_c}
+\newcommand{\tensv}{\mat{v}}
+\newcommand{\primu}{\vect{u}}
+\newcommand{\flow}{\primu}
+\newcommand{\primumatch}{\primu_\text{m}}
+\newcommand{\primw}[1][]{\vect{w_{#1}}}
+\newcommand{\dualp}{\vect{p}}
+\newcommand{\dualq}{\vect{q}}
+\newcommand{\grad}{\nabla}
+\DeclareMathOperator{\symgrad}{\Gamma}
+\newcommand{\TV}{\ensuremath{\text{TV}}}
+\newcommand{\TGV}{\ensuremath{\text{TGV}}}
+\newcommand{\cost}[1]{\fonction{C}_\text{#1}}
+\newcommand{\data}[1]{\fonction{D}_\text{#1}}
+\newcommand{\desc}[1]{\fonction{S}_\text{#1}}
+\newcommand{\reg}{\fonction{R}}
+\newcommand{\fb}{\fonction{F}}
+\newcommand{\dist}[1]{\Delta_\text{#1}}
+\newcommand{\feat}{\ensuremath{\mathbf{f}}}
+\newcommand{\features}{\ensuremath{\mathcal{F}}}
+\newcommand{\dir}{\mathbf{d}}
+\newcommand{\warp}{\mathbf{a}}
+\newcommand{\step}{\mathcal{S}}
+\newcommand{\prob}{\mathcal{P}}
+\newcommand{\J}{\mathbf{J}}
+\newcommand{\coeff}[1]{\omega_\text{#1}}
+
+\newcommand{\op}[1]
+{
+ 	\mathop{\text{#1}}
+}
+\newcommand{\W}{\cam{W}} % world
+\newcommand{\Cam}{\cam{C}} % camera
+\newcommand{\Cu}{\Cam_u} % user camera
+\newcommand{\Cs}{\Cam_o} % scene camera
+\newcommand{\OVC}{\mathcal{V}o} % Outer Virtual Camera
+\newcommand{\IVC}{\mathcal{V}} % Inner Virtual Camera
+\newcommand{\x}{\vect{x}}
+\newcommand{\M}{\mat{M}} % transformation matrix
+\newcommand{\R}{\mat{R}} % rotation matrix
+\newcommand{\T}{\vect{T}} % translation vector
+\newcommand{\RT}{\RTcustom{\R}{\T}}
+\newcommand{\RTi}[1]{\RTcustom{\R_{#1}}{\T_{#1}}}
+\newcommand{\RTcustom}[2]{\raisebox{.3ex}{$\begin{pmatrix}#1 & #2\end{pmatrix}$}}
+\newcommand{\tow}[1]{\Cam_{#1}\mathsmaller{\rightarrow}\W}
+\newcommand{\CM}{\mat{P}} % camera matrix
+\newcommand{\PM}{\mat{H}} % projection matrix
+\newcommand{\K}{\mat{K}} % intrinsic camera matrix
+\newcommand{\est}[1]{\widehat{#1}}
+\newcommand{\eM}{\est{\M}} % estimated transformation matrix
+\newcommand{\eR}{\est{\R}} % estimated rotation matrix
+\newcommand{\eU}{\est{\pTD{U}}} % estimated transformation matrix
+\newcommand{\eO}{\est{\pTD{O}}} % estimated rotation matrix
+\newcommand{\eK}{\est{\K}} % intrinsic camera matrix
+\newcommand{\eRT}{\raisebox{.3ex}{$\begin{pmatrix}\est{\R} & \est{\T}\end{pmatrix}$}}
+\newcommand{\noisy}[1]{\widetilde{#1}}
+\newcommand{\Cov}{\boldsymbol{\Sigma}} % covariance
+\newcommand{\sumsum}[1]{\operatorname*{\sum\sum}_{\substack{#1}}} % Double sum
+
+\newcommand{\fvec}[1]{\boldsymbol{\mathit{#1}}}
+\newcommand{\pointbase}[1]{{#1}}
+\newcommand{\pDDjim}[1]{\vect{\pointbase{#1}}}
+
+\newcommand{\q}{\pDD{q}}
+\newcommand{\Q}{\pTD{Q}}
+
+\newcommand{\img}[1]{\mathit{#1}}
+\newcommand{\I}{\img{I}}
+\newcommand{\domimg}[1]{\Omega_{\img{#1}}}
+\newcommand{\Timg}[2]{\img{T}_{\img{#1}}^{\,#2}}
+\newcommand{\Himg}[2]{\img{H}_{\img{#1}}^{\,#2}}
+\newcommand{\win}{\img{W}}
+
+\newcommand{\gdiff}[3][]{\frac{\partial^{#1} #3}{\partial #2^{#1}}}
+\newcommand{\pdiff}[2]{\frac{\partial #2}{\partial #1}}
+\newcommand{\fdiff}[2]{\partial^{+}_{#1}\fonction{#2}}
+\newcommand{\bdiff}[2]{\partial^{^\_}_{#1}\fonction{#2}}
+
+\newcommand{\degrees}{^\circ}
+\newcommand{\FFD}{\fonction{FFD}}
+\newcommand{\Disp}{\fonction{D}}
+\newcommand{\mat}[1]{\mathtt{#1}}
+
+
+\usepackage{amsthm}
+\theoremstyle{plain}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem*{surfacecor}{Corollary 1}
+\newtheorem{conjecture}{Conjecture} 
+\newtheorem{question}{Question} 
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{prop}{Proposition}
+
+
+\usepackage{relsize}
+\usepackage{stmaryrd}
+
+\begingroup
+\catcode`[=\active \catcode`]=\active
+
+% Define a meaning for active [ and ]
+\gdef[{\llbracket} \gdef]{\rrbracket}
+
+% Now take care of the \delcode of [ and ] for \left and \right
+% First a temporary macro
+\def\getdelim#1#2#3#4\relax{"#4}
+% Use the temporary macro to get the right delcodes out of
+% the meaning of \llbracket and \rrbracket
+\global\delcode`[=\expandafter\getdelim\llbracket\relax
+\global\delcode`]=\expandafter\getdelim\rrbracket\relax
+\endgroup
+
+% make [ and ] math active
+\mathcode`\[="8000
+\mathcode`\]="8000
+
+
+% End user command.
+
+
+
+
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+
+% Polices
+\usepackage{lmodern}
+\usepackage{times}
+
+% Packages mathématiques
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Algorithmie
+%\usepackage{algorithm}
+%\floatname{algorithm}{Algorithme}
+
+
+%\usepackage{algorithmic}
+%\usepackage[lined,algonl,boxed,french]{algorithm2e}
+
+
+% Tableaux 
+%\usepackage{slashbox}
+\usepackage{array}
+\usepackage{fancybox}
+\usepackage{longtable}
+\usepackage[table]{xcolor}
+\usepackage{rotating}
+
+\usepackage{multirow}
+\usepackage{booktabs}
+%\usepackage{floatrow}
+%\newfloatcommand{capbtabbox}{table}[][\FBwidth]
+
+% Packages pour la bibliographie
+\usepackage[authoryear,round]{natbib}
+
+% Packages pour les sommaires
+\usepackage{shorttoc} % Pour faire un sommaire (ie une deuxième table des matieres avec la profondeur voulue)
+
+\usepackage[french]{minitoc} % Pour faire des sous toc
+\setcounter{parttocdepth}{1} % Profondeur des sous toc (pour les parties)
+\renewcommand\ptctitle{Contenu de la partie}
+
+
+
+% =============================================================================
+%          MISE EN PAGE
+% =============================================================================
+
+% Taille des marges
+\usepackage{geometry}
+\geometry{inner=3cm, outer=2cm , tmargin=2.5cm , bmargin=3cm}
+
+% Package de mise en page personnalisée
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt} % pour eviter les warnings sur la taille des headers
+
+% Package de mise en page des titres des chapitres
+\usepackage[Sonny]{fncychap}
+
+
+\usepackage{appendix}
+\usepackage{chngcntr}
+\usepackage{etoolbox}
+\usepackage{appendix}
+\AtBeginEnvironment{subappendices}
+{
+	\chapter*{Appendix}
+	\addcontentsline{toc}{chapter}{Appendices}
+	\counterwithin{figure}{section}
+	\counterwithin{table}{section}
+}
+
+
+% =============================================================================
+%          MACROS PERSONNALISEES
+% =============================================================================
+\usepackage{macrosPierre}
+
+
+% =============================================================================
+%          DEFINITION DE LA LANGUE
+% =============================================================================
+\selectlanguage{french}
+
+
+% =============================================================================
+%          UTILISATION DES LIENS HYPERTEXTES
+% =============================================================================
+
+\screenVersiontrue % A decommenter pour la version a l'ecran (ie avec liens colores). Si commente, mode impression
+
+\ifscreenVersion
+	\def \couleurCitation {VertFonce}
+	\def \couleurLienRef {RougeMarron}
+	\def \couleurURL {BleuVert}
+\else	
+	\def \couleurCitation {black}
+	\def \couleurLienRef {black}
+	\def \couleurURL {black}
+\fi
+
+% Entete de creation du pdf : couleurs a l'ecran
+\usepackage[pdftex]{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=\couleurCitation,
+  linkcolor=\couleurLienRef,
+  urlcolor=\couleurURL,
+  pdftitle={Un modèle géométrique multi-vues des taches spéculaires basé sur les quadriques avec application en réalité augmentée},
+  pdfsubject={Mémoire de Thèse, Alexandre Morgand},
+  pdfkeywords={Prédiction de spécularité,  Réalité augmentée, Retexturing, Reconstruction de quadrique},
+  pdfauthor={Alexandre Morgand},
+}
+
+
+% =============================================================================
+%          DEBUT DU DOCUMENT
+% =============================================================================
+\begin{document}
+
+% Creation des toc pour les commandes du package minitoc (uniquement pour les parties ici)
+\doparttoc
+
+% Les options communes
+\sloppy % Permet à latex d'être moins exigeant pour la césure des mots => moins de problèmes de 'overfull box'
+\defineChapterHeadAndFoot % Définit la mise en page de l'entête et pied de pages des chapitres
+
+
+% \tableofcontents % Table des matières (debug, pour accéder plus vite lors des relectures)
+
+%   Page de Garde -
+\pagestyle{empty}
+\input{page_de_garde}
+ 
+%   Remerciements
+% - - - - - - - - - - - - - - - - - - - - - - - - -  -
+% Numérotation en chiffres romains
+\pagenumbering{roman}
+%\input{Remerciements}
+\pagestyle{fancy}
+ 
+%   Résumé et abstract -
+\input{resume}
+%\selectlanguage{english}
+\input{abstract}
+%\selectlanguage{francais}
+ 
+%   Les tables (matières, figures et tableaux)
+ 
+
+\tableofcontents
+ 
+%\shorttableofcontents{Sommaire}{1} % Insère un sommaire. Moins de détails que la table des matières qui est placée à la fin du document
+
+% Personnalisation en-tête et pied-de-page pour les pages relatives aux différents chapitres
+\pagestyle{fancy} 
+\headheight 24.0pt
+
+%   1er chapture : Introduction
+\input{introduction}
+
+%   2eme chapitre : notions de base
+\include{ch2_notions_de_base}
+
+%   3eme chapitre : état de l'art
+\include{ch3_etat_de_lart}
+
+%   4e chapitre : modèle primal
+\include{ch4_modele_primal}
+
+%   5e chapitre : modèle dual
+\include{ch5_modele_dual}
+
+%   6e chaptitre : modèle dual
+\include{ch6_modele_general}
+
+%   7e chaptitre : modèle dual
+\include{ch7_ra}
+
+%   Fin du mémoire
+
+
+% Permet de préciser au package minitoc que la partie précédente est terminée
+\addtocontents{toc}{\protect\partbegin}
+
+% Permet d'annuler l'indentation des bookmarks (hyperref) => Les chapitres suivants ne sont plus sous la partie 2
+\makeatletter
+\renewcommand*{\toclevel@chapter}{-1}
+\renewcommand*{\toclevel@section}{0}
+\renewcommand*{\toclevel@subsection}{1}
+\renewcommand*{\toclevel@subsubsection}{2}
+\renewcommand*{\toclevel@paragraph}{3}
+\renewcommand*{\toclevel@subparagraph}{4}
+\makeatother
+
+%   Conclusion
+
+\input{conclusion}
+
+%   Annexes
+
+\appendix % Informe Latex qu'on passe en annexe
+\addcontentsline{toc}{chapter}{Annexes} % On ajoute à la table des matières un lien vers l'ensemble des annexes
+
+% Pour les liens hypertextes, on place les 2 annexes sous le grand titre annexe
+\makeatletter
+\renewcommand*{\toclevel@chapter}{0}
+\renewcommand*{\toclevel@section}{1}
+\renewcommand*{\toclevel@subsection}{2}
+\renewcommand*{\toclevel@subsubsection}{3}
+\renewcommand*{\toclevel@paragraph}{4}
+\renewcommand*{\toclevel@subparagraph}{5}
+\makeatother
+
+\include{annexe}
+\include{annexe_quadric}
+\include{annexe_analysis}
+
+% Apres les annexes, on replace les titres normalement
+\makeatletter
+\renewcommand*{\toclevel@chapter}{-1}
+\renewcommand*{\toclevel@section}{0}
+\renewcommand*{\toclevel@subsection}{1}
+\renewcommand*{\toclevel@subsubsection}{2}
+\renewcommand*{\toclevel@paragraph}{3}
+\renewcommand*{\toclevel@subparagraph}{4}
+\makeatother
+
+%   Bibliographie
+
+\newpage
+\bibliographystyle{plainnat}
+\addcontentsline{toc}{chapter}{\bibname}
+\bibliography{memoireDeThese}
+
+%   Table des matières
+
+\listoffigures
+\addcontentsline{toc}{chapter}{Table des figures}
+\listoftables
+\addcontentsline{toc}{chapter}{Liste des tableaux}
+\listofalgorithms
+\addcontentsline{toc}{chapter}{Liste des algorithmes}
+
+\end{document}

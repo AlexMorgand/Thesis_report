@@ -1,0 +1,268 @@
+\defineHeaderForClassicalAnnexe
+\chapter{Étude analytique des modèles de Phong et Blinn-Phong}
+\label{annexe:analysis_phong_blinn}
+
+\graphicspath{{images/Annexe/analysis/}}
+
+\begin{chapeauChapitre}
+\fix{Remettre Intro, abstract}
+\end{chapeauChapitre}
+
+
+We give further explanations on the isocontour analysis for a special case of the Phong model for $\tau = 0$ and an analysis of the isocontours for the Blinn-Phong model for $\tau = 0$.
+
+\subsection{The Blinn-Phong Model}
+
+The Blinn-Phong intensity function of a 3D surface point $\mathbf{P}$ is given by:
+\begin{equation}
+ \begin{aligned}
+       I(\mathbf{P}) =  i_a k_a + i_d k_d (\hat{\mathbf{L}}\mathbf{(\mathbf{P})}\cdot \hat{\mathbf{N})} + i_s k_s (\hat{\mathbf{N}} \cdot \hat{\mathbf{H}}(\mathbf{P}))^n,
+ \end{aligned}
+    \label{eq:phong3}
+\end{equation}
+with the half-way vector $\hat{\mb{H}}$:
+\begin{equation*}
+\hat{\mb{H}} = \frac{\hat{\mathbf{L}}\mathbf{(\mathbf{P})} + \hat{\mathbf{V}}\mathbf{(\mathbf{P})}}{||\hat{\mathbf{L}}\mathbf{(\mathbf{P})} + \hat{\mathbf{V}}\mathbf{(\mathbf{P})}||}
+\end{equation*}
+The specular term is defined by:
+\begin{equation}
+	I_s(\mathbf{P}) \propto \hat{\mathbf{N}}(\mathbf{P})^\top \frac{\hat{\mathbf{L}}\mathbf{(\mathbf{P})} + \hat{\mathbf{V}}\mathbf{(\mathbf{P})}}{||\hat{\mathbf{L}}\mathbf{(\mathbf{P})} + \hat{\mathbf{V}}\mathbf{(\mathbf{P})}||},
+	\label{eq:simpl_blinn_phong}
+\end{equation}
+We expand equation \eqref{eq:simpl_blinn_phong} as:
+\begin{equation}
+I_s(\mathbf{P}) \propto \hat{\mathbf{N}}(\mathbf{P})^\top \frac{\mu(\mathbf{L} - \mathbf{P}) + \mu(\mathbf{V} - \mathbf{P})}{||\mu(\mathbf{L} - \mathbf{P}) + \mu(\mathbf{V} - \mathbf{P})||},
+\label{eq:blinn_phong_dev}
+\end{equation}
+In the same manner as the Phong model, we want to analyze the isocontours of a specular highlight from equation \eqref{eq:blinn_phong_dev}.
+
+\subsection{Analysis of the Highlight's Outer Ring, $\tau = 0$ for the Blinn-Phong Model}
+We solve the equation for $\tau = 0$:
+\begin{equation*}
+\hat{\mathbf{N}}(\mathbf{P})^\top \frac{\mu(\mathbf{L} - \mathbf{P}) + \mu(\mathbf{V} - \mathbf{P})}{||\mu(\mathbf{L} - \mathbf{P}) + \mu(\mathbf{V} - \mathbf{P})||} = 0.
+\end{equation*}
+By expanding and collecting the monomials of same degrees, we have:
+\begin{flalign*}
+(d^\circ 4) \text{    }&  P_Z ||\mb{P} ||^2\\ 
+(d^\circ 3) \text{    }&  - 2 (L_Z P_Z ||\mb{P} ||^2 - V_Z P_Z || \mb{P} ||^2 - \mb{P}^\top \mb{L} P_Z^2 + \mb{P}^\top \mb{V} P_Z^2)\\
+(d^\circ 2) \text{    }&  4 (L_ZP_Z\mb{P}^\top \mb{V} -  V_Z P_Z \mb{P}^\top \mb{L}) + \\ & P_Z^2 (|| \mb{V}||^2 -  || \mb{L} ||^2) + (L_Z^2 - V_Z^2)  ||\mb{P} || ^2\\
+(d^\circ 1) \text{    }&  2(V_ZP_Z || \mb{L} ||^2 - L_ZP_Z || \mb{V} ||^2 +  V_Z^2 \mb{P}^\top \mb{L} - L_Z^2 \mb{P}^\top \mb{V})\\
+(d^\circ 0) \text{    }& L_Z^2 || \mb{V} ||^2 - V_Z^2 ||\mb{L} ||^2.
+\end{flalign*}
+We note that, $\mb{P} =  \begin{bmatrix} P_X & P_Y & P_Z \end{bmatrix}^\top$. With $P_Z = 0$, the degrees 4 and 3 vanish and:
+\begin{flalign*}
+(d^\circ 2) \text{    }&   (L_Z^2 - V_Z^2)  ||\mb{P} || ^2\\
+(d^\circ 1) \text{    }&  2(V_Z^2  \mb{L}^\top - L_Z^2 \mb{V}^\top)\mb{P}\\
+(d^\circ 0) \text{    }& L_Z^2 || \mb{V} ||^2 - V_Z^2 ||\mb{L} ||^2.
+\end{flalign*}
+The monomials can be factored in the following form:
+\begin{equation}
+\tilde{\mb{P}}^\top\mathtt{J}\tilde{\mb{P}} = 0,
+\end{equation}
+where $\tilde{\mb{P}} = \begin{bmatrix} \mb{P} & 1 \end{bmatrix}^\top$ are the homogeneous coordinates of $\mb{P}$. Matrix $\mathtt{J} \in \mathbb{R}^{4\times 4}$ is symmetric and defined by:
+
+
+\begin{equation}
+\mathtt{J} =
+\begin{bmatrix}
+L_Z^2 - V_Z^2 & (V_Z^2  \mb{L} - L_Z^2 \mb{V})^\top \\
+V_Z^2  \mb{L} - L_Z^2 \mb{V} & L_Z^2 || \mb{V} ||^2 - V_Z^2 ||\mb{L} ||^2.
+\end{bmatrix}
+\end{equation}
+
+We define the orthographic projection on $S$ as:
+\begin{equation*}
+\mathtt{A} = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}.
+\end{equation*}
+The highlight's outer ring is thus given by the conic:
+\begin{equation*}
+\mathtt{C} = \mathtt{A}^\top \mathtt{J}\mathtt{A} = 
+\begin{bmatrix}
+L_Z^2 - V_Z^2 & (V_Z^2  \bar{\mb{L}} - L_Z^2 \bar{\mb{V}})^\top \\
+V_Z^2  \bar{\mb{L}} - L_Z^2 \bar{\mb{V}} & L_Z^2 || \mb{V} ||^2 - V_Z^2 ||\mb{L} ||^2
+\end{bmatrix},
+\end{equation*}
+with $\bar{\mb{V}} = \begin{bmatrix} V_X & V_Y\end{bmatrix}^\top $ and $\bar{\mb{L}} = \begin{bmatrix} L_X & L_Y\end{bmatrix}^\top $ are the orthographic projection of $\mathbf{V}$ and $ \mathbf{L}$ on $S$ respectively. $\mathtt{C}$ represents a real circle.
+
+
+\subsection{Special Case, Analysis for $\tau = 1$ for The Phong Model}
+\label{sec:tau_one}
+
+The study of $\tau = 1$ concerns the points of maximum intensity on the surface $S$. For the Phong model, this study is interesting because for $\tau = 1$, the terms of degrees 3 and 4 vanish. The remaining terms are:
+\begin{flalign*}
+(d^\circ 2) \text{    }& \mathbf{P}^\top [\mb{R} - \mb{V}]^2_\times \mb{P}\\
+(d^\circ 1) \text{    }& 2\mb{P}^\top[\mb{V} \times \mb{R}]_\times (\mb{V} - \mb{R}) \\
+(d^\circ 0) \text{    } &(\mathbf{R}^\top\mathbf{V})^2 - \tau^2 ||\mathbf{R} ||^2 ||\mathbf{V} ||^2.
+\end{flalign*}
+They can be factored in the following form:
+\begin{equation}
+\tilde{\mb{P}}^\top\mathtt{J}\tilde{\mb{P}} = 0,
+\end{equation}
+where $\tilde{\mb{P}} = \begin{bmatrix} \mb{P} & 1\end{bmatrix}^\top$ are the homogeneous coordinates of $\mb{P}$. Matrix $\mathtt{J} \in \mathbb{R}^{4\times 4}$ is symmetric and defined by:
+
+\begin{equation*}
+\mathtt{J} = \begin{bmatrix}
+[\mathbf{R} - \mathbf{V}]^2_\times & [\mathbf{V}\times \mathbf{R}]_\times (\mathbf{V} - \mathbf{R}) \\
+ ([\mathbf{V}\times \mathbf{R}]_\times (\mathbf{V} - \mathbf{R}))^\top & (\mathbf{R}^\top\mathbf{V})^2 - ||\mathbf{R} ||^2 ||\mathbf{V} ||^2
+\end{bmatrix}
+\end{equation*}
+It thus represent a quadric, and $\hat{\mb{P}}$ lies at the intersection of this quadric with $S$. The leading $(3 \times 3)$ block of $\mathtt{J}$ is $[\mb{R} - \mb{V}]_\times^2$ and thus has rank 2. Therefore, $\mathop{\text{rank}}(\mathtt{J}) \geq 2$. We show below that $\mb{Q}\tilde{\mb{R}} = \mb{Q}\tilde{\mb{V}} = 0$. This
+means $\mathop{\text{rank}}(\mathtt{J}) \leq 2$ and thus that $\mathop{\text{rank}}(\mathtt{J}) = 2$. This also means that $\mathtt{J}$ is semi-definite, either non-positive or non-negative. The way we constructed the polynomial, starting from a fraction $I_s = \frac{a}{b} = \tau = 1$, with $a \leq b$ implies $a - b \leq 0$ and thus that $\mathtt{J}$ is a point quadric representing the line containing $\mb{R}$ and $\mb{V}$. Its intersection with $S$ then yields the expected solution for $\hat{\mb{P}}$.
+
+Showing $\tilde{\mb{R}} \in \mathtt{J}^\perp$. We have the leading part as:
+\begin{equation*}
+[\mb{R} - \mb{V}]_\times^2\mb{R} + [\mb{V} \times \mb{R}]_ \times (\mb{V} - \mb{R}).
+\end{equation*}
+The first term is expanded as:
+\begin{flalign*}
+& [\mb{R} - \mb{V}]_ \times [\mb{R} - \mb{V}]_\times \mb{R} \\
+& = [\mb{R} - \mb{V}]_ \times [\mb{V}]_\times \mb{R} \\
+&= [\mb{V}]_\times^2 \mb{R} - [\mb{R}]_\times [\mb{V}]_\times \mb{R} \\
+&= \mb{V} \times (\mb{V} \times \mb{R}) - \mb{R} \times (\mb{V} \times \mb{R}).
+\end{flalign*}
+The second term is expanded as:
+\begin{equation*}
+(\mb{V} \times \mb{R}) \times \mb{R} - (\mb{V} \times \mb{R}) \times \mb{R} = - \mb{V} \times (\mb{V} \times \mb{R}) + \mb{R} \times (\mb{V} \times \mb{R}),
+\end{equation*}
+which sum to zero. The last element is:
+\begin{equation*}
+(\mb{R} - \mb{V})^\top[\mb{V} \times \mb{R}]_\times \mb{R} + (\mb{R}^\top \mb{V})^2 - ||\mb{R} ||^2 ||\mb{V} ||^2.
+\end{equation*}
+The first term is expanded as:
+\begin{equation*}
+(\mb{R} - \mb{V})^\top(\mb{R} \times (\mb{R} \times \mb{V})) = - \mb{V}^\top (\mb{R} \times (\mb{R} \times \mb{V})) = - \mb{V}^\top [\mb{R}]_\times^2 \mb{V}.
+\end{equation*}
+We saw that the second and third terms (the degree 0 coefficients of the polynomial) are also equal to $\mb{V}^\top [\mb{R}]_\times^2\mb{V}$, which concludes.
+
+\fix{Traduire mais ce n'est pas la priorité}
+\section{The Brightest Point in a Specular Highlight under the Phong Model}
+We wish to find the brightest point of a specular highlight created by a proximal light source on a flat surface, whose intensity is given according to Phong's model. Without loss of generality, we choose the world coordinate frame so that the scene's flat surface $S \subset \mathbb{R}^3$ is the $(\vect{XY})$. In other words, $S = \{\vect{P}\text{ } | \text{ } P_Z = 0\}$. We can thus parameterize $S$ by a point $\vect{p} \in \mathbb{R}^2$ and define $\vect{P} = \mathop{\text{stk}}(\vect{p}, 0)$. At point $\vect{p}$ the specular component $I_s(\vect{p})$ is given by:
+\begin{equation}
+I_s(\vect{p}) = \op{max}(0,\op{cos}(\beta(\vect{p})))^n,
+\end{equation}
+where $\beta$ returns the angle between the viewing direction and the direction of perfect reflection. The latter is obtained by reflecting the light direction about the surface's normal. The parameter $n > 0$ characterizes the surface's reflectance. We can now formally state the problem of finding the brightest surface point $\hat{\vect{p}} \in S$ as:
+\begin{equation}
+\hat{\vect{p}} =  \underset{\vect{p} \in \mathbb{R}^2}{\text{arg max }} I_s(\vect{p}).
+\end{equation}
+We want to study the existence, location and uniqueness of $\hat{\vect{p}}$. This is strictly speaking a study of the brightest point of Phong's specular term. In practice, this term dominates the diffuse and ambient ones in specular highlight, and $\hat{\vect{p}}$ will thus be a good approximation of the brightest point in many cases including
+ambient lighting and diffuse reflection.
+
+\section{Notation and Background}
+We now define the above mentioned direction vectors more precisely. All these vectors have unit length
+and we define them using the length normalizing function $\mu(\vect{U}) \overset{\mathrm{def}}{=\joinrel} \frac{\vect{U}}{\| \mb{U} \|}$. The viewpoint is at $\vect{V} \in \mathbb{R}^3$ and the viewing direction is $\mu(\vect{V} - \vect{P})$. The light source is at $\vect{L} \in \mathbb{R}^3$ and the light direction is $\mu(\vect{L} - \vect{P})$. The viewpoint and light source are located on the same side of $S$ and we choose it to be `positive side' so that $V_Z > 0$ and $L_Z > 0$. The direction of perfect reflection is $- \mu(\vect{R} - \vect{P})$, where $\vect{R} \in \mathbb{R}^3$ is a `virtual' point located on the negative side of $S$, with $\vect{R} \overset{\mathrm{def}}{=\joinrel} \op{stk}(L_X, L_Y, -L_Z)$. With this notation, we have:
+\begin{equation}
+\op{cos}(\beta(\vect{p})) = -\mu(\vect{R} - \vect{P})^\top\mu(\vect{V} - \vect{P}).
+\end{equation}
+
+\section{Main Result}
+
+\begin{theorem}
+For a viewpoint and a proximal light source at positions $\vect{V}, \vect{L} \in \mathbb{R}^3$ respectively, located on the same side of a plane $S$ coinciding with the $\vect{XY}$ plane of the world's coordinate frame, the highlight created
+accordingly to Phong's specular term always has a unique finite brightest point located at $\frac{1}{V_Z + L_Z}\begin{bmatrix}
+V_ZL_X + V_XL_Z & V_ZL_Y + V_YL_Z & 0
+\end{bmatrix}^\top$ with a reflexion intensity of one. 
+\end{theorem}
+
+The proof of theorem 1 requires the following proposition.
+
+\begin{prop}
+For two points $\vect{R}, \vect{V} \in \mathbb{R}^3$ and a plane $S$ with $\vect{R}, \vect{V} \notin S$, the set of points $\mathcal{P} \subset S$ such that the vector joining $\vect{R}$ to its projection on the line containing $\vect{P}$ and $\vect{V}$ is the opposite of the vector joining $\vect{V}$ to its projection on the line containing $\vect{P}$ and $\vect{R}$ when projected on $S$ is a single point $\mathcal{P} = \{\vect{P}\}$ at the intersection of the line containing $\vect{R}$ and $\vect{V}$ and $S$. Two special cases occur: if $\vect{R} = \vect{V}$ then $\mathcal{P} = \{\vect{P}\text{ } | \text{ } \vect{P} \in S\}$ and if the line containing $\vect{R}$ and $\vect{V}$ is parallel to $S$ then $\mathcal{P} = \emptyset$.
+\end{prop}
+\begin{proof}[Proof of theorem 1]
+We start by relaxing the highlight model to the following simpler model:
+\begin{equation*}
+\tilde{I}_s(\vect{p}) = \op{cos}(\beta(\vect{p}))^n = \big(-\mu(\vect{R} - \vect{P})^\top \mu(\vect{V} - \vect{P})\big)^n.
+\end{equation*}
+The extrema of $\tilde{I}_s$ are given by solving:
+\begin{equation*}
+\frac{\partial \tilde{I}_s}{\partial \vect{p}} = 0.
+\end{equation*}
+We have $\frac{\partial \mu}{\partial \vect{U}}(\vect{U}) = \frac{\| \vect{U} \|^2\mathtt{I} - \vect{U}\vect{U}^\top}{\|  \vect{U} \|^3}$, we rewrite this equation as:
+\begin{flalign*}
+- n \Big(-\mu(\vect{R} - \vect{P})^\top \mu(\vect{V} - \vect{P})\Big)^{n-1}&  \\
+\mathtt{K}\Bigg(\frac{\| \vect{R} - \vect{P}\|^2\mathtt{I} - (\vect{R} - \vect{P})(\vect{R} - \vect{P})^\top}{\| \vect{R} - \vect{P} \|^3} \mu(\vect{V} - \vect{P}) \\
++ \frac{\| \vect{V} - \vect{P}\|^2\mathtt{I} - (\vect{V} - \vect{P})(\vect{V} - \vect{P})^\top}{\| \vect{V} - \vect{P} \|^3} \mu(\vect{R} - \vect{P}) \Bigg) = 0,
+\end{flalign*}
+with $\mathtt{K} \overset{\mathrm{def}}{=\joinrel} \frac{\partial\vect{p}}{\partial p} = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}$. We have that $\mathtt{K}\mathbf{Q}$ simply projects a point $\vect{Q} \in \mathbb{R}^3$ onto $S$. Because $n > 0$ we can
+remove the first term. The second term vanishes for $\vect{R} - \vect{P}$ and $\vect{V} - \vect{P}$ orthogonal. It can be easily checked
+by inspecting the cost function that these extrema are minima, as they will nullify $\tilde{I}_s$ and $I_s$. Because we
+are interested in the maxima, the second term can be removed from the equation. We now multiply by $\| \vect{R} - \vect{P}\| \| \vect{V} - \vect{P} \|$ to obtain:
+\begin{flalign*}
+\mathtt{K}\Bigg(\bigg( \mathtt{I} - \frac{(\vect{R} - \vect{P})(\vect{R} - \vect{P})^\top}{\| \vect{R} - \vect{P} \|^2} \bigg) (\vect{V} - \vect{P}) \\
++ \bigg( \mathtt{I} - \frac{(\vect{V} - \vect{P})(\vect{V} - \vect{P})^\top}{\| \vect{V} - \vect{P} \|^2} \bigg) (\vect{R} - \vect{P}) \Bigg) = 0.
+\end{flalign*}
+This equation may be rewritten in a more compact way by using projectors, as:
+\begin{equation}
+\Pi_S\bigg( \overrightarrow{\vect{PV}} - \Pi_{\overrightarrow{\vect{PR}}}(\overrightarrow{\vect{PV}}) + \overrightarrow{\vect{PR}} - \Pi_{\overrightarrow{\vect{PV}}}(\overrightarrow{\vect{PR}}) \bigg) = 0,
+\end{equation}
+and we arrive at:
+\begin{equation}
+\Pi_S\bigg( \overrightarrow{\vect{PV}}\bigg) + \Pi_S\bigg( \overrightarrow{\vect{PR}}\bigg) =  \Pi_S \bigg(\Pi_{\overrightarrow{\vect{PR}}}(\overrightarrow{\vect{PV}}) \bigg) +  \Pi_S \bigg(\Pi_{\overrightarrow{\vect{PV}}}(\overrightarrow{\vect{PR}}) \bigg).
+\end{equation}
+We can finally apply proposition 1. Recall that $\vect{V}$ lies in the positive side of $S$ while $\vect{R}$ is a `virtual' point which lies on the negative side of $S$. Because none of $\vect{V}$ and $\vect{R}$ lie on $S$, we necessarily have $\vect{R} \neq \vect{V}$ and the line containing $\vect{R}$ and $\vect{V}$ is never parallel to $S$. None of the special case of proposition 1 apply, and we therefore conclude that $\vect{P}$ is uniquely defined as the intersection of $S$ and the line containing $\vect{R}$ and $\vect{V}$. A simple geometric reasoning shows that $\vect{P}$ is the point where $\vect{N}$ coincides with the bisector of the angle formed by $\vect{R}$, $\vect{P}$ and $\vect{V}$.
+We can find $\vect{P} = \vect{R} + \lambda(\vect{V} - \vect{R})$ using $P_Z = 0$ to find $\lambda = \frac{R_Z}{R_Z - V_Z}$, and finally obtain:
+\begin{equation}
+\vect{P} = \begin{bmatrix}
+\vect{p} \\ 0
+\end{bmatrix} \text{ with } \vect{p} = \frac{1}{V_Z + L_Z}\begin{bmatrix}
+V_ZL_X + V_XL_Z \\
+V_ZL_Y + V_YL_Z
+\end{bmatrix}.
+\end{equation}
+The value of the relaxed cost $\tilde{I}_s(\vect{p})$ is the given after some algebraic manipulations by:
+\begin{equation*}
+\tilde{I}_s(\vect{p}) = - \mu(\mathtt{M}\vect{L} - \vect{V})^\top \mu(\mathtt{M}\vect{V} - \vect{V}) = 1.
+\end{equation*}
+Because this is a positive value, this means point $\vect{P}$ is also a maximum of $I_s$. 
+\end{proof}
+The proof of proposition 1 requires the following lemma.
+
+\begin{lemma}
+For $\vect{A}$, $\vect{B} \in \mathbb{R}^3$, we have $(\| \vect{A} \|^2 \mathtt{I} - \vect{AA}^\top)\vect{B} = \vect{A} \times \vect{B} \times \vect{A}$.
+\end{lemma}
+
+\begin{proof}[Proof of lemma 1]
+Expanding the left-hand side we rewrite it as $\vect{A}^\top\vect{A}\vect{B} - \vect{A}\vect{A}^\top\vect{B}$. By switching the order of the dot and scalar-vector products in each term we obtain $\vect{BA}^\top\vect{A} - \vect{A}^\top\vect{BA}$, which we factor as ($\vect{BA}^\top - \vect{A}^\top\vect{B})\vect{A}$. The first factor can be rewritten using a skew-symmetric matrix and we obtain $[\vect{A} \times \vect{B}]_\times \vect{A}$ which matches the right-hand side.
+\end{proof}
+
+\begin{proof}[Proof of proposition 1]
+The statement can be formally written as:
+\begin{flalign*}
+\mathtt{K}\Bigg(\bigg( \mathtt{I} - \frac{(\vect{R} - \vect{P})(\vect{R} - \vect{P})^\top}{\| \vect{R} - \vect{P} \|^2} \bigg) (\vect{V} - \vect{P}) \\
++ \bigg( \mathtt{I} - \frac{(\vect{V} - \vect{P})(\vect{V} - \vect{P})^\top}{\| \vect{V} - \vect{P} \|^2} \bigg) (\vect{R} - \vect{P}) \Bigg) = 0.
+\end{flalign*}
+We multiply by $\|\vect{R} - \vect{P} \|^2\|\vect{V} - \vect{P} \|^2$ and obtain:
+\begin{flalign*}
+\mathtt{K}\Bigg( \| \vect{V} - \vect{P} \|^2 \Big( \| \vect{R} - \vect{P} \|^2\mathtt{I} - (\vect{R} - \vect{P})(\vect{R} - \vect{P})^\top \Big)(\vect{V} - \vect{P}) & \\ + \| \vect{R} - \vect{P} \|^2 \Big(  \| \vect{V} - \vect{P} \|^2 \mathtt{I} - (\vect{V} - \vect{P})(\vect{V} - \vect{P})^\top \Big) (\vect{R} - \vect{P}) \Bigg) = 0.
+\end{flalign*}
+Using lemma 1 twice, on the first term with $\vect{A} = \vect{R} - \vect{P}$ and $\vect{B} = \vect{V} - \vect{P}$ and on the second term with $\vect{A} = \vect{V} - \vect{P}$ and $\vect{B} = \vect{R} - \vect{P}$, we obtain:
+\begin{flalign*}
+\mathtt{K}\Bigg( \| \vect{V} - \vect{P} \|^2  [(\vect{R} - \vect{P}) \times (\vect{V} - \vect{P})]_\times (\vect{R} - \vect{P})  & \\ + \| \vect{R} - \vect{P} \|^2 [(\vect{V} - \vect{P}) \times (\vect{R} - \vect{P})]_\times (\vect{V} - \vect{P})  \Bigg) = 0.
+\end{flalign*}
+where for $\vect{A}$, $\vect{B} \in \mathbb{R}^3$, $[\vect{A}]_\times \in \mathbb{R}^{3 \times 3}$ is a skew-symmetric matrix such that $[\vect{A}]_\times \vect{B} = \vect{A} \times \vect{B}$. Because $[\vect{A} \times \vect{B}]_\times = -[\vect{B} \times \vect{A}]_\times$ we have:
+\begin{equation}
+\mathtt{K}[(\vect{R} - \vect{P}) \times (\vect{V} - \vect{P})]_\times (\|\vect{V} - \vect{P} \|^2 (\vect{R} - \vect{P}) - \| \vect{R} - \vect{P} \|^2 (\vect{V} - \vect{P})) = 0.
+\end{equation}
+We have a product of three factors, $f_1$, $f_2$ and $f_3$, two matrices and a vector, multiplying to a vector. Because $f_1 \neq 0$: we are left with three possibilities to fulfill the equation: $(i)$ $f_2 = 0$, $(ii)$ $f_3 = 0$ and $(iii)$ $f_3 \in (f_1f_2)^\perp$, where $f_1^\perp$ indicates the right nullspace of $f_i$. Condition $(iii)$ is equivalent to $f_2f_3 \in f_1^\perp$ and includes $f_2 \in f_1^\perp$ and $f_3 \in f_2^\perp$. Because $\vect{R} \neq \vect{P}$ and $\vect{V} \neq \vect{P}$, $(i)$ holds only if $\vect{R} - \vect{V}  \propto \vect{V} - \vect{P}$. This condition means that the three points $\vect{R}$, $\vect{V}$ and $\vect{P}$ must be aligned. We then have three cases: $(i)$$-a$ $\vect{R} = \vect{V}$, then $(i)$ holds for any $\vect{P} \in S$, $(i)$$-b$ $\vect{R} \neq \vect{V}$ and the line containing $\vect{R}$ and $\vect{V}$ is parallel to $S$, then $(i)$ never holds, and $(i)$$-c$ $\vect{R} \neq \vect{V}$ and the line containing $\vect{R}$ and $\vect{V}$ is not parallel to $S$, then $(i)$ holds for $\vect{P}$ at the intersection of $S$ and the line containing $\vect{R}$ and $\vect{V}$ is not parallel to $S$, then $(i)$ holds for $\vect{P}$ at the intersection of $S$ and the line containing $\vect{R}$ and $\vect{V}$. Because $\vect{R} \neq \vect{P}$ and $\vect{V} \neq \vect{P}$, $(ii)$ holds only if $\vect{R} - \vect{P} \propto \vect{V} - \vect{P}$ and $\| \vect{V} - \vect{P}\| = \| \vect{R} - \vect{P}\|$, which thus means if and only if $\vect{R} = \vect{V}$ and for any $\vect{P} \in S$. In $(iii)$, we consider $f_1f_2$, which is matrix $\mathtt{K}$ removing the third row of the skew-symmetric matrix in $f_2$. For $\vect{C} \overset{\mathrm{def}}{=\joinrel} (\vect{R} - \vect{P}) \times (\vect{V} - \vect{P})$ we have $\mathtt{K}[\vect{C}]_\times = \begin{bmatrix}
+0 & -c_3 & c_2 \\
+c_3 & 0 & -c_1
+\end{bmatrix}.$ We then have three cases, depending on $\op{rank}(\mathtt{K}[\vect{C}]_\times)$. Case $(iii)$$-a$ is when $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 2$, which holds if and only if $c_3 \neq 0$. $(iii)$ is fulfilled if and only if:
+\begin{equation*}
+(\vect{R} - \vect{P}) \times (\vect{V} - \vect{P}) \propto \| \vect{V} - \vect{P}\|^2(\vect{R} - \vect{P}) - \| \vect{R} - \vect{P}\|^2(\vect{V} - \vect{P}).
+\end{equation*}
+The left-hand side defines a vector which is orthogonal to the plane defined by $\vect{R}$, $\vect{V}$ and the world's origin
+located on $S$, while the right-hand side defines a vector which lies on this plane. Therefore, $(iii)$ holds if and only if both sides of the equation vanish, which $(i)$ and $(ii)$ must hold jointly, which happens only for $\vect{R} = \vect{V}$ and for any $\vect{P} \in S$, and thus reduces to $(ii)$. Case $(iii)$$-b$ is when $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 1$, which holds if and only if $c_3 = 0$ and $c_1 \neq 0$,  $c_2 \neq 0$ or $c_1c_2 \neq 0$, $c_3 = 0$ means that the first two components of $\vect{R} - \vect{P}$ and $\vect{V} - \vect{P}$ are linearly dependent, and thus that the plane containing $\vect{R}$, $\vect{V}$ and $\vect{P}$ is orthogonal to $S$, and thus contain $\vect{N}$. $(iii)$ is then fulfilled if:
+\begin{equation}
+\vect{N}^\top \big( \| \vect{V} - \vect{P}\|^2 ( \vect{R} - \vect{P}) - \| \vect{R} - \vect{P}\|^2 ( \vect{V} - \vect{P})  \big) = 0.
+\end{equation}
+This means $\vect{N}$ is orthogonal to the plane containing $\vect{R}$, $\vect{V}$ and $\vect{P}$, $(iii)$ thus requires $\| \vect{V} - \vect{P}\|^2( \vect{R} - \vect{P}) - \| \vect{R} - \vect{P}\|^2(\vect{V} - \vect{P}) = 0$, which is $(ii)$. Case $(iii)$-$c$ is when  $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 0$ which holds if and only if $\vect{C} = 0$ and is thus $(i)$
+\end{proof}
+

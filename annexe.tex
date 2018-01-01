@@ -1,0 +1,352 @@
+\defineHeaderForClassicalAnnexe
+\chapter{Détection de spécularité dans les images en temps réel}
+\label{annexe:specularity_detection}
+
+\graphicspath{{images/Annexe/specu/}}
+
+\begin{chapeauChapitre}
+	Dans cette annexe, nous détaillerons le processus de détection de spécularité utilisé dans ce mémoire. Plus particulièrement, nous proposons une méthode générique pour la détection en temps réel des réflexions spéculaires dans une image. Cette méthode utilise une nouvelle technique de seuillage appliquée dans l'espace colorimétrique Teinte-Saturation-Valeur (TSV). Les méthodes de l'état de l'art ne prennent souvent pas en compte les différents changements du contexte lumineux (sauts de lumières). De plus, ces méthodes sont généralement algorithmiquement complexes et non adapté à un contexte temps réel. Notre méthode répond à cette problématique de détection en trois étapes : adaptation du contraste de l'image pour gérer les variations d'intensité de la lumière, un seuillage automatique afin d'isoler les réflexions spéculaires et un post-traitement afin de limiter d'avantage toute mauvaise détection. Cette méthode a été comparée avec l'état de l'art par deux protocoles expérimentaux basés sur la précision des contours et du centre de gravité; elle propose, en temps réel, des résultats précis et sans \textit{a priori} sur les images.
+En fonction de l'application désirée, les spécularités présentent certains avantages et inconvénients pour la communauté de la vision par ordinateur. En effet, de nombreuses études ont été réalisées (\cite{blake1988geometry, saint2011detection, shafer1985using}) afin de souligner les différentes informations de la scène pouvant être extraites à partir de ces réflexions spéculaires. \cite{blake1988geometry, netz2013recognition} en ont déduit la  géométrie d'une surface ou d'un objet, la position 3D de la source lumineuse ou encore les caractéristiques d'un matériau comme la granularité, l'albédo ou la BRDF. Ces spécularités peuvent également être utilisées pour raffiner un algorithme de localisation de caméra  \cite{lagger20083d}.
+De plus, elles jouent un rôle important dans la compréhension et la modélisation du comportement de la lumière dans une scène et sont des éléments essentiels pour un rendu réaliste en image de synthèse (\cite{karsch2011rendering} et \cite{sillion1989general},
+ou pour des applications de réalité augmentée \cite{jachnik2012realtime}). Les éléments de lumières comme les ombres ou les reflets peuvent fortement améliorer la qualité de rendu.
+
+Dans le domaine du traitement d'image, pour certaines opérations comme la segmentation, la détection ou encore la correspondance d'objets, la présence de spécularités peuvent perturber les résultats.
+Par exemple, pour une application de segmentation colorimétrique comme dans  \cite{deng1999color}, les spécularités sont souvent considérées comme perturbantes. Dans le domaine médical, elles peuvent être à l'origine de faux positifs lors d'une détection d'éléments suspects. Pour cette raison, la restauration d'image est utilisée afin de les retirer (\cite{lee2010removal, oh2007informative, saint2011detection, stehle2006removal}).
+
+Néanmoins, la détection de spécularités est un processus complexe. Gérer efficacement les variations de luminosité comme les forts contrastes, les images sombres ou légèrement surexposées sous différentes sources lumineuses d'intensités variables, est une problématique difficile. Ainsi, les méthodes de l'état de l'art se limitent à leur domaine d'application et sont donc très spécifiques. Cependant, les spécularités plusieurs caractéristiques communes à de nombreux domaines d'applications peuvent être exploitées. Notre méthode vise un large panel d'applications sans \textit{a priori} sur le contexte lumineux pour une détection en temps réel.
+
+Dans la section \ref{travaux}, nous présentons les méthodes associées en soulignant les différentes applications visées, leurs résultats et leurs limitations. Ces méthodes sont divisées en deux approches : détection hors-ligne \ref{hors-ligne} et en ligne \ref{Online approaches}. Dans la section \ref{Our approach}, notre approche est décrite en soulignant sa fiabilité, son efficacité et  sa généricité. Nous avons positionné notre méthode par rapport à l'état de l'art sur 3 étapes : pré-traitement (section \ref{Pre-processing}), seuillage (section \ref{Thresholding process}) et post-traitement (section \ref{Post-processing}). Nos résultats sont présentés et comparés, dans la section \ref{Experimental evaluation} pour mettre en avant l'efficacité et la généricité de notre méthode.	
+\end{chapeauChapitre}
+
+\section{Travaux antérieurs}
+\label{travaux}
+
+La détection de spécularités est un processus qui se divise, en général, en 3 étapes. Dans un premier temps, un pré-traitement afin de gérer le bruit et le contexte lumineux potentiellement variable. Par la suite, un seuillage est réalisé afin d'isoler les spécularités. Le seuil utilisé peut être prédéfini ou calculé automatiquement. Pour finir, un post-traitement est réalisé afin d'éliminer les faux positifs ou récupérer les faux négatifs manquants. 
+
+Ces étapes sont présentées dans le tableau \ref{fig:methodtable} avec d'autres critères comme le choix de l'espace colorimétrique utilisé et le type de donnée d'entrée (image ou vidéo) afin de donner un vue globale de l'état de l'art et de notre positionnement.
+
+% 2D
+\subsection{Approches hors-ligne}
+\label{hors-ligne}
+
+Dans un contexte où la qualité du résultat prime sur le temps d'exécution, plusieurs méthodes hors ligne sont disponibles pour la détection de spécularité.
+\cite{stehle2006removal} ont utilisé un seuillage sur l'espace colorimétrique YUV, Y étant le canal de luminance et U, V les canaux de chrominance. Le principe de cette méthode est de seuiller le canal Y à la valeur d'intensité correspondant au dernier pic de son histogramme. Selon \cite{stehle2006removal} ce dernier pic de petite taille, correspond aux pixels spéculaires. Cette méthode est utilisée dans l'imagerie endoscopique où les images d'entrées ont une meilleure résolution, un histogramme bien égalisé où les problèmes lumineux sont fortement atténués. Néanmoins, dans des images dépourvus de spécularités, cette méthode de seuillage pourrait engendrer des faux positifs comme les objets de couleur blanche. De plus, une image comportant des spécularités n'a pas nécessairement de pic à la fin de son histogramme dans son canal de luminance. % Exemple : spécularité dégradée et légère.
+\cite{oh2007informative} appliquent deux seuillages : un seuillage global donnant une première estimation des réflexions spéculaires et un deuxième seuillage moins restrictif afin de récupérer les derniers éléments spéculaires restants. Ces éléments apparaissent comme ayant un contraste élevé et blancs (illustré à la figure \ref{fig:grad2} et  \ref{fig:rgb}). % \ref{fig:specular}
+Dans leur méthode, l'image est convertie dans l'espace TSV afin d'appliquer un seuillage sur les canaux Valeur et Saturation et d'obtenir une première estimation des candidats spéculaires.
+Par la suite, une segmentation spatiale est appliquée afin de séparer l'image source en \(k\) régions pour convertir celles-ci en de nouvelle zones qui seront fusionnées avec les candidats spéculaires. Cette méthode donne des résultats convenables mais souffrant des mêmes limitations que \cite{stehle2006removal}.
+
+%La fusion des \textit{régions brillantes} et \textit{régions relativement brillantes} donne des résultats satisfaisant mais l'utilisation de méthodes de segmentations a une complexité de l'ordre de \(O(n^2)\). De plus, avec les \textit{régions relativement brillantes}, il est possible de détecter des surfaces blanches non spéculaires.
+
+%L'apprentissage automatique, la réduction de dimension et les algorithmes d'optimisation peuvent être utilisés pour isoler les spécularités.  \cite{park2003truncated} a proposé approche par \textit{moindres carrés tronqués} pour associer la distribution colorimétrique des images d'un objet à différentes conditions d'illumination pour détecter les spécularités. \cite{lee2010removal} utilise un réseau de neurone pour classifier les régions spéculaires. Ces méthodes donnent des résultats satisfaisant mais sont connues pour leurs complexités importantes.
+
+Les méthodes de \cite{torres2003automatic} et \cite{ortiz2006automatic} utilisent un histogramme bidimensionnel appelé diagramme MS afin de seuiller l'image pour un seuil estimé à partir de ce diagramme. Une égalisation d'histogramme (EH) est utilisée pour garder un seuil constant pour chaque image. Ces méthodes donnent des résultats précis et rapides mais l'EH peut entrainer de mauvaises détections (augmentation du bruit).
+\cite{torres2003automatic, ortiz2006automatic} ont souligné l'importance du choix de l'espace colorimétrique à utiliser comme le TSV. En effet, cet espace colorimétrique est proche de la manière donc  la perception humaine analyse une image. En effet, celle-ci décompose une image en caractéristiques basiques comme l'intensité de la couleur, la teinte et la brillance.
+
+\subsection{Approches en ligne}
+\label{Online approaches}
+
+Plusieurs domaines requièrent une méthode temps réel pour la détection de spécularités tel que les applications médicales \cite{arnold2010automatic} ou la réalité augmentée \cite{jachnik2012realtime}.
+\cite{arnold2010automatic} utilisent un seuillage à partir d'informations dans l'espace RVB et dans une image en niveau de gris. En RVB, les valeurs de fortes intensités de bleu, rouge ou vert sont considérées comme des spécularités.
+
+Contrairement à l'approche de \cite{oh2007informative} utilisant des seuils constants, \cite{arnold2010automatic} utilisent un seuil adaptatif calculé à partir des canaux vert et bleu. Ainsi un premier seuillage est réalisé afin de sélectionner des premiers candidats. Un deuxième seuillage est utilisé par la suite pour trouver les derniers candidats plus incertains en utilisant un filtre médian et un seuil moins restrictif.
+Ces derniers candidats vont être traités dans une étape de post-traitement utilisant quelques opérations morphologiques (OM), calculant les contours des spécularités et supprimant les zones de tailles conséquentes. En effet, ces zones sont susceptibles d'être trop lumineuses et non spéculaires. Dans le domaine de l'imagerie endoscopique, cette méthode est fiable et rapide mais manque de généricité tout en étant sensible aux surfaces blanches. En effet, les systèmes endoscopiques permettent d'avoir un contrôle précis de la source lumineuse et fournissent une correction automatique de l'exposition ce qui permet d'éviter des cas de sur/sous exposition.
+
+
+\begin{table*}
+  \centering
+  {
+  \begin{tabular}{|c|c|c|c|c|c|}
+      \hline
+      \diagbox{Méthodes}{Propriétés} & \specialcell{Espace colorimétrique} & Seuil & \specialcell{Pré-traitement} & \specialcell{Post-traitement} & \specialcell{Vidéo/Image}\\
+      \hline
+      \specialcell{\cite{ortiz2006automatic}} & MS & Constant & \specialcell{EH} & \specialcell{OM} & Image\\
+      \hline
+      \specialcell{\cite{stehle2006removal}}  & YUV & Automatique & None & \specialcell{OM} & Image\\
+      \hline
+       \specialcell{\cite{oh2007informative}}  & TSV & Constant & \specialcell{OHF} & \specialcell{Segmentation et OM} & Image\\
+      \hline
+      \specialcell{\cite{arnold2010automatic}} & \specialcell{RVB + niveau de gris} & Automatique & Aucun & \specialcell{OM}  & Vidéo\\
+      \hline
+      \textbf{Notre méthode}  & \textbf{TSV} & \textbf{Automatique} & \textbf{Contraste} & \textbf{Dégradé} & \textbf{Vidéo}\\
+      \hline
+  \end{tabular}
+  }
+  \par
+  \bigskip
+  \caption{Classification de l'état de l'art et positionnement de notre méthode.}
+  \label{fig:methodtable}
+\end{table*}
+\section{Méthode proposée}
+\label{Our approach}
+\subsection{Vue d'ensemble}
+
+Notre méthode a pour but d'éviter les restrictions dans la détection de spécularités et de gérer plusieurs sources lumineuses en temps réel. Nous ne considérons pas l'histogramme de l'image comme égalisé. Au contraire, chaque problème lumineux pouvant se produire dans un flux vidéo doit être pris en compte (illustré à la figure \ref{fig:tablesaturated}).
+
+De plus, nous ne faisons aucun \textit{a priori} sur la taille d'une spécularité et nous considérons être en présence de surfaces non-Lambertiennes \footnote{voir \cite{lambert2001photometry} pour plus de détails}. Notre détecteur doit être suffisamment rapide pour gérer des applications temps réel.
+
+Nous avons choisi de travailler dans l'espace TSV car les spécularités y ressortent naturellement (voir figure \ref{fig:channels}) et deux critères peuvent être utilisés dans l'espace TSV au lieu d'un seul dans l'espace RVB (voir figure \ref{fig:channels}). En effet, dans l'espace TSV, les spécularités sont caractérisées par une intensité basse dans le canal Saturation basse et une haute intensité dans le canal valeur contrairement à l'espace RVB, où ces spécularités sont représentées aux pixels de haute intensité dans les trois canaux (surfaces blanches).
+
+\begin{figure}
+    \centering
+    \subfigure[]
+    {
+      \includegraphics[width=3.89cm]{tablesaturated}
+      \label{fig:tablesaturated}
+    }
+    \subfigure[]
+    {
+      \includegraphics[width=3.89cm]{contrast}
+      \label{fig:contrast}
+    }
+	\caption{Résultat de notre égalisation de contraste :  (a) présente le cas surexposé, difficilement exploitable en l'état. (b) montre l'image (a) après notre égalisation de contraste}
+
+%\vspace{-0.8em}
+	\label{fig:specularitycases}
+
+\end{figure}
+\begin{figure}
+    \includegraphics[width=0.45\linewidth]{rgbchannels}
+    \includegraphics[width=0.45\linewidth]{hsvchannels}
+  \caption{Représentation RVB (haut) et TSV (bas) d'une image contenant des spécularités. Le canal de Teinte peut être ignoré} 
+  \label{fig:channels}
+\end{figure}
+
+\subsection{Pré-traitement}
+\label{Pre-processing}
+
+Les images surexposées donnent souvent des images (figure \ref{fig:tablesaturated}) difficilement exploitables. En effet, celles-ci ont un contraste élévé pouvant impacter des méthodes de segmentation ou de détection. Pour limiter ce problème, une égalisation du contraste est appliquée sur l'image en calculant la luminosité de l'image définie dans l'équation \eqref{eq:brightness}. Si cette valeur est au dessus d'un certain seuil \(T_b\) (seuil de luminosité), l'image (I) est considérée comme surexposée et le contraste est abaissé. Le résultat de cet algorithme est illustré à la figure \ref{fig:contrast}.
+\begin{equation}
+    \label{eq:brightness}
+       I_\textup{Luminosité} = \sum\limits_{x \in I} \frac{\sqrt{0.241x_R^2 + 0.691x_V^2 + 0.068x_B^2}}{Largeur * Hauteur}
+\end{equation}
+
+La luminosité est un facteur pertinent pour un seuillage automatique car une augmentation de la luminosité provoque également une augmentation proportionnelle dans le canal valeur.
+
+\subsection{Étape de seuillage}
+\label{Thresholding process}
+Afin de gérer différentes conditions lumineuses et différents contrastes, nous pouvons appliquer une égalisation d'histogramme sur le canal valeur. Cependant, selon \cite{ortiz2006automatic}  cette égalisation augmente le bruit et l'intensité de certaines zones ce qui peut donner de mauvais résultats et amener de mauvaises détections.
+Ainsi, au lieu d'utiliser des seuils constants (\cite{oh2007informative} et \cite{ortiz2005new}), un seuil dynamique est utilisé sur le canal valeur afin d'éviter toute opération morphologique pouvant bruiter d'avantage l'image. Ce seuil est estimé à partir de la relation entre la luminosité et le canal valeur. En effet, après plusieurs expériences, nous avons remarqué une proportionnalité entre notre seuil  \(T_v\), fixé sur le canal valeur à une valeur donnant les meilleurs résultats, et la luminosité d'une image. 
+
+Afin de prouver cette observation, nous avons réalisé une régression linéaire sur notre base de données de 50 images variées en taille, contraste, contexte lumineux et en intensité de lumière. Pour chaque image, le seuil \(T_v\), correspondant à la valeur du seuil du canal valeur donnant les meilleurs résultats de détection de spécularités, a été manuellement estimé (voir figure \ref{reg}). Le résultat de cet régression est ainsi utilisé pour calculer le seuil $k_v$ qui est le rapport entre \(T_v\) ,seuil du canal valeur optimal, et la luminosité $I_{Luminosité}$ \eqref{eq:tsequation}.
+
+Afin d'utiliser toutes les informations disponibles, nous avons également seuiller le canal saturation avec le seuil \(T_s\). Ce seuil a été fixé à une valeur constante car le comportement de la saturation représente l'intensité de la couleur ce qui plus difficile à exploiter pour la détection de spécularité.
+
+\begin{figure}
+\centering
+      \includegraphics[width=0.8\linewidth]{regression.pdf}
+      \caption{Résultats de la regression linéaire donnant une relation entre \(T_v\) et la luminosité globale de l'image suivant une fonction linéaire \(y = k_vx\) avec $k_v = 2$ (ligne rouge). Les carrés bleus représentent la valeur optimale de  \(T_v\) en fonction de la luminosité pour chaque image.}
+      \label{reg}
+\end{figure}
+
+\noindent
+\begin{equation}
+  \label{eq:tsequation}
+  T_v = I_\textup{Luminosité}k_v.
+\end{equation}
+
+ Nos conditions de seuillage sont présentées dans l'algorithme \eqref{eq:algorithm}.
+
+\begin{equation}
+  \label{eq:algorithm}
+  \textup{si } S(x) < T_s  \textup{ et }  V(x) > T_v,
+  \textup{le pixel est spéculaire}
+\end{equation}
+avec \(S(x)\) et \(V(x)\) la valeur du canal saturation et valeur du pixel \(x\).
+
+Cette étape de seuillage produit des résultats robustes pour des conditions difficiles et permet un meilleur contrôle du contexte lumineux. En effet, nous pouvons désactiver la détection de spécularités quand l'image est trop exposée (haute luminosité) pendant des sauts de lumières pour éviter des détections incorrectes et fournir plus de fiabilité pour une application temps-réel.
+
+\subsection{Post-traitement}
+\label{Post-processing}
+
+Après une égalisation du contraste, certaines zones dans l'image restent faussement détectées pour une image surexposée (illustré à la figure \ref{fig:grad2}). En effet, une texture blanche renvoie une grande quantité de lumière ce qui peut fausser la détection car son intensité lumineuse est très élevée. Pour répondre à ce problème, nous avons implémenté une méthode pour séparer les taches spéculaires des textures ambiguës.\\
+
+\begin{figure*}
+  \centering
+	  \subfigure[]
+	  {
+      \includegraphics[scale=0.32]{grad2}
+      \label{fig:grad2}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[scale=0.3]{gradient}
+      \label{fig:gradient}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[scale=0.3]{rgb.png}
+      \label{fig:rgb}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[scale=0.3]{hsv.png}
+      \label{fig:hsv}
+    }
+\vspace{-1em}
+  \caption{Dans l'image (a) le papier a un aspect similaire à une spécularité et pourrait être détecté à tord comme étant une spécularité. (b) montre l'étape de séparation des candidats spéculaires de la figure (a). (c) représente une spécularité vue dans l'espace RVB. (d) illustre la décroissance progressive de l'intensité d'une spécularité à partir de son centre dans l'espace TSV.}
+  \label{fig:gradientcriteria}
+\end{figure*}
+
+En observant l'image dans le canal Valeur du TSV,, il est facile de constater une décroissance progressive de l'intensité de celles-ci à partir de leurs centres. Cette propriété est visible à la figure \ref{fig:hsv}.
+
+Pour comprendre ce constat, il est pertinent de rappeler le comportement d'un rayon incident sur une surface quelconque. En effet, plusieurs éléments sont à prendre en considération : la composante diffuse, la composante directionnelle  et la composante spéculaire. L'impact de ces différentes composantes est déterminé par la BRDF, qui est une fonction bidirectionnelle permettant de décrire la radiance selon le rayon incident, le matériau et l'angle de réflexion. Sur la figure \ref{fig:brdf}, on constate que pour un point de vue donnée, la composante spéculaire décrit un pic correspondant à la composante spéculaire idéale (réflexion stricte du rayon incident) et d'une intensité décroissante correspondant à la composante directionnelle. On peut modéliser cette zone spéculaire sous forme d'une gaussienne en trois dimensions centrée au centre de gravité de la réflexion spéculaire. 
+
+\begin{figure}
+	\centering
+		  \includegraphics{brdf.pdf}
+      \label{fig:noise2}
+  \caption{Représentation de la répartition lumineuse provoquée par la réflexion d'un rayon incident avec un objet. Cette répartition est déterminée en utilisant la BRDF du matériau.
+Nous constatons également que l'intensité de la lumière pour une réflexion spéculaire  décroit progressivement autour du centre de gravité de la spécularité (composante spéculaire idéale).}
+  \label{fig:brdf}
+\end{figure}
+
+Une première idée serait de partir du centre de gravité de chaque spécularité et d'analyser l'évolution de l'intensité sur la droite reliant le centre de gravité à un point  de contours. Théoriquement, l'allure de cette courbe d'intensité devrait représenter une fonction sigmoïde. Ainsi, en présence d'une texture, cette courbe décrit une fonction échelon ce qui  nous permettrai de discriminer les textures faussement détectées des réflexions spéculaires.
+
+% A reformuler, expliciter la difficulté de traiter individuellement chaque contours, faire une moyenne, => pas encore suffisant.
+En pratique, ce modèle présente quelques limites car cette décroissance d'intensité bien que visible n'est pas stricte (illustré à la figure \ref{fig:courbesig1}). Il est possible de déduire une sigmoïde caractéristique pour chaque spécularité mais réaliser une correspondance entre cette variation progressive de l'intensité avec une fonction adaptée comme la sigmoïde est sujet à de nombreuses erreurs.
+
+\begin{figure*}
+	  \subfigure[]
+	  {
+      \includegraphics[width=0.21 \linewidth]{sigmoidsimple.pdf}
+      \label{fig:sigmoidsimple}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[width=0.21\linewidth]{courbesig1.pdf}
+      \label{fig:courbesig1}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[width=0.21 \linewidth]{moyenne.pdf}
+      \label{fig:moyenne}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[width=0.21 \linewidth]{courbesig2.pdf}
+      \label{fig:courbesig2}
+    }
+\vspace{-1em}
+	\caption{Analyse de la variation d'intensité du canal Valeur suivant. (a) représente un contour allant du centre de gravité et passant par un des contours de la spécularité. On observe une forme de sigmoïde très bruitée au niveau de son intensité dans (b). (c) représente un ensemble de contours sur le même principe que (a). La moyenne de l'intensité de ces contours nous donne un sigmoïde beaucoup plus exploitable.}
+	\label{fig:sigmoidproperty}
+\end{figure*}
+
+% Petite spécularité difficile
+% Dépendant de la géométrie de la surface où celle-ci apparaît.
+% Illustration, image déjà existante + cylindre ?!
+
+% Schéma décroissance de la spécularité.
+
+Afin d'exploiter cette décroissance progressive de l'intensité pour séparer textures des spécularités, nous divisions l'image après notre seuillage en \(k\)-régions de candidats spéculaires. Cette segmentation est réalisée en utilisant un algorithme classique de segmentation d'images binaires \cite{suzuki1985topological}. Nous prenons la boite englobante la plus grande pour chaque contour. En effet, une spécularité n'est pas uniforme et est généralement très fragmentée. En utilisant une boîte englobante, nous incluons ces fragments dans le calcul. Dans un second temps, en modifiant le seuil \(T_v\) d'un pas unitaire pour chaque itération, nous allons observer l'évolution de l'aire de ces boîtes englobantes. Si cette évolution est constante (décroissance légère et régulière (voir figure \ref{fig:areaevolution}) ou si la variation est nulle, cette aire est considérée comme une réflexion spéculaire. Si l'aire décroit soudainement, cette zone a été détectée à tord comme étant spéculaire.
+
+\begin{figure*}
+	  \subfigure[]
+	  {
+      \includegraphics[width=0.45\linewidth]{area_tmp2.pdf}
+      \label{fig:area}
+    }
+	  \subfigure[]
+	  {
+      \includegraphics[width=0.47\linewidth]{histo.pdf}
+      \label{fig:histo}
+    }
+\vspace{-1em}
+	\caption{Évolution de l'aire d'une spécularité comparée à une texture blanche pour une image surexposée. (a) représente l'évolution de l'aire de la spécularité de l'image à la figure \ref{fig:gradient} pour 3 seuils donnés (marqués par les couleurs rouge, bleu et jaune). Nous pouvons observer que la spécularité a une aire qui décroît progressivement contrairement à la feuille de papier qui s'estompe dès le deuxième seuil. (b) représente notre histogramme du canal Valeur de notre image. Nous pouvons remarquer un pic à la fin de celui qui représente la feuille de papier et la spécularité. Une augmentation progressivement du notre seuil $T_v$ fait disparaitre plus rapidement la texture blanche de la réflexion spéculaire.}
+	\label{fig:areaevolution}
+\end{figure*}
+
+Ce critère de variation d'intensité à partir du centre est visible pour chaque spécularité mais est difficilement applicable pour de petites surfaces car le dégradé existe mais de façon infime. On peut noter que dans certains cas, les textures blanches ont un aspect dégradé mais ce cas reste isolé et rare.
+
+\subsection{Complexité algorithmique}
+Une étude sur la complexité algorithmique a été menée sur chaque étape de notre méthode (illustré au tableau \ref{fig:complexity}). La complexité globale calculée est de \(O(n + kc)\) avec \(n\) représentant le nombre de pixels de l'image, \(k\) le nombre de régions trouvées dans notre segmentation et \(c\) le nombre d'itérations durant notre étude de la variation d'intensité à partir du centre.
+\begin{table}[!h]
+  \centering
+  \begin{tabular}{|c|c|}
+      \hline
+      Étapes & Complexité\\
+      \hline
+      Égalisation du contraste & \(O(1)\) \\
+       \hline     
+       Seuillage & \(O(n)\) \\
+      \hline
+      \specialcell{Segmentation +  étude dégradé} &\(O(nk) + O(kc)\)\\
+      \hline  
+      Total & \(O(n + kc) \sim O(n)\)\\
+      \hline
+  \end{tabular}%
+  \par
+  \bigskip
+  \caption{Complexité globale de notre méthode.}
+ \label{fig:complexity}
+\end{table}
+
+\section{Évaluation expérimentale}
+\label{Experimental evaluation}
+\subsection{Protocole expérimental}
+
+Nous comparons nos résultats avec notre implémentation de la méthode de \cite{arnold2010automatic} qui est une approche rapide de l'état de l'art donnant de bons résultats en temps réel. De plus, \cite{arnold2010automatic} se sont positionnés par rapport à  \cite{oh2007informative}  en mettant en évidence l'efficacité et la vitesse de leur approche. L'implémentation de la méthode a été réalisé en utilisant les paramètres conseillés par \cite{arnold2010automatic}.
+
+
+\begin{figure*}
+	\centering
+		  \includegraphics[width=17.5cm, height=12cm]{resultsq}
+      \label{fig:noise2}
+\vspace{-1em}
+  \caption{Résultats de la détection de spécularités de l'approche de \cite{arnold2010automatic} (au milieu) en comparaison avec notre méthode (en bas).}% Ces résultats sont réalisés sur notre base de données de 100 images test. La dernière colonne met en évidence le  critère de taille d'Arnold et \textit{al}. La spécularité détectée a été considérée comme de trop grande taille et a été supprimée. Notre méthode du dégradé a supprimé avec succès la texture blanche non désirée. }
+  \label{fig:noise2}
+\end{figure*}
+
+Ces approches ont été testées sur la base de données de 100 images test (différente de notre base d'entrainement utilisé pour fixer les différents seuils) pour mettre en évidence la généricité et l'efficacité de la méthode proposée.
+
+\subsection{Évaluation quantitative}
+
+Notre évaluation quantitative se fera sur deux critères. Le premier critère a mettre en évidence correspond à la précision des contours des spécularités.
+L'objectif de ce critère est de comparer le contour d'une spécularité évaluée par l'\oe il humain avec les résultats de l'algorithme. Ainsi, un contour manuel a été réalisé sur la base de données de 100 images et comparé avec les contours des spécularités détectées. Les contours ont été calculés en utilisant l'opérateur de Sobel avec un noyau $3\times3$. Un contour est considéré comme précis si pour chaque point, nous trouvons un pixel de notre vérité terrain appartenant au voisinage. Celui-ci est représenté par un patch de taille $9\times9$ pour être suffisamment strict sans pour autant accepter les erreurs critiques (la figure \ref{fig:sobel} présente notre évaluation du contour). 
+
+Un deuxième critère à mettre en évidence et l'importance d'avoir un centre de gravité précis (voir \ref{fig:gravity}). En effet, c'est à partir de ce centre de gravité que la décroissance d'intensité dans le canal Valeur se produit. L'intérêt de ce critère est qu'il existe plusieurs cas où une spécularité peut être partiellement obstruée (rebord d'une surface, ombre coupant la spécularité ou diverses occultations comme illustré aux images \ref{fig:rgb} et \ref{fig:hsv}). Dans ces cas, le calcul du centre de gravité simple estimé avec le contour de la spécularité ne correspond pas au  centre réel représenté. Pour estimer ce centre, à partir du contour basique, nous reduisons ce contours jusqu'à  obtenir la valeur maximale (intensité stable ou à une valeur de 255). Ce nouveau contour réalisé est utilisé pour calculer un centre de gravité plus pertinent qu'une estimation avec le contour initial. La vérité terrain a également été réalisée manuellement en affinant le contour initial de la spécularité jusqu'à avoir le contour du noyau de la spécularité et utiliser celui-ci afin calculer un centre de gravité plus pertinent. Ces deux critères ont été évalués sur une base de données incluant les images de l'article de \cite{arnold2010automatic} et sur la base de données de 100 images test.
+
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|c|}
+      \hline
+      \diagbox{\specialcell{Évaluation}}{Méthode} & \specialcell{\cite{arnold2010automatic}} & \textbf{\specialcell{Notre méthode}} \\
+      \hline
+      \specialcell{Temps} & \specialcell{0.0584 s} & \specialcell{\textbf{0.0371 s}} \\
+      \hline  
+      Contour  & \specialcell{70.3 \%} & \specialcell{\textbf{80.29 \%}} \\
+      \hline    
+       \specialcell{Centre de  gravité} &  \specialcell{67.2 \%} & \specialcell{\textbf{78.13 \%}} \\
+      \hline  
+  \end{tabular}
+  \par
+  \bigskip
+  \caption{Évaluation quantitative. Pour les trois critères, notre méthode est plus pertinente et offre de meilleurs résultats.}
+  \label{fig:speed}
+\end{table}
+
+\begin{figure}[!h]
+  \centering
+  	\subfigure[]
+	{
+      		\includegraphics[width=0.85\linewidth]{26mask}
+      		\label{fig:sobel}
+    	}
+          \subfigure[]
+	{
+      		\includegraphics[width=0.85\linewidth]{grav}
+      		\label{fig:gravity}
+          }
+  	\caption{Évaluation proposée pour la détection de spécularités : contours et centre de gravité. (a) différences entre notre vérité terrain (en vert) et les résultats de notre détection (en rouge). Les pixels communs sont affichés en gris. (b) Estimation du centre de gravité. Les lignes rouges représentent le vecteur direction du dégradé et l'avancement de notre contour initial (vert) pour s'arrêter au contour du noyau de la spécularité (rouge).}
+ 	 \label{fig:evaluation}
+\vspace{-1em}
+\end{figure}
+
+Notre approche s'avère 1.5 fois plus rapide que \cite{arnold2010automatic}, plus précise avec une meilleure estimation du centre de gravité.
+
+\subsection{Évaluation qualitative}
+ En comparaison avec \cite{arnold2010automatic}, le bruit est grandement réduit pour toutes les images. La figure \ref{fig:noise2} met en évidence qu'une spécularité peut être de taille conséquente. Utiliser un critère de taille comme \cite{arnold2010automatic} peut amener à ignorer certains spécularités de grande taille ce qui n'est pas souhaitable pour une approche générique de la détection de spécularités.
+
+\section{{Conclusion et discussion}}
+Dans cet article, nous avons présenté une nouvelle approche pour la détection de spécularités en utilisant des propriétés simples et efficaces des spécularités. Nous avons utilisé les canaux de valeur et de saturation de l'espace TSV afin d'estimer les différents seuils calculés automatiquement en fonction du la luminosité globale de l'image. De plus, nous avons proposé un pré-traitement d'ajustement automatique du contraste afin de gérer les variations d'illumination et un post-traitement qui observe la décroissance de l'intensité du canal valeur à partir de son centre de gravité afin gérer les régions détectées à tord dans notre seuillage. Notre méthode est générique et fiable pour différentes applications temps-réel. Cette approche a été comparée avec l'état de l'art en utilisant un nouveau protocole expérimental fondé sur deux propriétés : la précision du contour et du centre de gravité d'une réflexion spéculaire. 
+
+Les approches de l'état de l'art pour la détection de spécularités en temps réel sont basées sur du seuillage. Néanmoins, l'utilisation de modèle de réflexion comme le modèle Lambertien \cite{brelstaff1988detecting} afin de prendre en compte les composantes diffuses de l'image ou séparer les composantes diffuses et spéculaires comme \cite{tan2004separating} peut être pertinent pour améliorer la précision et la réduction du bruit dans les résultats. 

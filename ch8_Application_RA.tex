@@ -1,0 +1,250 @@
+\chapter{Applications de Réalité Augmentée en milieu urbain}
+\label{chapitre:Application_RA}
+\defineHeaderForClassicalChapter
+\graphicspath{{../Img/Ch8/}}
+
+
+\begin{chapeauChapitre}
+	Dans les deux précédents chapitres nous avons proposé deux solutions pour fusionner les contraintes multi-vues avec les données GPS et les contraintes géométriques apportées par le MET et les modèles 3D des bâtiments. Tandis que la première solution est réalisée hors ligne, la deuxième approche de fusion s'effectue en ligne. Dans ce chapitre nous proposons un algorithme original qui exploite ces deux approches de fusion afin de fournir une application d'aide à la navigation à travers la Réalité Augmentée.
+\end{chapeauChapitre}
+
+\section{Introduction}
+
+Les systèmes d'aide à la navigation actuellement embarqués dans les véhicules offrent généralement une restitution de l'information de guidage sous la forme d'un tracé sur un plan de type carte routière, que celui-ci soit 2D ou 3D.  Cette représentation étant différente de la perception que le conducteur du véhicule a de son environnement, ce dernier doit effectuer un effort pour transposer cette représentation symbolique vers sa perception du monde réel. Cet effort cognitif est d'autant plus important que l'environnement dans lequel le véhicule évolue est complexe. Ceci peut s'avérer gênant en zone urbaine dense où le système routier  est généralement plus complexe et où la charge cognitive du conducteur devrait avant tout se focaliser sur les autres usagers de la route.
+ 
+Face à ce problème, la réalité augmentée semble être une solution pertinente puisqu'elle permet de présenter l'information de navigation selon une modalité similaire à la perception que le conducteur a de l'environnement. La trajectoire à suivre étant affichée sur une image correspondant à la vision qu'a le conducteur de l'environnement, ce dernier n'a plus besoin d'effectuer cet effort de transposition entre virtuel et réel.
+ 
+Cependant, pour qu'un tel système soit exploitable, ce dernier doit vérifier un ensemble de contraintes applicatives :
+\begin{itemize}
+\item Qualité de service : les informations virtuelles doivent s'aligner de manière précise avec l'environnement réel, sous peine de donner une mauvaise indication (eg. indiquer une mauvaise route) ou d'induire auprès du conducteur un effort cognitif important pour compenser cette imprécision. En particulier, ceci implique que la localisation soit sur six degrés de libertés et pas uniquement deux degrés comme c'est le cas pour les systèmes GPS courant.
+\item Continuité de service : le système doit offrir une localisation à tout instant, quel que soit l'environnement.
+\item Facilité de déploiement : le coût de mise en place et d'exploitation du système doit être le plus réduit possible. En particulier, le matériel nécessaire pour son exploitation par l'utilisateur final doit être disponible et de faible coût.
+\end{itemize}
+
+ 
+Ainsi, d'une part, les approches proposant de se localiser par rapport à une base d'amers visuels (\eg \cite{dong2009}, \cite{Irschara2009}, \cite{Snavely}) ou de modèles 3D de ville texturés (\eg \cite{Soheilian}) ne vérifient pas l'ensemble de ces contraintes. En effet, la création de ces bases d'amers reposent soit sur une flotte de véhicules dédiée (\eg \cite{Soheilian}) embarquant généralement un matériel couteux (LIDAR, multiples caméras, etc), soit sur l'exploitation de bases d'images issues d'internet (\eg \cite{Snavely1}, \cite{Frahm}). Dans le premier cas, si le modèle obtenu sera d'une grande précision, ce dernier ne représentera l'apparence de la scène que pour une condition d'illumination donnée et ne pourra pas facilement être mis à jour en cas de changement dans l'environnement. Le système risque donc d'être soit peu robuste, soit extrêmement couteux en terme d'exploitation (flotte de véhicule mettant continuellement à jour le modèle). Dans le second cas (exploitation de bases d'images internet),  si le modèle est obtenu à moindre coût (pas de flotte de véhicule), ce dernier sera principalement issu de point de vue « piéton » et non « véhicule ». La pertinence du modèle obtenu sera donc limitée vis-à-vis de l'application, et la continuité de service réduite (zones non cartographiées). 
+ 
+D'autre part, les approches n'utilisant pas de bases d'amers souffrent quant à elles généralement d'un défaut de qualité ou de robustesse. Ainsi, les méthodes consistant à fusionner le GPS avec d'autres capteurs (odomètre, angle de braquage, détection de ligne blanche, etc. ) offrent généralement une estimation de seulement 3 degrés de liberté (position dans le plan du sol et cap, \eg \cite{chausse05} \etc). Les méthodes basées sur la contrainte d'un SLAM avec un modèle 3D de ville, tels que proposées par \cite{Lothe2010b} ou dans le chapitre \ref{chapitre:SLAM_SIG_complet} de ce mémoire, souffrent généralement d'un problème de robustesse à l'issue d'une longue ligne droite (accumulation d'erreur trop importante). Par ailleurs, les méthodes basées sur la fusion de la vision avec les données GPS, telle celle proposée dans le chapitre \ref{chapitre:SLAM_GPS_MET} sont sujettes à une erreur de localisation de l'ordre de celle du GPS employé. Enfin, la méthode de GPS différentiel basé sur les modèles 3D des bâtiments présentée dans le chapitre précédent offre à la fois une facilité de déploiement et une continuité de service mais présente une précision de localisation plus faible que les méthodes basées sur les bases d'amers.
+ 
+L'objectif de ce chapitre est donc de proposer une solution exploitant une base d'amer géo-référencée mais offrant à la fois la qualité de service, la  continuité de service et la facilité de déploiement nécessaire à une application de réalité augmentée pour l'aide à la navigation.  Après avoir présenté le principe de l'approche (section \ref{sec:ra:approche}), nous présenterons le fonctionnement de notre solution lorsque le véhicule navigue dans une zone pour laquelle une base d'amers exploitable est disponible (section \ref{sec:ra:reloc}). Nous présenterons ensuite la manière dont fonctionne notre solution lorsque le véhicule évolue dans une zone où aucune base d'amers n'est disponible, ainsi que la manière dont cette base peut être mise à jour (section \ref{sec:ra:loc}). Enfin, nous présenterons comment notre solution gère la transition entre une zone pourvue d'une base d'amers valide et une zone dépourvue (section \ref{sec:ra:transition}). Ce chapitre fera alors l'objet d'une évaluation expérimentale ( section \ref{sec:ra:evaluation}) ainsi que d'une discussion (section \ref{sec:ra:discussion})
+ 
+\section{Approche proposée}
+\label{sec:ra:approche}
+
+Comme nous l'avons indiqué précédemment, le premier défaut des approches exploitant une base d'amers réside en l'absence de continuité de service lorsque le véhicule entre dans une zone où la base d'amers est absente ou incompatible avec les conditions d'illumination courante. Pour résoudre ce problème, nous proposons de passer dans un mode dégradé, reposant sur notre solution qui fusionne le SLAM avec le MET et le GPS différentiel basé sur les modèles 3D des bâtiments présentée dans le chapitre précédent, lorsque le véhicule entre dans une telle zone. A défaut de maintenir continuellement le même niveau de qualité de service, cette approche permet de maintenir sa continuité.
+ 
+Le second défaut des approches exploitant une base d'amers est lié à la difficulté de la création et du maintien de cette base ainsi que le coût associé. Pour résoudre ce problème, nous proposons d'utiliser une approche collaborative pour la création de la base en question. En effet, une approche collaborative présente l'avantage de transformer l'ensemble des utilisateurs en une flotte de véhicules dédiés à la création de la base. Néanmoins, pour y parvenir, le processus utilisé doit exploiter les capteurs disponibles et ne pas requérir des transmissions de données trop volumineuses. De plus, cette modélisation doit pouvoir être réalisée tout en offrant un service de localisation. Comme nous le verrons, la méthode présentée dans le chapitre \ref{chapitre:CreationBase} permet de répondre à l'ensemble de ces critères.
+
+
+\section{Navigation en zone disposant d'une base d'amers}
+\label{sec:ra:reloc}
+
+La majorité des méthodes de re-localisation existantes est basée uniquement sur des algorithmes de reconnaissance de point de vue (\eg \cite{dong2009}, \cite{Arth}, \cite{Tong2012}, \etc). Le principe de ces méthodes consiste à mettre en correspondance les amers 2D de l'image courante (les points d'intérêt détectés) avec les amers 3D de la base géo-référencée préalablement construite. A partir de cette mise en correspondance, la pose actuelle de la caméra peut être estimée. Toutefois, ces solutions restent très sensibles aux conditions d'illumination et aux changements de point de vue. De plus ces solutions ne peuvent pas garantir une estimation de pose précise à chaque image puisque la base d'amers exploitée ne modélise pas forcément toute la scène observée. Pour apporter plus de robustesse face à cette limitation, nous choisissons d'améliorer la méthode proposée par \cite{Gay-Bellile} qui fusionne l'algorithme de reconnaissance de point de vue (\textit{e.g} \cite{ballas}) avec l'algorithme du SLAM visuel. Ce dernier apporte une certaine cohérence temporelle qui permet d'assurer la continuité de la localisation même dans le cas où l'algorithme de reconnaissance de point de vue échoue. \\
+
+Le principe de cette méthode est le suivant. Le flux vidéo courant (c'est-à-dire enregistré en ligne par la caméra embarquée sur le véhicule) est traité en temps-réel par le SLAM visuel \cite{Mouragnon2006}. Afin d'éviter la dérive inhérente à ce type de méthodes, l'idée consiste à corriger au fur et à mesure la reconstruction SLAM à partir des données géo-référencées de la base d'amers. Pour cela, un traitement spécifique est réalisé à chaque nouvelle image clé. Deux poses sont ainsi calculées pour cette image:
+\begin{itemize}
+	\item La pose fournie par le module SLAM, cette pose étant erronée à cause de la dérive du facteur d'échelle.
+	\item La pose calculée à partir de la base d'amers préalablement reconstruite. Cette pose est supposée correcte et précise. Nous verrons par la suite que plusieurs filtres sont utilisés en pratique pour s'assurer que cette pose est correcte.
+\end{itemize}
+
+La transformation entre ces deux poses (figure~\ref{fig:ch6:correctionSLAM1}) définit complètement la dérive du SLAM: l'erreur de rotation, de translation ainsi que le facteur d'échelle (estimé par exemple soit à partir du nuage de points reconstruit ou par le rapport du déplacement entre deux positions consécutives de la caméra estimées par le module SLAM et celles estimées par le processus de relocalisation). Cette similitude est alors utilisée pour corriger la reconstruction SLAM. Tout d'abord, l'ensemble de la reconstruction est déplacée de telle sorte que la caméra clé courante ait la pose définie par les informations géo-référencées (figure~\ref{fig:ch6:correctionSLAM2}). Le facteur d'échelle est alors utilisé (figure~\ref{fig:ch6:correctionSLAM3}) pour corriger la norme du déplacement des $n$ dernières poses de caméras clés considérées dans l'ajustement de faisceaux local. Ainsi, le facteur d'échelle transmis à la suite de la reconstruction est correct. \\
+
+\begin{figure}[htb]
+	\centering
+		\subfigure[]{
+			\includegraphics[width=0.6\linewidth]{correctionSLAM1.jpg}
+			\label{fig:ch6:correctionSLAM1}
+		}
+		\subfigure[]{
+			\includegraphics[width=0.6\linewidth]{correctionSLAM2}
+			\label{fig:ch6:correctionSLAM2}
+		} 
+		\subfigure[]{
+			\includegraphics[width=0.6\linewidth]{correctionSLAM3}
+			\label{fig:ch6:correctionSLAM3}
+		} 
+	\caption[Couplage du SLAM avec des données géo-référencées]{\textbf{Couplage du SLAM avec des données géo-référencées (Image extraite du mémoire de Pierre Lothe 2010).} La reconstruction SLAM est corrigée en utilisant les données géo-référencées (a) : une transformation euclidienne est appliquée pour corriger la pose de la caméra clé courante (b) et le facteur d'échelle est alors corrigé (c).}
+	\label{fig:ch6:correctionSLAM}
+\end{figure}
+
+
+Notons que le processus complet décrit dans cette section ne fonctionne que lorsque la pose calculée à partir des données géo-référencées est correcte. Or, il  est possible que celle-ci soit erronée. Pour éviter cela, plusieurs filtres ont été mis en place: vérification des contraintes épipolaires, du ratio d'inliers conservés pour le calcul de la pose, de la bonne répartition de ces points dans l'image, \etc Ces différents filtres permettent de maximiser les chances d'obtenir une pose non-aberrante. Dès lors, deux cas de figure sont possibles: si la pose passe les filtres, la reconstruction SLAM est corrigée; dans le cas contraire, aucune correction n'est appliquée et le processus de SLAM continue.\\
+
+Néanmoins, à cause des erreurs de calcul qui peuvent survenir, l'estimation du facteur d'échelle en utilisant cette méthode reste peu précise. Or une propagation d'un facteur d'échelle erroné entraine des importantes imprécisions au niveau de l'estimation de la pose de la caméra. Pour pallier ces problèmes, nous avons choisi de remplacer l'utilisation du SLAM visuel proposé par \cite{Mouragnon2006} par l'approche introduite par \cite{Eudes2010} qui fusionne le SLAM visuel avec la sortie d'un odomètre qui fournit avec plus de précision la norme de déplacement de la caméra. Le facteur d'échelle étant bien contraint, seules l'orientation et la translation de la caméra sont estimées par le processus de la relocalisation. Par ailleurs pour améliorer la précision du processus de la mise en correspondance, une comparaison exhaustive dans la base d'amers en délimitant la zone de recherche à une région de rayon de quelques mètres autour de la position fournie par le GPS est utilisée. 
+
+\section{Navigation en zone dépourvue de base d'amers et mise à jour de la base}
+\label{sec:ra:loc}
+
+Considérons à présent le cas de figure où le véhicule se situe dans une zone pour laquelle aucune base d'amers n'est valide, ceci en raison de l'absence complète de base d'amers ou de la présence de base incompatible avec les conditions d'illumination. Deux tâches sont alors à réaliser : localiser le véhicule et mettre à jour la base d'amers.
+Pour y parvenir, nous proposons de combiner les méthodes présentées dans les précédents chapitres :
+
+\begin{itemize}
+\item Le véhicule est localisé à l'aide d'un SLAM contraint au MET et au GPS différentiel basé sur les modèles 3D des bâtiments si le véhicule est en milieu urbain (chapitre \ref{chapitre:CorrectionBiaisGPS}), ou avec une simple fusion du SLAM avec le GPS et MET si le véhicule est en zone rurale (chapitre \ref{chapitre:SLAM_GPS_MET}).
+\item La reconstruction de l'environnement obtenue par le processus de localisation est envoyée à un serveur qui réalise l'étape hors ligne du processus de géo-localisation d'une reconstruction SLAM présentée dans le chapitre \ref{chapitre:CreationBase}.
+\end{itemize}
+
+Tout d'abord, on notera que cette solution vérifie bien les critères évoqués dans la section \ref{sec:ra:approche}. En effet, la localisation est bien réalisée en parallèle de la modélisation avec des capteurs bas coût et largement répandus (GPS standard, caméra VGA). De plus, la quantité de données à transférer au serveur est réduite puisque seule la reconstruction SLAM (point 3D, descripteurs et images clés) est à transmettre.
+ 
+Aussi, on notera que le processus de localisation offre une qualité de service légèrement dégradée par rapport à la localisation basée sur la base d'amers. Néanmoins, la continuité de service est maintenue, et la fréquence d'apparition de ce cas de figure devrait diminuer avec le temps. En effet, l'approche collaborative permet d'obtenir une mise à jour fréquente de la base (\ie chaque fois qu'un utilisateur passe dans une telle zone). Ceci permet donc d'avoir une couverture géographique importante, mais aussi une couverture des zones en terme de condition d'illumination (\ie les différents véhicules passant sur une même zone à des heures et dates différentes).
+ 
+Enfin, s'agissant du temps de traitement au niveau du serveur distant, on notera que les expériences sur le raffinement de la reconstruction présentées dans le chapitre \ref{chapitre:CreationBase} ont présenté des temps de traitement de l'ordre de $2$ minutes pour $2400 \text{m}$. Si ce temps, sur une implémentation non GPU de l'algorithme, peut sembler déjà relativement raisonnable, on notera que ce temps est réduit dans les cas présents puisque l'utilisation d'un SLAM contraint au MET et au GPS différentiel basé sur les modèles 3D des bâtiments fournit une initialisation plus proche de la solution que celle utilisée lors de cette expérimentation. 
+
+\section{Transition entre zone avec base d'amers vers une zone sans base d'amers valide}
+\label{sec:ra:transition}
+Pour améliorer les performances du système, on notera que lors du passage du mode « basé amers » vers le mode « sans base d'amers », le biais affectant les données GPS peut être estimé à l'aide des dernières images clés obtenues à l'aide de la base d'amers. En effet, la précision de la localisation des images clés lorsqu'elles ont été obtenues à l'aide de la base d'amers permet d'estimer le biais du GPS directement à partir de la différence entre la donnée GPS brute et la position de l'image clé. Le biais ainsi estimé est alors utilisé comme initialisation dans le processus de SLAM contraint au MET et au GPS différentiel basé sur les modèles 3D des bâtiments.
+
+
+
+\section{Évaluation expérimentale}
+\label{sec:ra:evaluation}
+Cette section a pour objectif de démontrer la qualité de la localisation accessible par le système présenté dans ce chapitre. L'application cible étant la Réalité Augmentée, cette appréciation doit être évaluée en terme d'erreur de re-projection. Néanmoins, ne disposant pas de vérité terrain permettant d'évaluer précisément cette erreur, nous proposons ici une simple évaluation par appréciation visuelle.
+Dans un premier temps, nous proposons une expérience permettant de comparer sur une même séquence l'erreur de re-projection associée à une localisation en ligne dans une zone dépourvue de base d'amers, ce qui correspond au cas de figure le moins favorable pour notre méthode, avec celle obtenue à partir de la base d'amers issue de la méthode hors ligne du chapitre \ref{chapitre:CreationBase}. Dans un second temps, nous présentons quelques images de résultats obtenues à partir de notre application de Réalité Augmentée basée sur la méthode introduite dans ce chapitre, ceci aussi bien dans le cas d'une navigation pour lequel une base d'amers est disponible que dans le cas contraire.
+
+\subsection{Comparaison de la précision de la navigation en zone disposant d'une base d'amers avec la navigation en zone dépourvue d'une base d'amers}
+Cette expérience a pour objectif d'évaluer la qualité de la localisation perçue par l'utilisateur final dans le pire des cas de notre méthode, à savoir la localisation en zone dépourvue de base d'amers. Ne disposant pas de véritable vérité terrain, nous proposons d'utiliser les poses issues de la méthode hors ligne présentée dans le chapitre \ref{chapitre:CreationBase} au titre de résultat de référence.
+ 
+ 
+\paragraph{\textbf{Protocole expérimental.}} Pour évaluer la précision de la localisation, nous proposons d'apprécier visuellement la re-projection des modèles 3D des bâtiments sur des images extraites d'une séquence enregistrée dans le quartier de Versailles ($2400 \text{m}$, milieu urbain dense). 
+ 
+\paragraph{\textbf{Résultats.}}
+La figure \ref{fig:ch8:comparaison_fusionEnLigne} présente une série d'images résultats.
+Les différentes re-projections des modèles 3D mettent en évidence deux types d'imprécisions d'origines différentes au niveau de la localisation en ligne basé sur un SLAM contraint au MET et au GPS différentiel basé sur les modèles 3D des bâtiments. Le premier type d'imprécisions a pour origine la fusion SLAM avec le GPS et le MET. En effet, tandis que le MET permet de contraindre implicitement l'angle tangage en ligne droite, l'angle roulis quant à lui se trouve peu contraint dans ce cas de figure, comme le montre la figure \ref{fig:ch8:enLigne5}.
+
+La source du deuxième type d'imprécisions est spécifique à la méthode de correction du biais du GPS. En effet, un certain retard de correction est notable. Ceci est dû soit au manque de contraintes fournies par les modèles 3D des bâtiments comme c'est le cas pour la figure \ref{fig:ch8:enLigne1} ou au manque de points reconstruits dans des zones d'intérêt notamment les façades orthogonales observées comme c'est le cas dans la figure \ref{fig:ch8:enLigne3}. Malgré ces imprécisions, nous remarquons que quand les contraintes fournies par le MET (pour bien contraindre l'orientation) et les bâtiments (pour mieux estimer la correction) disponibles sont suffisantes, la précision atteinte par la fusion en ligne des contraintes est équivalente à celle obtenue à partir de la base d'amers comme le montre la figure \ref{fig:ch8:enLigne2}.
+
+
+\begin{figure}[tbp]
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_enLigneOrientationFausse}
+\label{fig:ch8:enLigne5}
+} 
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{imageo_horsLigneOrientationBonne}
+\label{fig:ch8:horsLigne5}
+}\\
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_enLigneManquedeContrainte}
+\label{fig:ch8:enLigne1}
+} 
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_horsLigneManquedeContrainte}
+\label{fig:ch8:horsLigne1}
+} \\
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_enLignePeuDepoint}
+\label{fig:ch8:enLigne3}
+} 
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_horsLignePeuDepoint}
+\label{fig:ch8:horsLigne3}
+}  \\
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_enLigne002}
+\label{fig:ch8:enLigne2}
+} 
+\subfigure[]
+{
+\includegraphics[width=0.35\linewidth]{image_horsLigne002}
+\label{fig:ch8:horsLigne2}
+} 
+\caption[Comparaison entre la localisation instantanée de la fusion en ligne et celle obtenue avec la fusion hors ligne]{\textbf{Comparaison entre la localisation instantanée de la fusion en ligne (chapitre \ref{chapitre:CorrectionBiaisGPS}) et celle obtenue avec la fusion hors ligne (chapitre \ref{chapitre:CreationBase}): Re-projection des modèles 3D sur des images extraites de la séquence de Versailles.} La colonne de gauche représente les résultats obtenus à l'issu de la localisation en ligne. La colonne de gauche représente les résultats obtenus à l'issu de la localisation a posteriori.}
+\label{fig:ch8:comparaison_fusionEnLigne}
+\end{figure}
+
+
+\subsection{Aide à la navigation en Réalité Augmentée}
+Cette expérience a pour objectif d'illustrer la qualité et le service pouvant être fourni par notre solution de localisation en ligne complète présentée dans ce chapitre.
+
+\paragraph{Protocole expérimental.} Pour évaluer la qualité de l'expérience de Réalité Augmentée ainsi que le service pouvant être offert, nous proposons d'apprécier visuellement les résultats obtenus par notre application d'aide à la navigation en Réalité Augmentée basée sur la méthode de localisation présentée dans ce chapitre. Cette évaluation est réalisée sur deux séquences réelles, et pour les différents cas de figures observables, à savoir la navigation en zone disposant d'une base d'amers et le cas inverse.
+La première séquence est enregistrée dans le quartier de Versailles ($2400 \text{m}$) qui représente un exemple de milieu urbain dense. La deuxième séquence est enregistrée dans le quartier de Saclay ($1200\text{m}$) et qui représente un exemple de milieu péri-urbain. Comme le montre la figure \ref{fig:ch8:séquences}, ces séquences présentent des conditions d'illuminations différentes de celles caractérisant les séquences utilisées lors de la création des bases d'amers.
+
+\begin{figure}[h!]
+\centering
+\begin{tabular}{|c|c|} \cline{1-2}
+Séquences d'apprentissage & Séquences de test \\ \cline{1-2}
+
+\subfigure
+{
+	\includegraphics[width=0.45\linewidth]{saclay_apprentissage}
+}
+& 
+\subfigure
+{
+	\includegraphics[width=0.45\linewidth]{saclay_test}
+} \\ \cline{1-2}
+\subfigure
+{
+	\includegraphics[width=0.45\linewidth]{versailles_apprentissage}
+}
+& 
+\subfigure
+{
+	\includegraphics[width=0.45\linewidth]{versailles_test}
+}  \\ \cline{1-2}
+\end{tabular}
+\caption[Illustrations de séquences d'apprentissage et de test utilisées]{\textbf{Illustrations de séquences d'apprentissage et de test utilisées.} La première ligne correspond à des illustrations des séquences d'apprentissage et de test dans le quartier de Saclay. La deuxième ligne correspond à des illustrations des séquences d'apprentissage et de test dans le quartier de Versailles.}
+\label{fig:ch8:séquences}
+\end{figure} 
+
+
+\paragraph{\textbf{Résultats}}
+\begin{figure}[tbp]
+\centering
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{RA_enLigne1.png}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{RA_enLigne2.png}
+}
+\caption[Des exemples d'applications de Réalité Augmentée en utilisant la fusion en ligne des contraintes.]{\textbf{Des exemples d'applications de Réalité Augmentée en utilisant la fusion en ligne des contraintes (chapitre \ref{chapitre:CorrectionBiaisGPS}):} projection des modèles des bâtiments et la trajectoire du véhicule.}
+\label{fig:ch8:RA_base2}
+\end{figure}
+Les figures \ref{fig:ch8:RA_base1} et \ref{fig:ch8:RA_base2} montrent que les localisations obtenues sont suffisamment précises pour assurer des applications convaincantes de Réalité Augmentée en insérant soit des informations routières (panneaux routier, passage piétons), des information de navigation (route à suivre), les noms des rues, ou en re-projetant des bâtiments d'intérêt. Ces résultats témoignent également de la grande précision atteinte par nos deux solutions de fusions de contraintes.
+
+
+\begin{figure}[tbp]
+\centering
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{Saclay0003.png}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{Versailles000566.png}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{Saclay0001.png}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{VersaillesISmar2001314.jpg}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{Saclay.png}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{VersaillesISmar2002388.jpg}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{Saclay0004.png}
+}
+\subfigure[]{
+\includegraphics[width=0.4\linewidth]{VersaillesISmar2003205.jpg}
+}
+\caption[Des exemples d'applications de Réalité Augmentée en exploitant des bases d'amers créées à travers la fusion hors ligne des contraintes.]{\textbf{Des exemples d'applications de Réalité Augmentée en exploitant des bases d'amers créées à travers la fusion hors ligne des contraintes (chapitre \ref{chapitre:CreationBase}):} projection des modèles des bâtiments, insertion des informations routières et la trajectoire du véhicule.}
+\label{fig:ch8:RA_base1}
+\end{figure}
+
+
+
+\section{Discussion}
+\label{sec:ra:discussion}
+La méthode présentée dans ce chapitre se distingue de la majorité des approches existantes par différents aspects. Tout d'abord, elle repose sur une modélisation collaborative, ce qui rend la méthode déployable à moindre coût.  Ensuite, elle offre un niveau de qualité variable, celui-ci variant en fonction que la zone dispose d'une base d'amers compatible avec les conditions d'illumination courante ou non. Cependant, cette variabilité de la qualité de localisation devrait se stabiliser au fur et à mesure de l'utilisation du système. En effet, au cours du temps, l'exploitation du système par les utilisateurs va permettre d'obtenir une base d'amers couvrant à la fois l'ensemble des zones géographiques mais aussi l'ensemble des conditions d'illumination. La fréquence d'apparition du cas de figure correspondant à une navigation en zone ne disposant pas d'une base d'amers valide devrait donc diminuer au fil du temps.  On notera aussi que cette fréquence baissera d'autant plus vite sur les axes les plus fréquentés par les utilisateurs.
+ 
+Un autre avantage de notre méthode par rapport aux autres méthodes exploitant une base d'amers vient du fait qu'elle offre une résistance à la perte de connexion internet. En effet, si la base d'amers est obtenue à l'aide d'une connexion internet mobile, l'indisponibilité de ce type de connexion entraine l'échec des méthodes classiques exploitant la base en question. Dans le cas de notre méthode, une perte de connexion internet revient simplement à naviguer en zone dépourvue d'une base d'amers valide.
+ 
+L'utilisation d'une approche collaborative engendre néanmoins un certain nombre de problèmes qu'il faudra résoudre à terme. En particulier, la taille de la base d'amers risque de croître rapidement. Il sera donc nécessaire d'étudier la robustesse de la méthode d'indexation à une telle montée en charge. Une procédure de « maintenance » visant à supprimer les données redondantes ou inutiles est aussi à envisager. Celle-ci pourrait se baser sur des statistiques sur l'utilisation des amers de la base par exemple.

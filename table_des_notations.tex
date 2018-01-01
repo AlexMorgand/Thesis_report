@@ -1,0 +1,121 @@
+% !TeX root = memoireDeThese.tex
+
+\section{Notations}
+\label{chapitre:tableNotations}
+
+% =============================================================================
+\section*{Mathématiques} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+
+\begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
+
+	$\espace{E}{n}$ & Espace $E$ de dimension $n$ \smallAutoReturn
+	$\matrice{M}$   & Matrice \smallAutoReturn
+	$\vect{v}$            & Vecteur \smallAutoReturn
+	$[\vect{t}]_\times$     & Matrice antisymétrique créée à partir du vecteur 
+	$\vect{t}$ \smallAutoReturn
+	$\pinv{\matrice{M}}$             & Pseudo-inverse de la matrice $\matrice{M}$ \smallAutoReturn
+	$\hat{\vect{v}}$ &  Vecteur normalisé \smallAutoReturn
+	$\fonction{F}$ & Fonction mathématique \smallAutoReturn
+\end{longtable}
+
+
+% =============================================================================
+\section*{Géométrie euclidienne et projective} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+
+\begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
+
+	$\equi$ & Égalité à un facteur non-nul près \smallAutoReturn
+	$\pDD{p}$ & Point 2D \smallAutoReturn
+	$\pDDHom{p}$ & Coordonnées homogènes du point 2D \smallAutoReturn
+	$\pDD{P}$ & Point 3D dans le repère monde\smallAutoReturn
+	$\pDDHom{P}$ & Coordonnées homogènes du point 3D \smallAutoReturn
+	$\droite{d}$      & Droite de l'espace \smallAutoReturn
+	$\plan{\pi}$ & Plan de l'espace \smallAutoReturn
+	$\plan{\pi}_\vect{P}$ & Plan tangent au point $\vect{P}$ \smallAutoReturn
+	$\mathtt{R}$ & Matrice de rotation  \smallAutoReturn
+	$\hat{\vect{N}}(\vect{P})$ & Normale au point $\vect{P}$ \smallAutoReturn
+	$S$ &  Surface étudiée \smallAutoReturn
+	$\mathtt{Q}$ & Quadrique \smallAutoReturn
+	$\mathtt{C}$ & Conique \smallAutoReturn
+\end{longtable}
+
+% =============================================================================
+\section*{Caméras et reconstruction 3D} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+
+\begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
+	$\cam{C}$ & Caméra \smallAutoReturn
+	$\mathit{I}$ & Image capturée par la caméra \smallAutoReturn
+	$\matrice{P}$  & Matrice de projection \smallAutoReturn
+	$\calib{K}$ & Matrice de calibrage \smallAutoReturn
+	$\matrice{F}$   & Matrice fondamentale \smallAutoReturn
+	$\matrice{E}$   & Matrice essentielle \smallAutoReturn
+	$\mathtt{R}$ & Rotation de la caméra  \smallAutoReturn
+	$\vect{V}$ & Position de la caméra \smallAutoReturn
+	$\mathtt{\Pi}$ & Pose de la caméra \smallAutoReturn
+\end{longtable}
+
+% =============================================================================
+\section*{Acronymes} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% =============================================================================
+
+\begin{longtable}{p{0.15\linewidth} | p{0.8\linewidth}}
+	SfM & Structure from Motion \smallAutoReturn
+	BRDF & Bidirectionnal Reflectance Distribution Function \smallAutoReturn
+	SLAM & Simultaneous Localization and Mapping \smallAutoReturn
+	JOLIMAS & JOint LIght-MAterial Specularity \smallAutoReturn
+	DoF & Degree of Freedom (degré de liberté) \smallAutoReturn
+	RA & Réalité augmentée  \smallAutoReturn
+	RD & Réalité diminuée  \smallAutoReturn
+	SVD & Singular value decomposition (décomposition en valeurs singulières) \smallAutoReturn
+	CAO & Conception Assistée par Ordinateur  \smallAutoReturn
+\end{longtable}
+
+\section*{Algèbre linéaire}
+
+\begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
+	$x$ & Scalaire \\
+	$\mathtt{R}^n$ & Espace vectoriel de dimension $n$ \\
+	$\mathbf{x}$ & Vecteur \\
+	$x_1 \dots$ & Coordonnées \\
+	$\|.\|$ & Norme euclidienne $L^2$ \\
+	$\phantom{|}|.|$ & Norme $L^1$ \\
+	$\wedge$ & Produit vectoriel \\
+	$[x]_{\times}$ & Matrice antisymétrique \\
+	$\mathtt{M}$ & Matrice \\
+	$M_{11} \dots$ & Coefficients \\
+	$\mathtt{M}^\top$ & Transposée \\
+	$\mathtt{M}^{-1}$ & Inverse \\
+	$\mathbf{0}_{m \times n}$ & Matrice nulle de dimensions $m \times n$ \\
+	$\mathtt{I}$ & Matrice identité \\
+	$\otimes$ & Produit de Kronecker \smallAutoReturn
+	$.$& Produit scalaire \smallAutoReturn
+	$\mathop{\text{vec}}$ & Opération de vectorisation de matrice  \smallAutoReturn
+	$\mathop{\text{vech}}$ &  Opération de vectorisation de matrice symétriques  \smallAutoReturn
+	$\mu$ & Opération de normalisation \smallAutoReturn
+	$\mathtt{M}^*$ &  Matrice adjointe de $\mathtt{M}$ \smallAutoReturn
+	$\vect{M}_v$ & Matrice vectorisée \smallAutoReturn
+\end{longtable}
+
+\section*{Images et éléments d'illumination}
+
+\begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
+	$I$ & Image \\
+	$I(\mathbf{q})$ & Intensité du pixel $\mathbf{q}$ \\
+	$I_s$ & Composante spéculaire de l'image \\
+	$I_d$ & Composante diffuse de l'image \\
+	$I_a$ & Composante ambiante de l'image \\
+	$i_s$ & Intensité spéculaire incidente \\
+	$i_d$ & Intensité diffuse incidente \\
+	$i_a$ & Intensité ambiante incidente \\
+	$i_a$ & Intensité ambiante incidente \\
+	$k_s$ & Ratio de réflexion spéculaire \\
+	$k_d$ & Ratio de réflexion diffuse \\
+	$k_a$ & Ratio de réflexion ambiante \\
+	$\tau$ & Seuil d'intensité \\
+	$\vect{L}$ & Position de la source de lumière ponctuelle \\
+	$\vect{R}$ & Position du symétrique de la source de lumière par rapport à la surface $S$\\
+\end{longtable}%
+\newpage

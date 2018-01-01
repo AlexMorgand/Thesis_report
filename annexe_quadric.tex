@@ -1,0 +1,460 @@
+\defineHeaderForClassicalAnnexe
+\chapter{Reconstruction d'objet sous forme de quadrique}
+\label{annexe:quadric_recon}
+
+\graphicspath{{images/Annexe/quadric_recon/}}
+
+\begin{chapeauChapitre}
+La reconstruction d'objet sous forme de quadrique est primordiale dans ce travail de thèse. Cependant, nos contributions vont au delà du cadre de la thèse puisque la reconstruction de quadrique peut être utilisée dans de nombreux domaines comme la localisation d'objets, l'estimation d'enveloppe englobante d'objet mais également la localisation de caméra.
+\end{chapeauChapitre}
+
+\section{Introduction}
+\section{État de l'art}
+
+Notre modèle géométrique repose sur l'existence d'une quadrique reconstruite par l'observation d'ellipses calculées à partir des spécularités. Il est important d'évoquer l'état de l'art des méthodes de reconstruction de quadrique car le phénomène de spécularité étant hautement variable, nous avons besoin d'une méthode de reconstruction particulièrement résistante au bruit des données d'entrée.
+
+\subsection{Approches par reconstruction multi-vues}
+Un des premières approches de reconstruction de quadriques correspond à celle de \cite{karl1994reconstructing} et \cite{ma1994quadric}. Ces deux articles ont exprimés l'existence d'une relation linéaire entre l'enveloppe d'une quadrique et la silhouette (ou contour occultant) dans le plan image de la caméra mais non généralisé à l'ensemble des classes de quadrique. Par la suite, \cite{ma1996ellipsoid} ont mis en évidence que la reconstruction d'une quadrique n'est pas possible de façon immédiate avec seulement deux vues mais ont omis de préciser les différentes raisons autre que la dégénérescence de la solution algébrique. De plus, aucune précision n'est donnée sur l'ambiguïté de la reconstruction. L'inclusion de la reconstruction de quadriques dégénérées n'est également pas évoqué.
+
+Dans l'approche de \cite{shashua1997the}, la reconstruction de quadrique est réalisée  par une approche hybride mélangeant des correspondances de points d'intérêts et de contours occultants de la quadrique. Cependant, cette approche est difficilement généralisable au delà de l'algorithme proposé qui permet de reconstruire une quadrique à partir d'une seule vue et 4 correspondances de points.
+
+Par la suite, \cite{kahl1198using} ont également remarqué que la dégénérescence de la reconstruction de quadrique en utilisant un système de deux équations fournis par deux vues mais ont émis qu'une suggestion sur preuve algébrique potentielle.
+
+Un détail très complet sur les méthodes de reconstruction de quadrique ont été réalisé par \cite{cross1998quadric, cross2000surface} en considérant la reconstruction dans l'espace dual ce qui permet de donner une solution plus générale et géométriquement complète. Un soin particulier a été porté sur l'ambiguïté de chaque reconstruction (à partir de conique dégénérées ou non) et a été exprimée géométriquement. Plus particulièrement, le concept de contrainte de dégénérescence qui permet de géré le cas difficile de reconstruction de quadrique dégénérées a été méticuleusement traité géométriquement. La contribution principale de \cite{cross1998quadric} repose sur une reconstruction générale de quadrique à partir de 2 vues (problème sous contraint), 3 vues (résolution parfaite) et 3+ vues (surcontraint). Cette reconstruction se fait par l'utilisation des contours occultant et de correspondances de points. Cette reconstruction utilise également en pré-traitement une contrainte épipolaire de coniques.
+
+\cite{reyes2005projective} ont insisté sur l'aspect contrainte épipolaire en mettant en évidence que le critère épipolaire de \cite{cross1998quadric} requiert des données d'entrée (estimation de conique) très précise. Ils proposent une contrainte épipolaire plus robuste en utilisant les points de contours utilisé pour estimer les coniques en entrée et une reconstruction de quadrique optimisée par ajustement de faisceaux. 
+
+\subsection{Autres approches}
+Récemment \cite{crocco2016structure} ont présenté une méthode permettant à la fois d'estimer la calibration et de reconstruire une quadrique (majoritairement un ellipsoïde) englobant un objet d'intérêt à partir de coniques (majoritairement ellipses) détectée à partir d'une boite englobante d'un objet. L'originalité de la méthode réside dans le traitement de données d'entrées fortement bruitées (ellipses à partir de boite englobante potentiellement ambiguë et paramètres intrinsèques initialement inconnus). Les quadriques reconstruites sont utiles pour calculer la surface d'occupation 3D d'un objet et de permettre d'imposer une contrainte forte sur les objets et peut être amélioré en ajoutant des correspondances de points ou une segmentation plus fine de l'objet pour une meilleure précision de la pose 3D de l'objet.
+
+\section{Solutions proposées}
+
+%=============================================================================
+\subsection{Contrainte épipolaire} 
+\label{sec:contrainte_epipolaire}
+%=============================================================================
+
+\subsubsection{Correction épipolaire d'ellipses}
+Reconstruire une quadrique à partir de réflexions spéculaires n'est pas une tache facile. En effet, contrairement à l'approche de \cite{cross1998quadric}, notre reconstruction est réalisée à partir d'observations de réflexions spéculaires dans plusieurs images au lieu d'observations d'un objet directement.
+
+Dans l'approche de \cite{cross1998quadric}, le calcul d'ellipses est moins propice aux erreurs. En effet, les spécularités représentent des images semi-miroir des sources de lumières réfléchies sur des surfaces spéculaires. Ces spécularités ont des contours qui ne sont pas consistantes à cause de la variation d'intensité entre les images ce qui cause que les ellipses calculées ne sont pas épipolairement consistantes comme illustré dans la figure \ref{fig:epipolar_error}.
+
+\begin{figure}[!ht]
+\centering
+    \subfigure[]
+    {
+        \includegraphics[width=0.7\linewidth]{epipolar}
+    }
+    \subfigure[]
+    {
+        \includegraphics[width=0.35\linewidth]{epi}
+    }
+    \subfigure[]
+    {
+        \includegraphics[width=0.35\linewidth]{epi_corrected}
+    }
+\caption{Lignes épipolaires des ellipses pour 3 poses de caméra $\mathtt{\Pi}_1$, $\mathtt{\Pi}_2$ et $\mathtt{\Pi}_3$ et une source de lumière $\mbf{L}$. Cette scène est illustrée en (a) et les ellipses associées et les lignes épipolaires le sont dans (b). Dans la forme naïve, la géométrie épipolaire des ellipses n'est pas respectée. Ceci résulte en une reconstruction de quadrique incorrecte et donc une prédiction de spécularité incorrecte. La correction épipolaire corrige ce problème en corrigeant les ellipses afin de répondre aux contraintes épipolaires sans changer drastiquement la forme des ellipses.}
+\label{fig:epipolar_error}
+\end{figure}
+
+Ce problème pourrait affecter la qualité de la reconstruction de quadrique à partir des spécularités. En conséquence, la consistance épipolaire devrait être vérifiée pour chaque vue utilisées pour l'initialisation afin d'obtenir un résultat optimal. Sans correspondance entre les contours d'ellipses, le système linéaire \eqref{eq:linearsystem} peut retourner des résultats incohérents. L'espace dual permet une formulation élégante du problème mais à cause de la nature algébrique des équations, un bruit même léger sur l'estimation des ellipses peut causer de grandes erreurs dans la quadrique reconstruite.
+
+Une ellipse est définie de façon unique à partir de 5 points non-alignés et 5 droites non-colinéaires dans l'espace dual. Pour trois point de vues, chaque ellipse est contrainte par deux paires de droites provenant des autres points de vues ce rendant le problème d'estimation de la conique duale sous-contrainte. Une des solutions proposées par \cite{reyes2005projective} est d'estimer les lignes épipolaires de façon plus précises à partir des ellipses provenant des autres points de vue et une droite supplémentaire provenant de la tangente d'un point de contour de l'ellipse de l'image actuelle. En utilisant ces 5 lignes, nous pouvons calculer une conique duale unique. Ce procédé est répété pour chaque point de contour et chaque point de vue. L'ellipse corrigée est celle minimisant notre distance ellipse/Point discutée dans la section \ref{sec:dist_conic_point}. Nous pouvons noter que l'efficacité du calcul d'ellipse dépend fortement de la qualité des points de contour de la spécularité.
+Les ellipses obtenues pour chaque point de vues seront utilisées dans le processus de reconstruction car elles respectent les contraintes épipolaires. Ce procédé est itératif, fiable et efficace. Nous illustrons une étape du procédé de correction à la figure \ref{fig:reyes_epipolar}. Dans notre contexte, nous ne pouvons pas nous limiter à seulement trois points de vue. Ainsi, nous incluons un raffinement non-linéaire à partir de 3+ points de vue afin d'améliorer la reconstruction de quadrique.
+\begin{figure}[!ht]
+\centering
+    \includegraphics[width=0.7\linewidth]{reyes_epipolar}
+    \caption{Correction épipolaire de \cite{reyes2005projective}. L'ellipse observée (points bleus) est calculée à partir des points de contour (croix noires) de la spécularité. Les quatre droites épipolaires crées à partir des autres points de vue sont représentées en rouge et magenta. Afin d'estimer la conique duale respectant la géométrie épipolaire, une cinquième droite calculée à partir de la tangente d'un point de contours (droite en pointillée en bleu). Nous calculons une ellipse dans l'espace dual pour chaque point de contour et nous choisissons celle (représentée ici) minimisant la distance ellipse/point évoquée à section \ref{sec:dist_conic_point} pour chacun des trois points de vue. Les ellipses obtenues seront utilisées dans le processus de reconstruction d'une quadrique précise à partir d'ellipses épipolairement consistantes.}
+\label{fig:reyes_epipolar}
+\end{figure}
+
+\subsection{Distance 2D Ellipse/Point}
+
+\subsubsection{Distance de Jaccard}
+\label{sec:jaccard}
+La distance de Jaccard calcule la similarité entre deux ensemble $A$ et $B$ en comparant la ratio entre entre l'intersection et l'union des deux ensembles. Cette distance est illustrée à la figure \ref{fig:jaccard_distance}. En pratique, cette distance peut facilement être utilisée pour estimer une distance entre deux ellipses dans un processus de maximisation. Cette distance est définie dans l'équation \eqref{eq:jaccard}.
+\begin{equation}
+\begin{aligned}
+J(A, B) =  \frac{| A \cap B |}{|A \cup B |}.
+\end{aligned}
+\label{eq:jaccard}
+\end{equation}
+
+\begin{figure}[!ht]
+   \centering	        
+   	  \subfigure[]
+	  {
+  		 \includegraphics[width=0.45\linewidth]{point_point_distance.pdf}
+  		 \label{fig:point_point_distance}
+        }
+   	  \subfigure[]
+	  {
+  		 \includegraphics[width=0.45\linewidth]{jaccard_distance}
+  		 \label{fig:jaccard_distance}
+        }
+  
+   \caption{Dans (a) le distance point/point est représenté comme étant la somme des distances Euclidiennes entre les contours de spécularités (en vert) et l'ellipse discrétisée par notre méthode (points rouges). Dans (b), nous illustrons la distance de Jaccard en utilisant l'intersection (en jaune) de l'aire des deux ellipses (en rouge et vert). L'union correspond à la somme de ces 3 couleurs.}
+   \label{fig:conic_distance}
+\end{figure}
+
+
+\subsubsection{Paramétrisation d'ellipse et distance point/ellipse}
+\label{sec:dist_conic_point}
+Calculer une distance point/ellipse entre les contours d'une spécularité et son ellipse associée n'est pas optimal en pratique. En effet, calculer la distance entre un point (élément discret) et une ellipse (élément paramétrique) requiert de calculer la racine d'ordre 4 d'un polynôme ce qui est couteux en temps de calculs et ne permet pas une dérivée analytique.
+Pour ces raisons, une distance point/point est préférable par soucis de simplicité et d'optimisation. Pour discrétiser l'ellipse en différents points, une paramétrisation d'ellipse est nécessaire.
+
+\subsubsection{Paramétrisation d'ellipse pour l'association point/point}
+Afin de résoudre ce problème, \cite{sturm2007conic} proposent une paramétrisation de l'ellipse afin de l'échantillonner en fonction des points de contours les plus proches de l'ellipse. Cette paramétrisation permet ainsi d'obtenir une distance point/point plus rapide, plus cohérente et plus adaptée à notre contexte. Intuitivement, le point sur l'ellipse le plus proche d'un point de contour correspond à l'intersection de la droite passant par le centre de l'ellipse et le point de contour avec l'ellipse. Cependant, il est plus simple de calculer l'homographie $\mat{H}$ appliquée à notre ellipse $\mat{C}$ afin de transformer celle-ci en un cercle unitaire $\mat{C}_{unit}$. En effet, sans cette transformation, cet échantillonnage d'ellipse impliquerait le calcul d'une intersection entre une droite et une ellipse ce qui n'est pas trivial et coûteux en temps de calcul. Cependant, avec la transformation $\mat{H}$, le problème se résume à un calcul d'angle déduit par relation trigonométrique. Naïvement, nous pouvons représenter chaque point $\vect{q}'_{j} \in \mat{C}_{unit}$ par:
+\begin{equation}
+\vect{q}'_{j} =
+	\begin{pmatrix}
+		x \\ 
+		y \\ 
+		1
+	\end{pmatrix}
+\end{equation}
+Cependant, une façon plus simple de paramétrer une ellipse et de choisir le cercle unitaire $\mat{C}_{unit}$ comme support ce qui nous permet de paramétrer chaque $q'_{j} \in \mat{C}_{unit}$ par un angle $\alpha_j$ tel que:
+\begin{equation}
+\vect{q}'_{j} =
+	\begin{pmatrix}
+		\text{cos} \alpha_j \\ 
+		\text{sin} \alpha_j \\ 
+		1
+	\end{pmatrix},
+\end{equation}
+ce qui implique de calculer un seul paramètre d'angle au lieu de deux paramètres de position.
+
+A première vue, cette paramétrisation a l'inconvénient de comporter un nombre important de paramètres à estimer: $n + 8$ (pour $n$ points de contours de spécularités à faire correspondre à l'ellipse $\mat{C}$ et 8 paramètres pour $\mat{H}$) au lieu de 5 paramètres suffisants pour paramétrer une ellipse (position $x_o, y_o$, échelle $s_x, s_y$ et angle $\alpha$).
+
+Jusqu'à maintenant, nous avons considéré $\mat{H} \in \mathbb{R}^{3 \times 3}$ tel que notre ellipse $\mat{C}$ est obtenue par la relation :
+\begin{equation}
+    \mat{C} \sim \mat{H}^{-\top}\mat{C}_{unit}\mat{H}^\top,
+\end{equation}
+avec $\mat{C}_{unit}$ le cercle unitaire centrée à l'origine. Nous avons considéré $\mat{C}$ comme étant une générale homographie 2D ce qui est une sur-paramétrisation. Nous pouvons paramétrer $\mat{H}$ de façon minimale tel que:
+\begin{equation}
+ \mat{C} \sim \mat{R}\mat{\Sigma} = \mat{R}\text{ diag}(a, b, c),
+\end{equation}
+avec $\mat{R}^{3 \times 3}$ une matrice orthogonale et $a$, $b$ et $c$ des scalaires. Ces paramètres sont obtenus par décomposition en valeurs singulières (SVD). Contrairement à cette approche de \cite{sturm2007conic}, nous estimons les 5 paramètres de $\mat{C}$ utilisant l'algorithme suivant :
+\begin{algorithm}
+\caption{}
+\begin{algorithmic}[1]
+\Procedure{TransformationEllipseEnParametrique}{$\mat{C}$}
+\State $\mat{K} \gets \mat{C}(1:2, 1:2)$
+\State $\vect{t} \gets \mat{C}(1:2, 3)$
+\State $e \gets \mat{C}(3, 3)$
+\State $\vect{p} \gets -\mat{K}^{-1}\vect{t}$
+\State $[\mat{V}, \mat{D}] \gets eig(\frac{1}{(\vect{t}^{\top}\mat{K}^{-1}\vect{t} - e)\mat{K}})$
+\If {$\text{det}(\mat{V}) < 0$}
+    \State $\mat{V}(:, 1) = -\mat{V}(:, 1)$
+\EndIf
+\State $s_x \gets \frac{1}{\sqrt{\mat{D}(1, 1)}}$
+\State $s_y \gets \frac{1}{\sqrt{\mat{D}(2, 2)}}$
+\State $\alpha \gets \text{tan}(\frac{\mat{V}(2, 1)}{\mat{V}(1, 1)})^{-1}$ \\
+\Return $\begin{pmatrix} \vect{p} & s_x & s_y & \alpha \end{pmatrix}$
+\EndProcedure
+\end{algorithmic}
+\label{algo:conic_to_natural}
+\end{algorithm}
+
+\begin{figure}[!ht]
+   \centering	     
+  		 \includegraphics[width=0.8\linewidth]{conic_param_full}
+   \caption{Paramétrisation d'ellipse. À partir de l'état initial (gauche) avec les contours de la spécularité (points noirs), nous associons à chaque point de contours un point sur l'ellipse. Ces points de l'ellipse sont calculés en transformant l'ellipse (en cercle unitaire (droite)) et les points de contours par l'homographie $\mat{H}^{-1}$ (étape (1)). Dans l'étape (2), nous calculons les intersections des lignes passant par les points de contours et le centre du cercle unitaire avec ce même cercle. dans l'étape (3), les intersections (points bleus) sont transformés à nouveau sur l'ellipse avec l'homographie $\mat{H}$.}
+   \label{fig:conic_param}
+\end{figure}
+
+Ainsi $\mat{H}$ est obtenu en convertissant $\mat{C}$ en représentation naturelle explicitant les coordonnées du centre $\vect{p_o} = (x_o, y_o)^\top$, les scalaires $s_x, s_y$ et l'angle de rotation de l'ellipse $\alpha$ décrit par l'algorithme \ref{algo:conic_to_natural}. $\mat{H}$ se construit de la manière évoquée par \cite{Hartley2004} :
+\begin{equation}
+ \mat{H} =  \begin{pmatrix}
+          s_x  cos(\alpha) &- s_y   sin(\alpha) &  x_o  \\
+          s_x  sin(\alpha) & s_y  cos(\alpha) &  y_o \\
+          0 & 0  & 1
+\end{pmatrix}
+% \end{aligned}
+\label{eq:homocomputation}
+\end{equation}
+Cette paramétrisation a pour objectif d'associer les points de contours de la spécularité avec les points associés les plus proches de l'ellipse. Cette étape est réalisée une seule fois afin de fournir un état initial au processus de raffinement non-linéaire. Ces points seront utilisés comme paramètres dans le raffinement pour contraindre d'avantage la quadrique à raffiner. Ainsi, nous appliquerons également ce $\mat{H}$ pour les points de contours de la spécularité. Ce principe est illustré dans la figure \ref{fig:conic_param}. 
+Les différentes étapes de cet algorithme représentée dans la figure \ref{fig:conic_param} sont:
+\begin{enumerate}
+    \item Calcul de l'homographie $\mat{H}$ transformant l'ellipse $\mat{C}$ en cercle unitaire $\mat{C}_{unit}$ et transformation des points de contours (en noir à gauche) par $\mat{H}$ en points de contours à droite autour du cercle unitaire $\mat{C}_{unit}$
+    \item Calcul de l'intersection entre les points de contours transformés et le cercle unitaire $\mat{C}_{unit}$. Nous isolons un point de contour (en bleu à droite) comme exemple
+    \item Transformation des points d'intersection par la transformation $\mat{H}^{-1}$. Le point résultant (en bleu à gauche) est cohérent par rapport au point de contour de spécularité le initial
+\end{enumerate}
+
+\paragraph{Limitations}
+A l'opposé des approches de calcul d'ellipse à partir d'un ensemble de points de contours comme dans  \cite{sturm2007conic}, notre application présente quelques cas spécifiques qui mettent en échec notre paramétrisation d'ellipse $\mat{C}$ par rapport aux points de contours de la spécularité. Lors de la reconstruction initiale de notre quadrique, nous n'avons pas de garantie que les ellipses obtenues par projection soient considérablement décalées par rapport à leurs ellipses associées correspondant aux contours de spécularités. Ce phénomène s'explique si la quadrique reconstruite est considérablement décalé. Nous illustrons ce phénomène à la figure \ref{fig:decalage_quad}.
+ Il est également possible que les ellipses obtenues par projection aient une échelle considérablement différentes de leurs ellipses associées. Cette problématique s'explique quand la position de la quadrique a bien été estimée mais que le calcul de l'échelle de cette quadrique soit fausse. Nous illustrons ce phénomène à la figure \ref{fig:echelle_quad}.
+ 
+\begin{figure}[!ht]
+   \centering	        
+   	  \subfigure[]
+   	  {
+   	      \includegraphics[width=0.45\linewidth]{param_conic2.png}
+   	      \label{fig:decalage_quad}
+   	  }       
+   	  \subfigure[]
+   	  {
+   	      \includegraphics[width=0.45\linewidth]{param_conic3.png}
+   	      \label{fig:echelle_quad}
+   	  }
+\caption{Limitation de la paramétrisation classique d'ellipse à partir de points de contours. Dans (a), nous illustrons le problème de la paramétrisation pour des contours éloignées considérablement de l'ellipse associée. Notre paramétrisation recherche les points de l'ellipse les plus proches des points de contours ce qui provoque une mauvaise répartition des points sur l'ellipse. Dans (b), nous illustrons le problème d'une paramétrisation entre des points contours répartis sur une surface beaucoup plus importante que l'ellipse associée. Ces deux problèmes ont pour impact d'avoir une distance ellipse/point trop faible et incohérente.}
+\label{fig:conic_param_limitation}
+\end{figure}
+Ces deux phénomènes ne permettent pas une estimation de la distance entre une ellipse et des points de contours cohérente car pour une ellipse et des points de contours visuelles éloignés et d'échelles différentes, la distance entre les deux entité est trop faible et non représentative.
+
+\paragraph{Amélioration de la paramétrisation}
+Pour notre application, nous recherchons une répartition des points sur $\mat{C}$ plus uniforme tout en conservant une correspondance entre un point de contour et un point appartement à l'ellipse la plus petite possible. Nous proposons une amélioration de la paramétrisation permettant un bon compromis entre ces deux objectifs.
+
+Les différentes étape de notre algorithme sont:
+\begin{enumerate}
+    \item Nous partons de l'ellipse initiale $\mat{C}_1$ estimée par la projection de la quadrique reconstruite et de l'ellipse $\mat{C}_2$ estimée à partir des points de contours de la spécularité et utilisée par le processus de reconstruction de quadrique
+    \item Nous calculons l'homographie $\mat{H}_1$ transformant $\mat{C}_1$ en cercle unitaire $\mat{C}_{unit}$. Nous appliquons cette homographie à $\mat{C}_2$ afin d'obtenir une ellipse $\mat{C}'_2$ et aux points de contours de spécularité associés.
+    \item  Par la suite, nous calculons l'homographie $\mat{H}_2$ transformant $\mat{C}'_2$ en cercle unitaire $\mat{C}_{unit}$  et l'appliquons au point de contours transformés par $\mat{H}_1$.
+    \item L'intersection entre les nouveaux points de contours obtenus et le cercle unitaire nous donne une discrétisation que nous appliquons à $\mat{C}_1$ en utilisant la transformation $\mat{H}_1^{-1}$
+\end{enumerate}
+   Notre processus de paramétrisation est illustré à la figure \ref{fig:new_conic_param2}.
+
+\begin{figure}[!ht]
+   \centering	        
+   	  \subfigure[]
+   	  {
+   	      \includegraphics[width=0.45\linewidth]{old_conic_param}
+   	      \label{fig:new_conic_param1}
+   	  }       
+   	  \subfigure[]
+   	  {
+   	      \includegraphics[width=0.45\linewidth]{new_conic_param}
+   	      \label{fig:new_conic_param2}
+   	  }
+\caption{Amélioration des limitations de la paramétrisation d'ellipse classique. Dans (a), nous illustrons le problème de notre méthode précédente de paramétrisation pour des contours fortement éloignées de l'ellipse associée en appliquant les même étapes que dans la figure \ref{fig:conic_param}. Dans (b), nous présentons le même exemple avec notre nouvelle paramétrisation qui fournit un meilleur compromis entre répartitions des points sur l'ellipse paramétrée et distance entre point de contours et l'ellipse minimale. Nous partons de la partie gauche de la figure avec l'ellipse $\mat{C}_1$ estimée par la projection de l'ellipsoïde. Les points de contours (vert) correspondent à nos données d'entrées avec l'ellipse $\mat{C}_2$ (en verte) associée aux points. Nous estimons l'homographie $\mat{H}_1$ qui transforme $\mat{C}_1$ en cercle unitaire et centré (étape 1) et l'appliquons à $\mat{C}_1$, $\mat{C}_2$ et aux points de contours (étape 2). Pour recentrer les contours, nous estimons $\mat{H}_2$ l'homographie qui transforme $\mat{C}_2$ en cercle unitaire centré et l'appliquons aux points de contours transformés par $\mat{H}_1$ (étape 3). L'intersection entre le cercle unitaire et ces points (bleus à droite) transformés est calculée. Nous utilisons $\mat{H}_1^{-1}$ pour transformer ces points d'intersections sur $\mat{C}_1$ (étape 4).}
+\label{fig:new_conic_param}
+\end{figure}
+En reprenant les exemples de la figure \ref{fig:conic_param_limitation}, nous observons dans la figure \ref{fig:conic_param_limitation_new} les amélioration de notre nouvelle paramétrisation. Nous observons une meilleure répartition des points sur l'ellipse associée aux contours et une distance  ellipse/point cohérente pour chaque point de contours.
+
+\begin{figure}[!ht]
+   \centering	        
+   	  \subfigure[]
+   	  {
+   	      \includegraphics[width=0.45\linewidth]{param_conic_new2.png}
+   	      \label{fig:decalage_quad_fixed}
+   	  }       
+   	  \subfigure[]
+   	  {
+   	      \includegraphics[width=0.45\linewidth]{param_conic_new3.png}
+   	      \label{fig:echelle_quad_fixed}
+   	  }
+\caption{Amélioration des limitations de la paramétrisation d'ellipse classique. Nous observons une meilleure répartition des points sur l'ellipse associée aux contours et une distance ellipse/point cohérente pour chaque point de contours.}
+\label{fig:conic_param_limitation_new}
+\end{figure}
+
+\subsubsection{Distance point/point d'ellipses}
+Notre distance correspond à la somme des distances euclidiennes pour chaque paire de point $q'_{i,j}$ (points de contours de la spécularité) et $\vect{q}_{i, j} \in \mat{C}$ tel que :
+\begin{equation}
+\begin{aligned}
+\sum^{m}_{j = 1}{d(\vect{q}'_{j}, \vect{q}_{j})}, 
+\end{aligned}
+\label{eq:latentdistance}
+\end{equation}
+avec $m$ le nombre de points de contours pour l'ellipse $\mat{C}$. Cette distance est illustrée sur la figure \ref{fig:point_point_distance}.
+
+\subsection{Raffinement non-linéaire}
+Le raffinement non-linéaire est crucial pour gérer des données d'entrée bruitées et pour corriger l'initialisation de quadrique sur un panel de points de vue plus large. Pour des données réelles, le processus d'initialisation n'est pas suffisant. Notre contexte diffère fortement de \cite{cross1998quadric} due à l'aspect bruité des spécularités ce qui correspond à un problème de modélisation. En détails, un contour de spécularité est difficilement consistant d'une image à l'autre à cause d'une dépendance forte de la forme de la spécularité aux paramètres de caméra, des propriétés des matériaux et des conditions d'illumination. Afin d'améliorer notre initialisation de quadrique, nous utilisons un raffinement non-linéaire qui minimise notre distance Ellipse/Point évoqué à la section \ref{sec:dist_conic_point} entre les projections de la quadrique pour chaque points de vue et les contours associés. Notre fonction de coût pour la minimisation est proche de celle de \cite{reyes2005projective} mais nous n'utilisons pas un ajustement de faisceau car nous assumons que les poses de caméra sont suffisamment robustes. De plus, en dehors de la fonction de coût, \cite{reyes2005projective} ne donne pas énormément de détail sur l'implémentation du raffinement non-linéaire et notamment sur le calcule de la distance Ellipse/Point.
+
+\subsubsection{Fonction de coût avec la distance de Jaccard}
+Cette distance a pour objectif de maximiser le recouvrement de la spécularité détectée et l'ellipse estimée par projection perspective de la quadrique sur différents points de vue. Une fonction de coût utilisant la distance de Jaccard est décrite dans l'équation \eqref{eq:jaccardistance}:
+\begin{equation}
+\begin{aligned}
+& \underset{\mathtt{Q}}{\max}
+& & \sum^{n}_{i = 1}{J(\mathtt{C}'_i, E_i)},  \\
+\end{aligned}
+\label{eq:jaccardistance}
+\end{equation}
+avec $E$ l'ensemble des pixels spéculaires dans l'image fournit par notre détecteur de spécularité pour le point de vue d'indice $i$.
+
+\subsubsection{Limitations}
+La distance de Jaccard fournit des résultats précis seulement quand les ensembles comparés sont sécants. Dans notre situation, il n'est pas rare d'avoir l'ellipse projetée de la quadrique et les contours de la spécularités séparé par une distance conséquente après une mauvaise initialisation de la quadrique. Dans ce cas, la distance de Jaccard est nulle et ne fournit aucune information localement ce qui pose un problème lors de l'utilisation d'algorithmes de raffinement non-linéaire. De plus, le calcul de l'aire d'intersection entre la surface couverte par les points de contours et l'ellipse projetée est relativement coûteuse en temps de calcul et relativement complexe comme évoqué dans les travaux de \cite{hughes2012calculating}.
+
+
+\subsubsection{Fonction de coût avec variables latentes}
+
+Afin de contraindre d'avantage le raffinement et de réduire la dimensionnalité de la minimisation, nous utilisons des variables latentes sous forme de points 2D $\mathbf{q'}_{i, j}$ contraint à être appartenir à l'ellipse  $\mathtt{C}$ et comparé avec les contours de spécularité $\mathbf{q}_{i, j}$. Cette formulation nous permet de poser les contraintes suivantes durant la minimisation:
+
+\begin{equation}
+\begin{aligned}
+\mathbf{q}_{i, j}^{\prime\top}\mathtt{C}_j\mathbf{q}_{i, j}^{\prime} = 0.
+\end{aligned}
+\end{equation}
+
+Les paramètres de notre minimisation est la représentation matricielle de la quadrique $\mathtt{Q} \in \mathbb{R}^{4\times4}$ accompagnée des différentes variables latentes appartenant à l'ellipse. Avant le processus de raffinement, ces variables latentes $\mathbf{q}'_{i, j}$ sont estimées  par notre paramétrisation évoqué dans la section \ref{sec:dist_conic_point} pour chaque ellipse $\mathtt{C}_j$ d'indice $j$. La fonction de coût avec les variables latentes est décrite par:
+
+\fix{A t'on la projection inclue dans l'équation ?}
+\begin{equation}
+\left\{
+\begin{aligned}
+& \underset{\mathtt{Q}, \mathbf{q}_{1, 1}^{\prime}, \ldots, \mathbf{q}_{n, m_n}^{\prime}}{\text{min}}
+& & \sum^{n}_{i = 1}\sum^{m_i}_{j = 1}{d(\mathbf{q}'_{i, j}, \mathbf{q}_{i, j})^2},  \\
+& \text{subject to}
+& & \mathbf{q}_{i, j}^{\prime\top}\mathtt{C}_j\mathbf{q}_{i, j}^{\prime} = 0
+\end{aligned}
+\right.
+\label{eq:latentcost}
+\end{equation}
+Une illustration du raffinement d'une quadrique à partir de trois points de vue est illustré à la figure \ref{fig:quadrique_refinement}.
+\begin{figure}[!ht]
+	\centering
+	\subfigure[]
+	{
+        \includegraphics[width=0.35\linewidth]{1.png}
+    }
+	\subfigure[]
+	{
+        \includegraphics[width=0.35\linewidth]{1_proj.png}
+    }
+	\subfigure[]
+	{
+        \includegraphics[width=0.35\linewidth]{274.png}
+    }
+	\subfigure[]
+	{
+        \includegraphics[width=0.35\linewidth]{274_proj.png}
+    }
+	\subfigure[]
+	{
+        \includegraphics[width=0.35\linewidth]{967.png}
+    }
+	\subfigure[]
+	{
+        \includegraphics[width=0.35\linewidth]{967_proj.png}
+    }
+\caption{Illustration de l'évolution du raffinement non-linéaire de quadrique (à droite) à partir des contours de spécularité en vert. Nous pouvons observer l'évolution des ellipses correspondant aux projections de la quadrique en fonction des poses de caméra.}
+\label{fig:quadrique_refinement}
+\end{figure}
+Bien que cette minimisation soit fonctionnelle, la forme matricielle de $\mat{Q}$ est plus difficile à optimiser dans l'état que la forme paramétrique de la quadrique (9 degrés de libertés : position 3D, échelle en 3 dimensions et 3 angles). Cela est due au fait que les 10 éléments distincts de la matrice symétrique $\mat{Q}$ (9 en fixant la dernière case correspondant à l'échelle à 1) ne sont pas indépendants. Nous transformons la forme matricielle de $\mat{Q}$ en représentation paramétrique par l'algorithme suivant:
+\begin{algorithm}
+\caption{}
+\begin{algorithmic}[1]
+\Procedure{TransformationQuadriqueEnParametrique}{$\mat{Q}$}
+\State $\mat{K} \gets \mat{Q}(1:3, 1:3)$
+\State $\vect{t} \gets \mat{Q}(1:3, 4)$
+\State $e \gets \mat{Q}(4, 4)$
+\State $\vect{p} \gets -\mat{K}^{-1}\vect{t}$
+\State $[\mat{V}, \mat{D}] \gets eig(\frac{1}{(\vect{t}^{\top}\mat{K}^{-1}\vect{t} - e)\mat{K}})$
+\State $\mat{V} = \mat{V}^\top$
+\If {$\text{det}(\mat{V}) < 0$}
+    \State $\mat{V} = -\mat{V}$
+\EndIf
+\State $\mat{V}(1, :) = -\mat{V}(1, :)$
+\State $\mat{V}(2, :) = -\mat{V}(2, :)$
+\State $s_x \gets \frac{1}{\sqrt{\mat{D}(1, 1)}}$
+\State $s_y \gets \frac{1}{\sqrt{\mat{D}(2, 2)}}$
+\State $s_z \gets \frac{1}{\sqrt{\mat{D}(3, 3)}}$
+\State $\alpha \gets -\text{tan}(\frac{\mat{V}(3, 2)}{\mat{V}(3, 3)})^{-1}$ \\
+\State $\beta \gets -\text{tan}(-\frac{\mat{V}(3, 1)}{\sqrt{\mat{V}(3, 2)^2 + \mat{V}(3, 3)^2}})^{-1}$ \\
+\State $\gamma \gets -\text{tan}(\frac{\mat{V}(2, 1)}{\mat{V}(1, 1)})^{-1}$ \\
+\Return $\begin{pmatrix} \vect{p} & s_x & s_y & s_z & \alpha & \beta & \gamma \end{pmatrix}$
+\EndProcedure
+\end{algorithmic}
+\label{algo:quadric_to_natural}
+\end{algorithm}
+
+\fix{Parler du protocole expérimental pour bien estimer la différence en ellipsoide}
+
+\fix{Distance ellipsoide/ellipsoide est également super intéressante. Je pense qu'il faut mettre en annexe par contre}
+
+\subsection{Critère d'images clés}
+Lorsque les points de vue de caméra s'étendent sur un ensemble d'images où la pose se déplace faiblement, le système \eqref{eq:linearsystem} utilisée pour reconstruire la quadrique duale $\mat{Q}^*$ peut être mal conditionnée. Ce contexte peut engendrer une reconstruction de quadrique dégénérée, à la mauvaise échelle (un degré de liberté complètement disproportionné) ou l'obtention d'une mauvaise quadrique comme une hyperboloïde. Pour la phase initiale et le raffinement non-linéaire, il est important de choisir un ensemble d'images pertinentes appelé images clés (notion similaire à \cite{mouragnon2006real}). Une approche naïve serait de sélection toutes les images de la séquence ce qui engendrerait une accumulation d'erreur importante avec une augmentation du temps de calcul de l'application. En pratique, nous limitons la reconstruction initiale de quadrique par 6 images clés.
+
+Une image est considérée comme image clé lorsqu'elle répond à deux critères : estimation correcte de l'ellipse correspondante due à une bonne détection de la spécularité et bonne contrainte épipolaire.
+
+\paragraph{Qualité de détection et correspondance d'ellipse de la spécularité} A l'aide de la distance de \ref{sec:jaccard}, nous considérons l'image courante comme image clé si l'ellipse estimée recouvre une aire proche de l'aire de la spécularité détectée. En pratique, $90\%$ de recouvrement est suffisant pour obtenir une bonne correspondance. Ce processus est illustré à la figure \ref{fig:specularity_quality}.
+\paragraph{Répartition des tangentes épipolaire} To ensure our epipolar constraint to be fully effective, we want the tangents of the conic to be evenly spread around it.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=\linewidth]{tangent_criterion.pdf}
+	\caption{\fix{Can you do it with real images ?} Epipolar tangency spreading criterion. We want to maximize the angle between the lines containing the center of the conic and respectively the two epipoles for the three frames. We need to have the angles ($\alpha$, $\beta$ and $\gamma$) close to $120^{\circ}$ to ensure an optimal spreading of the viewpoints and a good initialization of the quadric.}
+	\label{fig:tangent_criterion}
+\end{figure}
+\fix{Our criterion is to maximize the angle between the lines containing the epipoles and the conic center. This criterion is applied on every keyframe and illustrated in the Fig.\ref{fig:tangent_criterion}. We need to have the angles close to $120^\circ$ to ensure an optimal spreading of the viewpoints. Combining to the epipolar correction, the quadric initialization is made in robust conditions.}
+\begin{figure}[!ht]
+	\centering
+	\subfigure[]
+	{
+		\fbox{\includegraphics[width=0.45\linewidth, height=4.5cm]{epipo_without.pdf}}
+	}
+	\subfigure[]
+	{
+		\fbox{\includegraphics[width=0.45\linewidth]{proj_without.pdf}}
+	}
+	
+	\subfigure[]
+	{
+		\fbox{\includegraphics[width=0.45\linewidth, height=4cm]{epipo_with.pdf}}
+	}
+	\subfigure[]
+	{
+		\fbox{\includegraphics[width=0.45\linewidth, height=4cm]{proj_with.pdf}}
+	}
+    \caption{\fix{I don't like these but what can I do ? Use real data on real sequences. Display the complete quadric ?} Quadric reconstruction with manually chosen frames (first row) and keyframes (last row). In (a, c), we compared the quadric projections in blue, red and magenta with the ground truth in green. The upper triplet of frame does not constraint efficiently the quadric reconstruction.   The lower triplet has epipolar tangents evenly spread on the conics which will further constraint and improve the reconstruction.}
+    \label{fig:keyframe_criterion}
+\end{figure}
+
+\section{Résultats}
+
+
+\fix{A traduire obviously}
+\section{Vectorization du système de projection de la quadrique duale}
+\label{sec:vectorization_appendix}
+A detailed process of the vectorization of equation \eqref{eq:conicdual} can be found here. We define two vectorization operators, as in \cite{henderson1979vec}, $\mathop{\text{vec}}$ for any matrix and $\mathop{\text{vech}}$ for symmetric matrices such as $\mathtt{C}$, $\mathtt{Q}$:
+\begin{equation*}
+\setlength\arraycolsep{2pt}
+\mathtt{X} =
+\begin{bmatrix}
+a & b \\
+b & d \\
+\end{bmatrix}\text{, }  \mathop{\text{vec}}(\mathtt{X}) = \begin{bmatrix} a & b & b & d\end{bmatrix}^\top \text{, } \mathop{\text{vech}}(\mathtt{X}) = \begin{bmatrix}a & b & d\end{bmatrix}^\top.
+\end{equation*}
+We apply $\mathop{\text{vech}}$ to equation \eqref{eq:conicdual}:
+\begin{equation*}
+	\mathop{\text{vech}}(\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top) = \mathop{\text{vech}}(\mathtt{C}^*)
+\end{equation*}
+which can be rewritten as:
+\begin{equation*}
+\setlength\arraycolsep{2pt}
+	\mathtt{H}\mathop{\text{vec}}(\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top) = \mathbf{C}_v^* \text{, with } \mathtt{H} =
+	\begin{bmatrix}
+	1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+	0 & 0.5 & 0 & 0.5 & 0 & 0 & 0 & 0 & 0 \\ 
+	0 & 0 & 0.5 & 0 & 0 & 0 & 0.5 & 0 & 0 \\
+	0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+	0 & 0 & 0 & 0 & 0 & 0.5 & 0 & 0.5 & 0 \\
+	0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\ 
+	\end{bmatrix},
+\end{equation*}
+with $\mathtt{H} \in \mathbb{R}^{6 \times 9}$ as $\mathop{\text{vech}}(\mathtt{X}) = \mathtt{H}\mathop{\text{vec}}(\mathtt{X})$. From \cite{henderson1979vec}, with three matrices $\mathtt{A}$, $\mathtt{B}$ and $\mathtt{C}$, $\mathop{\text{vec}}(\mathtt{ABC}) = (\mathtt{C}^\top \otimes  \mathtt{A}) \mathop{\text{vec}}(\mathtt{B})$ with $\otimes$ the Kronecker product. We further develop in:
+\begin{equation*}
+\mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathop{\text{vec}}(\mathtt{Q}^*) = \mbf{C}^*_v.
+\end{equation*}
+$\mathop{\text{vec}}$ and $\mathop{\text{vech}}$ are also linked such as $\mathop{\text{vec}} (\mathtt{X}) = \mathtt{G}\mathop{\text{vec}}(\mathtt{X})$ with \mbox{$\mathtt{G} \in \mathbb{R}^{16 \times 10}$}. Finally, we obtain the linearization:
+\begin{equation}
+\setlength\arraycolsep{2pt}
+\mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathtt{G} \mathop{\text{vech}}(\mathtt{Q}^*) = \mbf{C}^*_v
+\end{equation}
+with
+\begin{equation*}
+\setlength\arraycolsep{4.5pt}
+\setcounter{MaxMatrixCols}{16}
+\mathtt{G} =
+    \begin{bmatrix}
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+0 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &  0\\
+0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 1 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 0\\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1\\
+	\end{bmatrix}^\top,
+\end{equation*}
+which gives the final form $\mathtt{B}\mathbf{Q}^*_v = \mathbf{C}_v^*$ with $\mathtt{B} = \mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathtt{G}$.
