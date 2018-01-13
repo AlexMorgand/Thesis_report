@@ -37,7 +37,7 @@ Par observation de la forme de la spécularité sur une surface planaire, il sembl
 
 Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAterial Specularity} (JOLIMAS) permettant de prédire facilement la position et la forme des spécularités pour de nouveaux points de vue comme illustré à la figure \ref{fig:real_data}. Ce modèle est composé d'une quadrique qui inclue les propriétés des lumières et des matériaux de la scène. Cette quadrique est reconstruite à partir de chaque ellipse associée à une spécularité observée sur une surface planaire, pour un point de vue donné. Dans ce chapitre, nous présentons les différents modèles physiques utilisés en général en vision par ordinateur et analysons leur capacité à prédire le phénomène complexe des spécularités. Nous travaillons essentiellement sur des surfaces planaires car il est facile de retrouver ce type de surface dans une scène comme exploité dans \cite{buteau2015poster, jachnik2012realtime}. L'extension de ce modèle pour des surfaces plus complexes requiert une étude plus approfondie.
 
- Notre modèle est présenté dans la section \ref{sec:approche_proposee_primal}. Son estimation est développée dans la section \ref{sec:model_estimation} en comparant différentes approches de l'état de l'art. Notre modèle et sa capacité à prédire les spécularités ont été testés sur des séquences de synthèse et réelles comprenant des sources de lumière de type ampoule et néon dans la section \ref{sec:results}. Nous illustrons également la capacité de notre modèle à gérer plusieurs sources de lumières \ref{sec:contexte_multi_lumieres} et des lumières à état changeant (allumées et éteintes) \ref{sec:etat_changeant}.
+ Notre modèle est présenté dans la section \ref{sec:approche_proposee_primal}. Son estimation est développée dans la section \ref{sec:model_estimation} en comparant différentes approches de l'état de l'art. Notre modèle et sa capacité à prédire les spécularités ont été testés sur des séquences de synthèse et réelles comprenant des sources de lumière de type ampoule et néon dans la section \ref{sec:results}. Nous illustrons également la capacité de notre modèle à gérer plusieurs sources de lumières et des lumières à état changeant (allumées et éteintes) dans le chapitre \ref{chapitre:RA}.
 
 % =============================================================================
 \section{Approche proposée} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,7 @@ Une démonstration de notre approximation de la spécularité, observée sur une sur
 \begin{figure}[!ht]
    \centering	  
   \includegraphics[width=\linewidth]{main_schema.pdf}
-   \caption{Lien entre le modèle physique (lumière et matériaux) et la géométrie multi-vues (notre modèle empirique). À partir de plusieurs points de vue, une quadrique est reconstruite à partir de spécularités de forme elliptique. Cette quadrique virtuelle projetée sur chaque point de vue correspond aux spécularités. \fix{Traduire en français}}
+   \caption{Lien entre le modèle physique (lumière et matériaux) et la géométrie multi-vues (notre modèle empirique). À partir de plusieurs points de vue, une quadrique est reconstruite à partir de spécularités de forme elliptique. Cette quadrique virtuelle projetée sur chaque point de vue correspond aux spécularités.}
   \label{fig:dessin}
   \vspace{-1.3em}
 \end{figure}
@@ -136,7 +136,7 @@ où $\tilde{\mathbf{P}} \overset{\mathrm{def}}{=\joinrel} \begin{bmatrix} \mathbf
 \end{bmatrix}
 \end{equation*}
 
-Nous avons montré dans l'appendice \ref{sec:analysis_phong_blinn} que $\mathop{\text{rang}}(\mathtt{J}) = 2$ et $\mathtt{J}$ est non-négative. Ce qui signifie que $\mathtt{J}$ est une quadrique de classe point ce qui représente une ligne contenant $\mathbf{R}$ et $\mathbf{V}$. Son intersection avec $S$ est définie comme étant le point d'intensité maximale. En conséquence, la spécularité a un point d'intensité maximale bien défini et unique.
+Nous avons montré dans l'appendice \ref{annexe:analysis_phong_blinn} que $\mathop{\text{rang}}(\mathtt{J}) = 2$ et $\mathtt{J}$ est non-négative. Ce qui signifie que $\mathtt{J}$ est une quadrique de classe point ce qui représente une ligne contenant $\mathbf{R}$ et $\mathbf{V}$. Son intersection avec $S$ est définie comme étant le point d'intensité maximale. En conséquence, la spécularité a un point d'intensité maximale bien défini et unique.
 
 \subsubsection{Contour externe}
 Pour comprendre en détail la structure du problème, l'Eq.\ref{eq:phong_tau} est résolue pour $\tau = 0$ ce qui révèle la nature du contour externe. En développant le terme spéculaire de Eq.\ref{eq:phong}, on obtient :
@@ -178,22 +178,22 @@ Cette démonstration illustre la pertinence et la précision d'une modélisation d'
 
 \begin{figure}[!ht]
 \centering
-\subfigure[Phong, point light]
+\subfigure[Phong, source ponctuelle]
 {
     \includegraphics[width=0.47\linewidth]{phong_closeup.pdf}
     \label{fig:phong_closeup}
 }
-\subfigure[Blinn-Phong, point light]
+\subfigure[Blinn-Phong, source ponctuelle]
 {
     \includegraphics[width=0.47\linewidth]{blinn_closeup.pdf}
     \label{fig:blinn_closeup}
 }
-\subfigure[Phong, extended light]
+\subfigure[Phong, source étendue]
 {
      \includegraphics[width=0.47\linewidth]{phong_closeup_extended.pdf}
      \label{fig:phong_closeup_extended}
 }
-\subfigure[Blinn-Phong, extended light]
+\subfigure[Blinn-Phong, source étendue]
 {
      \includegraphics[width=0.47\linewidth]{blinn_phong_extended.pdf}
      \label{fig:blinn_phong_extended}
@@ -304,7 +304,6 @@ Cette expérience a été également réalisée pour des sources de lumière étendues c
 sources ponctuelles pour les modèles d'illumination de Phong et Blinn-Phong pour une erreur moyenne de $1\%$ et $1.6\%$ respectivement. On peut noter que le processus de raffinement ne joue pas un rôle significatif sur des données de synthèses où les conditions sont idéales.
 
 \subsection{Données réelles}
-\fix{Présenter TOUS les résultats y compris les exemples adrien de la mer et toutes les séquences planaires de la thèse}
 Nous évaluons notre modèle JOLIMAS sur des séquences réelles avec trois sources de lumière différentes et cinq matériaux différents. La quadrique est reconstruite à partir des ellipses calculées par la méthode de Fitzgibbon \etal \cite{fitzgibbon1996buyer}. Les spécularités sont détectées en utilisant notre méthode de détection de spécularité \cite{morgand2014generic}. Les poses de caméra sont calculées en utilisant une méthode de SLAM \cite{tamaazousti2011nonlinear}. Le processus de reconstruction est composé de méthode temps-réel et la prédiction est également réalisée en temps réel en projetant perspectivement la quadrique reconstruite en fonction de la pose de caméra actuelle tel que l'ellipse correspond à la prédiction est obtenue par la formule :
 \begin{equation}
 	\mathtt{C} = (\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top)^*.
@@ -368,11 +367,11 @@ Dans le cas d'une surface parfaitement spéculaire tel qu'un miroir, nous ne pouv
 	\centering
 	\subfigure[]
 	{
-	    \includegraphics[width=0.4\linewidth]{poly_light1.PNG}
+	    \includegraphics[width=0.43\linewidth]{poly_light1.PNG}
 	}
 	\subfigure[]
 	{
-	    \includegraphics[width=0.4\linewidth]{poly_light2.PNG}
+	    \includegraphics[width=0.43\linewidth]{poly_light2.PNG}
 	}
 	\caption{Exemples de sources de lumière polygonales présentée dans l'approche de \cite{heitz2016real} dans des séquences synthétiques. Ce type de sources de lumière n'est pas géré par le modèle JOLIMAS.}
 \end{figure}

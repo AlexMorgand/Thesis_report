@@ -57,15 +57,15 @@ Ces derniers candidats vont être traités dans une étape de post-traitement utili
   {
   \begin{tabular}{|c|c|c|c|c|c|}
       \hline
-      \diagbox{Méthodes}{Propriétés} & \specialcell{Espace colorimétrique} & Seuil & \specialcell{Pré-traitement} & \specialcell{Post-traitement} & \specialcell{Vidéo/Image}\\
+      \diagbox{Méthodes}{Propriétés} & \specialcell{Espace \\ colorimétrique} & Seuil & \specialcell{Pré-traitement} & \specialcell{Post-traitement} & \specialcell{Vidéo/Image}\\
       \hline
       \specialcell{\cite{ortiz2006automatic}} & MS & Constant & \specialcell{EH} & \specialcell{OM} & Image\\
       \hline
       \specialcell{\cite{stehle2006removal}}  & YUV & Automatique & None & \specialcell{OM} & Image\\
       \hline
-       \specialcell{\cite{oh2007informative}}  & TSV & Constant & \specialcell{OHF} & \specialcell{Segmentation et OM} & Image\\
+       \specialcell{\cite{oh2007informative}}  & TSV & Constant & \specialcell{OHF} & \specialcell{Segmentation \\ et OM} & Image\\
       \hline
-      \specialcell{\cite{arnold2010automatic}} & \specialcell{RVB + niveau de gris} & Automatique & Aucun & \specialcell{OM}  & Vidéo\\
+      \specialcell{\cite{arnold2010automatic}} & \specialcell{RVB + \\ niveau de gris} & Automatique & Aucun & \specialcell{OM}  & Vidéo\\
       \hline
       \textbf{Notre méthode}  & \textbf{TSV} & \textbf{Automatique} & \textbf{Contraste} & \textbf{Dégradé} & \textbf{Vidéo}\\
       \hline
@@ -90,12 +90,12 @@ Nous avons choisi de travailler dans l'espace TSV car les spécularités y ressort
     \centering
     \subfigure[]
     {
-      \includegraphics[width=3.89cm]{tablesaturated}
+      \includegraphics[width=0.43\linewidth]{tablesaturated}
       \label{fig:tablesaturated}
     }
     \subfigure[]
     {
-      \includegraphics[width=3.89cm]{contrast}
+      \includegraphics[width=0.43\linewidth]{contrast}
       \label{fig:contrast}
     }
 	\caption{Résultat de notre égalisation de contraste :  (a) présente le cas surexposé, difficilement exploitable en l'état. (b) montre l'image (a) après notre égalisation de contraste}
@@ -164,22 +164,22 @@ Après une égalisation du contraste, certaines zones dans l'image restent faussem
   \centering
 	  \subfigure[]
 	  {
-      \includegraphics[scale=0.32]{grad2}
+      \includegraphics[width=0.42\linewidth]{grad2}
       \label{fig:grad2}
     }
 	  \subfigure[]
 	  {
-      \includegraphics[scale=0.3]{gradient}
+      \includegraphics[width=0.4\linewidth]{gradient}
       \label{fig:gradient}
     }
 	  \subfigure[]
 	  {
-      \includegraphics[scale=0.3]{rgb.png}
+      \includegraphics[width=0.4\linewidth]{rgb.png}
       \label{fig:rgb}
     }
 	  \subfigure[]
 	  {
-      \includegraphics[scale=0.3]{hsv.png}
+      \includegraphics[width=0.4\linewidth]{hsv.png}
       \label{fig:hsv}
     }
 \vspace{-1em}

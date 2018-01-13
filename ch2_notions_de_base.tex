@@ -302,10 +302,10 @@ Les opérations suivantes sur les images seront utiles par la suite :
   \end{equation}
 
   \paragraph{Convolution.} La convolution, notée $\ast$ est une opération permettant d'appliquer un filtre linéaire à une image. En coordonnées discrètes, une convolution sur l'image $\I$ est définie par une image $\win$ de domaine $\domimg{W}$, appelée \emph{masque} ou \emph{noyau}:
-  \begin{multline}
+  \begin{flalign*}
     \forall \win : \llbracket -m,m \rrbracket \times \llbracket -n,n \rrbracket \rightarrow \real \\
     (\I \ast \win)[x,y] = \sum_{i=-m}^m \sum_{j=-n}^n \win[i,j] \cdot \I[x-i,y-j].\hspace*{\fill}
-  \end{multline}
+  \end{flalign*}
   En coordonnées réelles la définition est similaire:
   \begin{equation}
     \forall \win : \domimg{\win} \rightarrow \real\qquad
@@ -785,7 +785,7 @@ où $\vect{v}_\vect{p} \in M_\vect{p}$. La courbure normale dans la direction $\v
 H(\vect{v}\vect{p}) = \frac{ea^2 + 2fab +gb^2}{Ea^2 + 2 Fab + Gb^2},
 \end{equation}
 où $E$, $F$ et $G$ sont les coefficients de la première forme fondamentale et $e$, $f$ et $g$ sont les coefficients de la deuxième forme fondamentale.
-Les valeurs maximales et minimales de la courbure normale d'un point sur une surface régulière sont appelées les courbures principales $\mathcal{k}_1$ et $\mathcal{k}_2$.
+Les valeurs maximales et minimales de la courbure normale d'un point sur une surface régulière sont appelées les courbures principales $\kappa_1$ et $\kappa_2$.
 
 %http://mathworld.wolfram.com/PrincipalCurvatures.html
 
@@ -805,19 +805,19 @@ Soit une surface paramétrée au moyen de deux paramètres $u$ et $v$, et soit $\ma
 \mathcal{K} = \frac{LN - M^2}{EG - F^2}
 \end{equation}
 
-Un lien entre la courbure de Gauss $\mathcal{K}$ et la courbure moyenne $H$ sont liés à $\mathcal{k}_1$ et $\mathcal{k}_2$ par :
+Un lien entre la courbure de Gauss $\mathcal{K}$ et la courbure moyenne $H$ sont liés à $\kappa_1$ et $\kappa_2$ par :
 \begin{flalign*}
-\mathcal{K} = \mathcal{k}_1 \mathcal{k}_2 \\
-H = \frac{1}{2}(\mathcal{k}_1 + \mathcal{k}_2).
+\mathcal{K} = \kappa_1 \kappa_2 \\
+H = \frac{1}{2}(\kappa_1 + \kappa_2).
 \end{flalign*}
 Ce qui peut être écrit par l'équation quadratique:
 \begin{equation}
-\mathcal{k}^2 - 2 H \mathcal{k} + \mathcal{K} = 0;
+\kappa^2 - 2 H \kappa + \mathcal{K} = 0;
 \end{equation}
 qui a pour solutions:
 \begin{flalign*}
-\mathcal{k}_1 = H + \sqrt{H^2 - \mathcal{K}} \\
-\mathcal{k}_2 = H - \sqrt{H^2 - \mathcal{K}}.
+\kappa_1 = H + \sqrt{H^2 - \mathcal{K}} \\
+\kappa_2 = H - \sqrt{H^2 - \mathcal{K}}.
 \end{flalign*}
 
 %https://fr.wikipedia.org/wiki/Courbure_de_Gauss#Calcul_de_la_courbure_de_Gauss
@@ -842,7 +842,7 @@ avec $\vect{b} \in \espace{R}{m}$ et $\mat{A} \in \espace{R}{m\times n}$ connus 
 \end{equation}
 Il est possible de dériver une solution directe même si les méthodes numériques actuelles obtiennent des résultats plus stables et plus rapides en évitant l'inversion de matrice:
 \begin{equation}
-  \x = argmin \cost{LS}(\x, \mat{A},\vect{b}) = \inv{\left( \transpose{\mat{A}}\mat{A} \right)}\transpose{\mat{A}} \vect{b} = \pinv{\mat{A}} \vect{b}.
+  \x = argmin \text{ } \cost{LS}(\x, \mat{A},\vect{b}) = \inv{\left( \transpose{\mat{A}}\mat{A} \right)}\transpose{\mat{A}} \vect{b} = \pinv{\mat{A}} \vect{b}.
 \end{equation}
 $\pinv{\mat{A}}$ est la pseudo-inverse de $\mat{A}$.
 \subsubsection{Décomposition en valeurs singulières}
@@ -992,7 +992,7 @@ Plus que la fonction $\rho$, c'est sa dérivée, appelée \emph{influence} qui est 
 
 Afin de pouvoir réutiliser les approches classiques de moindres carrés, on utilise une approche aux moindres carrés itérativement repondérés:
 \begin{equation}
-  \x_k = argmin \cost{}(\x) = argmin \sum_{i=1}^m \omega(\f{f_i}(\x_{k-1}))\cdot\f{f_i}(\x),
+  \x_k = argmin \text{ } \cost{}(\x) = argmin \text{ } \sum_{i=1}^m \omega(\f{f_i}(\x_{k-1}))\cdot\f{f_i}(\x),
   \label{eq:notions:rls}
 \end{equation}
 où le poids $\omega$, constant au sein de chaque itération est défini comme suit:
