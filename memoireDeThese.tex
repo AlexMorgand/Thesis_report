@@ -63,7 +63,7 @@
 \newcommand{\mathup}[1]{\text{\textup{#1}}}
 
 %\newcommand{\mat}[1]{\boldsymbol{\mathup{#1}}}
-\newcommand{\f}{\fonction}
+\newcommand{\f}[1]{\mathit{#1}}
 \DeclareMathOperator*{\argmin}{arg\!\min}
 \DeclareMathOperator*{\trace}{trace}
 \let\div\relax % Undefine previous div definition
@@ -176,7 +176,8 @@
 \catcode`[=\active \catcode`]=\active
 
 % Define a meaning for active [ and ]
-\gdef[{\llbracket} \gdef]{\rrbracket}
+%\gdef[{\llbracket} \gdef]{\rrbracket}
+\gdef[{[} \gdef]{]}
 
 % Now take care of the \delcode of [ and ] for \left and \right
 % First a temporary macro

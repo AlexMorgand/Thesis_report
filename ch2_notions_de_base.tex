@@ -6,7 +6,7 @@
 \graphicspath{{images/Ch2/}}
 
 \begin{chapeauChapitre}
-	Dans ce chapitre, nous introduisons les notions de base et les notations nécessaires à la compréhension du mémoire. Après avoir présenté les caméras perspectives et géométrie associée, nous rappellerons le formalisme des coniques et quadriques. Par la suite, nous donnerons un détail complet du formalisme pour décrire l'interaction lumière/matière, l'illumination locale, globale ainsi qu'un rappel de notion de courbure. Nous terminerons par un rappel des plus importantes techniques d'optimisation utilisées. Plus de détails sur ces notions peuvent être trouvées dans le livre de \cite{Hartley2004}.
+	Dans ce chapitre, nous introduisons les notions de base et les notations nécessaires à la compréhension du mémoire. Après avoir présenté les caméras perspectives et géométrie associée, nous rappellerons le formalisme des coniques et quadriques. Par la suite, nous donnerons quelques détails  pour décrire l'interaction lumière/matière, l'illumination locale, globale ainsi qu'un rappel de notion de courbure d'une surface. Nous terminerons par un rappel des plus importantes techniques d'optimisation utilisées. Plus de détails sur ces notions peuvent être trouvées dans le livre de \cite{Hartley2004}.
 \end{chapeauChapitre}
 
 
@@ -83,11 +83,11 @@ Dans la suite, nous présenterons tout d'abord les différents paramètres caractér
 \subsection{Projection perspective}
 \label{sec:projectionPerspective}
 
-La projection perspective vise à calculer, pour tout point $\pTD{P}$ de $\espace{R}{3}$, la position 2D $\pDD{q}$ de sa projection dans l'image. Basée sur la projection centrale, cette transformation consiste à calculer l'intersection du plan de la \emph{rétine} de la caméra (\ie le capteur) avec le \emph{rayon de projection} de $\pTD{P}$. Ce dernier est défini comme étant la droite reliant le point $\pTD{P}$ au centre de la caméra (figure \ref{fig:ch2:projectionPerspective}).
+La projection perspective vise à calculer, pour tout point $\mathcal{Q} \in \espace{R}{3}$, la position 2D $\pDD{q}$ de sa projection dans l'image. Basée sur la projection centrale, cette transformation consiste à calculer l'intersection du plan de la \emph{rétine} de la caméra (\ie le capteur) avec le \emph{rayon de projection} de $\mathcal{Q}$. Ce dernier est défini comme étant la droite reliant le point $\mathcal{Q}$ au centre de la caméra (figure \ref{fig:ch2:projectionPerspective}).
 
 Cette projection peut être vue comme un enchaînement de trois transformations géométriques (figure \ref{fig:ch2:projectionPerspective}) :\autoParSpace
 \begin{itemize}
-	\item La première transformation est un changement de repère qui consiste à exprimer les coordonnées de $\pTD{P}$ dans le repère lié à la caméra. Ce changement de repère est défini par les \emph{paramètres extrinsèques} de la caméra. Dans la suite du mémoire, en cas d'ambiguité, les exposant $\monde{W}$ ou  $\cam{C}$ indiqueront le repère dans lequel les coordonnées du point 3D sont exprimées (respectivement monde ou caméra). \autoParSpace
+	\item La première transformation est un changement de repère qui consiste à exprimer les coordonnées de $\mathcal{Q}$ dans le repère lié à la caméra. Ce changement de repère est défini par les \emph{paramètres extrinsèques} de la caméra. Dans la suite du mémoire, en cas d'ambiguité, les exposant $\monde{W}$ ou  $\cam{C}$ indiqueront le repère dans lequel les coordonnées du point 3D sont exprimées (respectivement monde ou caméra). \autoParSpace
 
 	\item La deuxième transformation est la \emph{projection centrale} du point 3D. Elle revient à passer du point 3D (exprimé dans le repère caméra) au point d'intersection du rayon de projection et du capteur. Les coordonnées 2D du point résultant sont alors exprimées dans le plan de la rétine (en mm). \autoParSpace
 
@@ -159,16 +159,9 @@ Les paramètres extrinsèques de la caméra permettent d'établir les changements de
 						\end{pmatrix} \pTDHom{Q}[\cam{C}][]
 \end{align}
 
-Dans le contexte de localisation de véhicule, étant donné que la caméra est rigidement embarquée sur le véhicule à une hauteur fixe par rapport au sol, sa trajectoire appartient théoriquement à un plan parallèle au plan de la route qui représente le plan de déplacement de la caméra. Dans ce cas, les six degrés de liberté de la caméra peuvent être regroupés différemment: 
-
-\begin{itemize}
-		\item Les degrés de liberté dans le plan de déplacement: $((\vect{t})_x, (\vect{t})_y, \gamma)$. Dans la suite du mémoire nous parlerons de paramètres \textit{dans le plan}.
-		\item Les degrés de liberté en dehors du plan de déplacement:$((\vect{t})_z, \alpha, \beta)$. Dans la suite du mémoire nous parlerons de paramètres \textit{hors plan}.
-\end{itemize}
-
-\paragraph{Projection centrale}
+\paragraph{Projection centrale.}
 %\label{sec:projectionCentrale}
-Lorsqu'on utilise les coordonnées homogènes, la projection centrale d'un point $\pTD{P}[][\cam{C}]$ est une fonction linéaire de $\espace{P}{3} \mapsto \espace{P}{2}$ caractérisée par la matrice de dimension $3 \times 4$ :
+Lorsqu'on utilise les coordonnées homogènes, la projection centrale d'un point $\mathcal{Q}[][\cam{C}]$ est une fonction linéaire de $\espace{P}{3} \mapsto \espace{P}{2}$ caractérisée par la matrice de dimension $3 \times 4$ :
 \begin{equation}
 		\pDDHom{q}  \equi \begin{pmatrix}
 							    1 & 0 & 0 & 0 \\
@@ -177,7 +170,7 @@ Lorsqu'on utilise les coordonnées homogènes, la projection centrale d'un point $
 				                    \end{pmatrix} \pTDHom{Q}[\cam{C}][].
 \end{equation}
 
-Dans de nombreuses publications, le changement de repère 3D et la projection centrale sont vus comme une unique projection centrale à partir d'un point 3D dans le repère monde. Cela s'écrit matriciellement :
+Dans de nombreuses publications, le changement de repère 3D et la projection centrale sont vus comme une unique projection centrale à partir d'un point 3D dans le repère monde. Cela s'écrit sous forme matricielle :
 \begin{equation}
 	\begin{split}
 		\pDDHom{q} & \equi \begin{pmatrix}
@@ -205,7 +198,7 @@ La projection d'un point exprimé dans le repère monde dans l'image (équation \re
 
 
 
-\paragraph{Paramètres intrinsèques et distorsion}
+\paragraph{Paramètres intrinsèques et distorsion.}
 %\label{sec:paramInternes}
 Les paramètres intrinsèques définissent les propriétés géométriques du capteur de la caméra. Dans notre étude, nous considérons que les pixels sont carrés. La \emph{matrice de calibrage} $\calib{K}$ peut alors s'exprimer sous la forme :
 \begin{equation}
@@ -272,7 +265,7 @@ Notons que l'on utilise les crochets pour les coordonnées discrètes et les paren
 Les opérations suivantes sur les images seront utiles par la suite :
 \paragraph{Homographie.} Une homographie décrit une transformation linéaire dans l'espace projectif. L'homographie $\Himg{I}{\mat{H}}$ de l'image $\I$ décrite par la matrice $\mat{H} \in \espace{R}{3\times 3}$ est définie par :
   \begin{equation}
-    \forall \pDD{q}\quad\text{t.q.}\quad
+    \forall \pDD{q}  \in \mathbb{R}^2 \quad\text{t.q.}\quad
     \pi(\mat{H}\pDDHom{q}) \in \domimg{I} \quad : \quad
     \Himg{I}{\mat{H}}(\pDD{q}) = \I\left(\pi(\mat{H}\pDDHom{q})\right).
   \end{equation}
@@ -284,7 +277,7 @@ Les opérations suivantes sur les images seront utiles par la suite :
     $
     Elle peut donc s'écrire :
     \begin{equation}
-	\forall \pDD{q}\quad\text{t.q.}\quad
+	\forall \pDD{q} \in \mathbb{R}^2 \quad\text{t.q.}\quad
 	\pi(\overline{\mat{H}}\pDD{q}+\vect{t}_{\mat{H}}) \in \domimg{I} \quad : \quad
 	\Himg{I}{\mat{H}}(\pDD{q}) = \I\left(\pi(\overline{\mat{H}}\pDD{q}+\vect{t}_{\mat{H}})\right)
     \end{equation}
@@ -342,7 +335,7 @@ Les opérations suivantes sur les images seront utiles par la suite :
 \fix{On peut encore en rajouter ici, à partir de la page 19 de cross + signature de quadriques}.
 
 \subsection{Conique}
-Une conique est une famille de courbe plane générée en prenant toute les sections possibles d'un cône infini avec un plan. La famille des coniques non-dégénéré inclue les paraboles, hyperboles et ellipses. Nous évoquerons les coniques dégénérés par la suite.
+Une conique est une famille de courbe plane générée en prenant toute les sections possibles d'un cône infini avec un plan. La famille des coniques non-dégénérées inclue les paraboles, hyperboles et ellipses. Nous évoquerons les coniques dégénérés par la suite.
 Chaque point $(x, y)^\top$ de la conique respecte l'équation :
 \begin{equation}
 ax^2 + 2bxy + cy^2 + 2dx + 2ey + f = 0,
@@ -373,10 +366,10 @@ Plusieurs types de coniques sont illustrées à la figure \ref{fig:conic}.
 \label{fig:conic}
 \end{figure}
 
-Nous pouvons noter que $\mathtt{C}$ est une matrice symétrique. De plus, nous pouvons observer qu'une conique a cinq degrés de liberté.
+Nous pouvons noter que $\mathtt{C}$ est une matrice symétrique. De plus, nous pouvons observer qu'une conique a cinq degrés de liberté (six paramètres à une échelle près).
 
 \subsubsection{Transformation projective}
-Considérons une transformation projective 2D $\mathtt{H}$ tel que $\vect{x}' = \mathtt{H}\vect{x}$. En assumant que la transformation est non-singulière et en substituant $\vect{x} = \mathtt{H}^{-1}\vect{x}'$ dans l'équation \eqref{eq:conic_matrix_form}, nous avons :
+Considérons une transformation projective 2D $\mathtt{H}$ transformant un point $\vect{x}$ en $\vect{x}'$ tel que $\vect{x}' = \mathtt{H}\vect{x}$. En assumant que la transformation est non-singulière et en substituant $\vect{x} = \mathtt{H}^{-1}\vect{x}'$ dans l'équation \eqref{eq:conic_matrix_form}, nous avons :
 \begin{equation}
 \mathtt{x}'^{\top}\mathtt{H}^{-\top}\mathtt{C}\mathtt{H}^{-1}\vect{x}' = 0.
 \label{eq:homo_conique}
@@ -393,13 +386,13 @@ Cette formule est justifiée par le fait que la ligne $\vect{l}$ passe par $\vect
 
 \subsubsection{Enveloppe de la conique}
 Vu qu'il existe une droite tangente pour chaque points de la conique, il semble logique que la conique soit définie par les droites tangentes. Ce constat est un résultat standard en géométrie projective :
-\textit{Pour tout théorème de géométrie projective en 2 dimensions, il existe un théorème dual qui est décrit par inter-changer les rôles des points et des lignes du théorème originel.}.
+\textit{Pour tout théorème de géométrie projective en 2 dimensions, il existe un théorème dual qui est décrit par inter-changer les rôles des points et des lignes du théorème originel.}
 
 Pour une conique non-dégénérée, l'équation  \eqref{eq:ligne_sur_conique} peut être inversée afin de trouver le point où la droite $\vect{l}$ est tangente à la conique $\mat{C}$ : $\vect{x} = \mat{C}^{-1}\vect{l}$. Par injection dans l'équation \eqref{eq:conic_matrix_form}, nous avons :
 \begin{equation}
 (\mat{C}^{-1}\vect{l})^\top\mat{C}(\mat{C}^{-1}\vect{l}) = \vect{l}^\top\mat{C}^{-1}\vect{l} = 0,
 \end{equation}
-avec $\vect{C}$ (réciproquement $\vect{C^{-1}}$) est symétrique. La conique duale $\mat{C}^{-1}$ représente l'enveloppe de la conique et est directement associée à la conique $\mat{C}$. Elle est décrite par cinq degrés de liberté (six paramètres à une échelle près).
+avec $\vect{C}$ (réciproquement $\vect{C^{-1}}$) est symétrique. La conique duale $\mat{C}^{-1}$ représente l'enveloppe de la conique et est directement associée à la conique $\mat{C}$.
 
 Plus généralement, nous avons la formule :
 \begin{equation}
@@ -417,7 +410,7 @@ Une conique dégénérée est définie par:
 \begin{equation}
 \mat{C} = \vect{l}\vect{m}^\top + \vect{m}\vect{l}^\top,
 \end{equation}
-avec $\vect{l}$ et $\vect{m}$. On peut retrouver cette relation en observant que tout les points sur $\vect{l}^\top\vect{x} = 0$ sont sur la conique $\vect{x}^\top\mat{C}\vect{x} = (\vect{x}^\top\vect{l})(\vect{m}^\top\vect{x}) + (\vect{x}^\top\vect{m})(\vect{l}^\top\vect{x}) = 0$. Tous les points sur $\vect{m}^\top\vect{x} = 0$ sont aussi sur la conique. La matrice $\mat{C}$ est symétrique et de rang 2 (dans le cas où $\vect{l}$ et $\vect{m}$ ne sont pas confondus). Dans le cas ultérieur, $\mat{C}$ sera de rang 1.
+avec $\vect{l}$ et $\vect{m}$ deux droites. On peut retrouver cette relation en observant que tout les points sur $\vect{l}^\top\vect{x} = 0$ sont sur la conique $\vect{x}^\top\mat{C}\vect{x} = (\vect{x}^\top\vect{l})(\vect{m}^\top\vect{x}) + (\vect{x}^\top\vect{m})(\vect{l}^\top\vect{x}) = 0$. Tous les points sur $\vect{m}^\top\vect{x} = 0$ sont aussi sur la conique. La matrice $\mat{C}$ est symétrique et de rang 2 (dans le cas où $\vect{l}$ et $\vect{m}$ ne sont pas confondus). Dans le cas ultérieur, $\mat{C}$ sera de rang 1.
 
 Si le rang de $\mat{C}$ est de 1, l'espace nul est de dimension 2 correspondant à une droite (homogène). Cette conique correspond à une paire de lignes confondues. La conique a ainsi seulement 2 degrés de liberté.
 
@@ -427,9 +420,9 @@ L'équation \eqref{eq:conique_dual_line} définie l'enveloppe de la conique $\mat{
 \subsection{Quadriques}
 Un point 3D $(x, y, z)^\top$ sur la surface d'une quadrique suit l'équation:
 \begin{equation}
-ax^2 = 2bxy + cy^2 + 2dxz + 2eyz + fz^2 + 2gx + 2hy + 2iz + j = 0,
+ax^2 + 2bxy + cy^2 + 2dxz + 2eyz + fz^2 + 2gx + 2hy + 2iz + j = 0,
 \end{equation}
-ou en coordonnées homogènes $(x, y, z) -> (x_1/x_4, x_2/x_4, x_3/x_4)$
+ou en coordonnées homogènes $(x, y, z) \rightarrow (x_1/x_4, x_2/x_4, x_3/x_4)$
 \begin{equation}
 ax_1^2 = 2bx_1x_2 + cx_2^2 + 2dx_1x_3 + 2ex_2x_3 + fx_3^2 + 2gx_1x_4 + 2hx_2x_4 + 2ix_3x_4 + jx_4^2 = 0.
 \end{equation}
@@ -458,7 +451,7 @@ Les quadriques inclues des formes comme les sphères, les ellipsoïdes, les hyperb
 \end{figure}
 
 \subsubsection{Transformation projective}
-Sous la contrainte d'une transformation projective 3D $\mat{H}$, la quadrique $\mat{Q}$ devient $\mat{Q}' = \mat{H}^{-\top}\mat{Q}\mat{H}^{-1}$ (la preuve est quasi identique à celle d'une conique subissant une transformation projective 2D.
+Sous la contrainte d'une transformation projective 3D $\mat{H}$, la quadrique $\mat{Q}$ devient $\mat{Q}' = \mat{H}^{-\top}\mat{Q}\mat{H}^{-1}$ (la preuve est quasi identique à celle d'une conique subissant une transformation projective 2D).
 
 \subsubsection{Enveloppe de quadrique}
 Le plan tangent $\pi$ à la quadrique $\mat{Q}$ au point $\vect{X}$ est donné par:
@@ -516,7 +509,7 @@ La \emph{géométrie épipolaire} décrit les contraintes reliant les observations d
 	\end{center}
 \end{figure}
 
-\paragraph{Matrice fondamentale} 
+\paragraph{Matrice fondamentale.} 
 La \emph{matrice fondamentale} exprime la relation épipolaire dans le cas où les paramètres internes des caméras sont inconnus. Ainsi, pour un point $\pDD{q}[1]$ de l'image de la première caméra, il est possible de calculer la droite $\droite{d}_2$ sur laquelle se situe l'observation correspondante dans la deuxième caméra (figure \ref{fig:ch2:geometrieEpipolaire}) :
 \begin{equation}
 		\droite{d}_2 \equi \matrice{F} \pDDHom{q}[1].
@@ -532,18 +525,18 @@ Cette relation permet d'estimer la matrice fondamentale à partir d'associations 
  
 Dans chacune des images, un point joue un rôle particulier. Il s'agit des deux \emph{épipôles} $\pDD{e}[1]$ et $\pDD{e}[2]$. Ils correspondent à la projection dans l'image du centre optique de l'autre caméra. Les épipôles présentent deux caractéristiques intéressantes. Tout d'abord, elles définissent le noyau de $\matrice{F}$ : $\matrice{F} \pDDHom{e}[i]~=~0, \forall i \in \{1,2\}$. De plus, les épipôles correspondent aux points d'intersection de toutes les droites épipolaires de chacune des images.
 
-\paragraph{Matrice essentielle} 
+\paragraph{Matrice essentielle.} 
 La \emph{matrice essentielle} $\matrice{E}$ peut être vue comme le cas particulier de la matrice fondamentale dans le cas où le calibrage des caméras ($\calib{K}_1$ et $\calib{K}_2$) est connu, ce qui est le cas qui nous intéresse en particulier. La relation entre matrice essentielle et matrice fondamentale est la suivante :
 \begin{equation}
 	 \matrice{E} \equi \transpose{\calib{K}_2} \matrice{F} \calib{K}_1.
 \end{equation}
-L'équation ~\ref{eq:ch2:matriceFondamentale} devient dans ce cas :
+L'équation \eqref{eq:ch2:matriceFondamentale} devient dans ce cas :
 \begin{equation}
 		\transpose{\pDDHom{q}[2]} \left( \invTranspose{\calib{K}_2} \matrice{E} \inv{\calib{K}_1} \right) \pDDHom{q}[1] = 0,
 \end{equation}
 où $\invTranspose{\calib{K}_2}$ est la transposée inverse de $\calib{K}_2$. Pour estimer la matrice essentielle, \cite{nister2004efficient} a proposé un algorithme efficace appelé \emph{algorithme des 5 points}. 
 
-\paragraph{Relation entre matrice essentielle et déplacement relatif}
+\paragraph{Relation entre matrice essentielle et déplacement relatif.}
 En fonction des cas d'étude, la matrice essentielle peut avoir différentes utilisations. En effet, il existe une relation qui lie la matrice essentielle du couple de caméras ($\cam{C}[1]$, $\cam{C}[2]$) au déplacement relatif entre ces caméras. Le déplacement relatif est défini par le couple  $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$. Une formalisation en sera faite à la section~\ref{sec:definitionDeplacementRelatif}. La relation entre $\matrice{E}$, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ s'écrit :
 \begin{equation}
 		\matrice{E} = \antiSym{\vect{t}_{1 \rightarrow 2}} \mathtt{R}_{1 \rightarrow 2},
@@ -560,7 +553,7 @@ où $\antiSym{\vect{t}}$ est la matrice antisymétrique construite à partir du vec
 Dès lors, deux cas de figure sont possibles. Si le déplacement entre les caméras est connu, la matrice essentielle permet de réduire la recherche de point d'intérêt correspondant à 1 dimension (le long de la droite épipolaire). Dans le cas contraire, une estimation de la matrice essentielle (grâce à l'appariement d'au moins 5 points) permet de retrouver le déplacement relatif entre les caméras. Cette notion sera développée dans la section~\ref{sec:deplacementAssociations2D2D}.
 
 
-\paragraph{Homographies 2D}
+\paragraph{Homographies 2D.}
 Dans le cas où la scène observée est planaire, la relation qui existe entre deux caméras est définie
 par une \emph{homographie} $\mathit{H}$ (ou \emph{transformation projective}) 2D qui représente une transformation linéaire inversible de $\espace{P}{2}$ dans $\espace{P}{2}$ qui conserve l'alignement. Le théorème suivant permet de caractériser de façon matricielle les homographies 2D :  
 \begin{theorem}
@@ -614,7 +607,7 @@ avec $\pTD{P}[{\cam{C}[1]}][]$ et $ \pTD{P}[{\cam{C}[2]}][]$  les coordonnées de
 									  \end{pmatrix} \pTDHom{Q}[{\cam{C}[1]}][].	
 		\label{eq:definitionDeplacementRelatif}
 \end{equation}
-Des équations \ref{eq:poseCam1} et \ref{eq:poseCam2}, on peut obtenir le système d'équations suivant :
+Des équations \eqref{eq:poseCam1} et \eqref{eq:poseCam2}, on peut obtenir le système d'équations suivant :
 \begin{equation}
 \left\{
 		\begin{aligned}
@@ -694,10 +687,140 @@ L'utilisation d'associations 2D/3D plutôt que 2D/2D présente plusieurs avantages
 \section{Notion de courbure d'une surface} 
 \label{sec:notion_de_courbure}
 
-\fix{Todo pas le courage pour l'instant}
+Dans l'étude métrique des courbes du plan et de l'espace, la courbure mesure la manière dont une courbe, ou arc géométrique, s'éloigne localement d'une ligne droite. Elle évalue le rapport entre la variation de la direction de la tangente à la courbe et un déplacement d'une longueur infinitésimale sur celle-ci : plus ce rapport est important, plus la courbure est importante. En langage imagé, la courbure indique de combien il faut tourner le volant d'une voiture pour aborder un virage (volant tourné modérément pour une courbure faible et fortement pour une courbure forte).
+Plus précisément, si $\f{f}$ est une courbe régulière de classe $\mat{C}^k$ avec $k \geq 2$ c'est-à-dire une courbe paramétrée par une fonction dérivable au moins deux fois, dont la dérivée première n'est jamais nulle et dont la dérivée seconde est continue - on sait que $\f{f}$ possède localement une paramétrisation normale, c'est-à-dire qu'au voisinage d'un point $\vect{M}$, il existe une fonction $\f{g}$ paramétrisant $\f{f}$ et telle que $\|\f{g} '\| = 1$. Si $\f{g}(s) = \vect{M}$, la courbure de $\f{f}$ au point $\vect{M}$ est :
+\begin{equation}
+    \gamma = \|\f{g}''(s)\| \gamma = \|\f{g}''(s)\|
+\end{equation}
+Si la courbure au point $\vect{M}$ est non nulle, son inverse donne le rayon du cercle osculateur, c'est-à-dire le rayon du cercle s'approchant au plus près de la courbe au point $\vect{M}$.
+Dans le cas d'une courbe plane orientée, dans un plan orienté, on peut définir une courbure algébrique, qui indique non seulement l'intensité de l'incurvation mais aussi sa direction. Pour reprendre l'image de la route, dans un plan orienté selon le sens trigonométrique, une courbure algébrique positive indique qu'il faut tourner le volant à gauche pour aborder le tournant. La courbure algébrique est liée à l'orientation de la courbe, c'est-à-dire son sens de parcours : si pour un conducteur, il faut tourner à gauche pour aborder un tournant, pour les voitures roulant en sens inverse, il faut tourner à droite pour aborder ce même virage.
+Si $\f{g}$ est une paramétrisation normale de $\f{f}$, pour tout $s$, il existe un vecteur unitaire $vect{n}(s)$ tel que $(\f{g}'(s), n(s))$ soit une base orthonormée directe du plan, et il existe une fonction réelle $\gamma$ telle que, pour tout $s$, $\f{g}''(s) = \gamma(s)n(s)$. La valeur $\gamma(s)$ est la courbure algébrique de l'arc orienté au point $\vect{M} = \f{g}(s)$. La valeur absolue de la courbure algébrique donne la courbure géométrique. Dans le cas d'une courbe gauche (c'est-à-dire non plane), il n'est pas possible de définir de courbure algébrique.
+
+\paragraph{Cas d'un cercle}
+Quand on se déplace sur un cercle de rayon $R$ d'une longueur $\Delta S$, la tangente au cercle change de direction. Les tangentes au point de départ et au point d'arrivée font un angle de $\Delta \alpha$. Cet angle correspond à l'angle au centre entre le point d'arrivée et le point de départ. On a ainsi la relation :
+\begin{equation}
+    \Delta \alpha = \frac{\Delta S}{R}
+\end{equation}
+Le rapport $\frac{\Delta \alpha}{\Delta S}$ est constant et égal à $\frac{1}{R}$. C'est ce qu'on appelle la courbure du cercle. Plus le rayon est grand, plus cette courbure est faible. Cette propriété est illustrée à la figure \ref{fig:angle_tangente}. L'idée est de considérer une courbe localement comme un cercle et de chercher la limite du rapport précédent pour un déplacement infiniment petit sur la courbe.
+
+\paragraph{Cas du graphe d'une fonction}
+Considérons un plan muni d'un repère orthonormé (0, x, y), et un arc défini comme le graphe d'une fonction $\f{f}$, c'est-à-dire défini par l'équation $y = \f{f}(x)$.
+Si cet arc est "suffisamment lisse", alors il admet en tout point $x$ une tangente, et la pente de la tangente est la dérivée en ce point, $\f{f}'(x)$.
+Si cet arc est une droite, la tangente est la même partout, $\f{f}'$ est constante. Si cet arc présente une courbure non nulle, c'est qu'il s'écarte de la notion de droite : sa dérivée varie. Intuitivement, on voit que plus l'arc est courbe, plus la dérivée "varie vite".
+On peut ainsi lier la courbure à la variation de la dérivée, et donc à la dérivée seconde.
+Si l'on cherche à chiffrer cette courbure, il faut s'intéresser aux variations infinitésimales d'angle des tangentes et de longueur d'arc. La tangente à la courbe fait avec l'axe des abscisses un angle $\alpha(x) = arctan (\f{f} '(x))$. Pour une variation infinitésimale $dx$, on obtient
+\begin{equation*}
+d\alpha(x) = \frac{\f{f}''(x)}{1 + \f{f}^{'2}(x)}dx
+\end{equation*}
+\begin{equation*}
+ds(x) = \sqrt{1 + \f{f}^{'2}(x)}dx
+\end{equation*}
+La courbure algébrique est alors donnée par le rapport de ces deux variations
+\begin{equation}
+\gamma(x) = \frac{\f{f}''(x)}{(1 + \f{f}^{'2}(x))^{3/2}}
+\end{equation}
+Nous illustrons le cas du graphe d'une fonction à la figure \ref{fig:curv2}.
+
+\begin{figure}
+    \subfigure[]
+    {
+        \includegraphics[width=0.3\linewidth]{angle_tangente.pdf}
+        \label{fig:angle_tangente}
+    }
+    \subfigure[]
+    {
+        \includegraphics[width=0.3\linewidth]{curv2.pdf}
+        \label{fig:curv2}
+    }
+    \subfigure[]
+    {
+        \includegraphics[width=0.3\linewidth]{curv1.jpg}
+        \label{fig:curv1}
+    }
+    \caption{Dans (a), nous montrons que l'angle entre les deux tangentes est égale à l'angle au centre. Dans (b), nous montrons que plus un arc est courbé plus la pente de la tangente varie vite. Dans (c), un exemple de courbure est illustré. Au point $\vect{P}$, le rayon de courbure de la courbe $C$ est égal à $R$.}
+    \label{fig:curvature_simple}
+\end{figure}
+
+\paragraph{Introduction géométrique}
+L'analyse dimensionnelle montre que pour un problème de cinématique, $\gamma$ est homogène à l'inverse d'une longueur. On introduit donc fréquemment le rayon de courbure (algébrique):
+\begin{equation*}
+    R = \frac{1}{\gamma} = \frac{ds}{d\alpha}
+\end{equation*}
+Pour comprendre la signification de cette grandeur, il est intéressant d'examiner le cas particulier d'un cercle:
+\begin{equation}
+\Big\{
+\begin{array}{l}	
+    x(t) = r cos(t) \\
+    y(t) = r sin(t)
+\end{array}.
+\end{equation}
+L'application de la formule de calcul de la courbure donne $R=r$.
+Plus généralement, pour tout arc $C^2$ birégulier au point $\vect{P}$ d'abscisse curviligne $s$, on montre qu'il existe un unique cercle qui épouse cette courbe le mieux possible dans un voisinage de $\vect{P}$ : le cercle osculateur. Il est tangent à la courbe en $\vect{P}$ et son rayon est égal à la valeur absolue du rayon de courbure.
+La sinuosité décrit la courbure de plusieurs arcs reliés avec des points d'inflexion. Un exemple est illustré à la figure \ref{fig:curv1}.
+
+%https://fr.wikipedia.org/wiki/Courbure_d%27un_arc
+
+%https://www.ma.utexas.edu/users/m408m/Display13-4-3.shtml
+
+\subsection{Première et seconde forme fondamentale}
+\fix{A faire}
+%http://mathworld.wolfram.com/FundamentalForms.html
+
 %=============================================================================
-\subsection{Courbure principale}
-\subsection{Courbure gaussienne}
+\subsection{Courbure normale et principale}
+Soit $\vect{u}_{\vect{p}}$ le vecteur tangent d'une surface régulière $M \in \mathbb{R}^3$. La courbure normale de $M$ dans la direction de $\vect{u}_{\vect{p}}$ est:
+\begin{equation}
+H = S(\vect{u}_{\vect{p}}) \cdot\vect{u}_{\vect{p}},
+\end{equation}
+avec $S$ l'opérateur de forme correspond à la dérivée négative tel que :
+\begin{equation}
+S(\vect{v}) = -D_{\vect{v}}\vect{N},
+\end{equation}
+avec $\vect{N}$ la normale au point de surface donnée. Prenons $x$ un patch régulier (\fix{a définir ?}) du $M$ avec $p = x(u_x, v_y)$ et:
+\begin{equation}
+\vect{v}_{\vect{p}} = a \vect{x}_\vect{u}(u_0, v_0) + b \vect{x}_\vect{v}(u_0, v_0),
+\end{equation}
+où $\vect{v}_\vect{p} \in M_\vect{p}$. La courbure normale dans la direction $\vect{v}_\vect{p}$ est :
+\begin{equation}
+H(\vect{v}\vect{p}) = \frac{ea^2 + 2fab +gb^2}{Ea^2 + 2 Fab + Gb^2},
+\end{equation}
+où $E$, $F$ et $G$ sont les coefficients de la première forme fondamentale et $e$, $f$ et $g$ sont les coefficients de la deuxième forme fondamentale.
+Les valeurs maximales et minimales de la courbure normale d'un point sur une surface régulière sont appelées les courbures principales $\mathcal{k}_1$ et $\mathcal{k}_2$.
+
+%http://mathworld.wolfram.com/PrincipalCurvatures.html
+
+\subsection{Courbure de Gauss}
+Calculer la courbure de Gauss est complexe. Dans cette section, nous allons évoquer le calcul de cette courbure sur une surface paramétrisable et en utilisant les formes fondamentales.
+
+\paragraph{Paramétrage}
+Supposons que la surface soit donnée par une équation $z = f(x, y)$ où $f$ est une fonction de classe $C^2$. Notons en indice les variables par rapport auxquelles les dérivées sont calculées. Alors, la courbure de Gauss au point de paramètre $(x,y)$ vaut :
+\begin{equation}
+\mathcal{K} = \frac{f''_{xx}f^{''}_{yy} - f^{''2}_{xy}}{(1 + f^{'2}_x + f^{'2}_{y})^2}
+\end{equation} 
+
+
+\paragraph{Formes fondamentales}
+Soit une surface paramétrée au moyen de deux paramètres $u$ et $v$, et soit $\mathtt{I} = Edu^{2} + 2Fdudv + Gdv^{2}$ la première forme fondamentale, $\mathbb{II} = Ldu^{2} + 2Mdudv + Ndv^{2}$ la seconde forme fondamentale. Alors la courbure de Gauss vaut :
+\begin{equation}
+\mathcal{K} = \frac{LN - M^2}{EG - F^2}
+\end{equation}
+
+Un lien entre la courbure de Gauss $\mathcal{K}$ et la courbure moyenne $H$ sont liés à $\mathcal{k}_1$ et $\mathcal{k}_2$ par :
+\begin{flalign*}
+\mathcal{K} = \mathcal{k}_1 \mathcal{k}_2 \\
+H = \frac{1}{2}(\mathcal{k}_1 + \mathcal{k}_2).
+\end{flalign*}
+Ce qui peut être écrit par l'équation quadratique:
+\begin{equation}
+\mathcal{k}^2 - 2 H \mathcal{k} + \mathcal{K} = 0;
+\end{equation}
+qui a pour solutions:
+\begin{flalign*}
+\mathcal{k}_1 = H + \sqrt{H^2 - \mathcal{K}} \\
+\mathcal{k}_2 = H - \sqrt{H^2 - \mathcal{K}}.
+\end{flalign*}
+
+%https://fr.wikipedia.org/wiki/Courbure_de_Gauss#Calcul_de_la_courbure_de_Gauss
 
 %=============================================================================
 \section{Optimisation numérique} 
@@ -1028,10 +1151,10 @@ Le modèle de réflexion dichromatique de \cite{shafer1985using} est décrit par:
 L(\lambda, i, e, g) & = L_i(\lambda, i, e, g) + L_b(\lambda, i, e, g) \\
                     & = m_i(i, e, g)c_i(\lambda) + m_b(i, e, g)c_b(\lambda)
 \end{flalign*}
-Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de a la lumière réfléchie est la somme de deux partie indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendantes et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. \fix{Peut être parler du modèle dichromatique dans Kim}. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
+Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de a la lumière réfléchie est la somme de deux partie indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendantes et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. \fix{Peut être parler du modèle dichromatique dans Kim}. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
 
 \subsection{Modèle de Phong et Blinn-Phong}
-La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de Phong \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distincts décrivant la réflexion: la composante ambiante $I_a$ (un quantité de lumière constante permettant de décrire de façon grossière de l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchie de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
+La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de Phong \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchie de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
 
 
 \begin{figure}
@@ -1080,7 +1203,7 @@ avec $k_s$ un scalaire de réflexion spéculaire qui correspond au ratio de réflex
 
 Nous pouvons remarquer que l'intensité spéculaire diminue quand l'observateur s'éloigne du rayon réfléchi (l'angle entre $\hat{\vect{V}}(\vect{P})$ et $\hat{\vect{R}}_l(\vect{P})$ augmente). Afin de contrôler la vitesse d'atténuation, un exposant spéculaire $s$ est utilisé qui est en général associé à un type de matériau. Pour une réflexion légère comme sur un pomme par exemple, ce coefficient aura une valeur autour de 10 alors que pour une surface métallique, cette valeur tournera autour de 100 à 1000.
 
-Ce modèle de Phong, a été pendant des décennies une méthode rapide et efficace pour donner une impression de réalisme à des applications comme le jeux vidéo. Même si ce modèle n'a pas de fondements physiques précis, la séparation de l'image image $I$ en trois composante et la simplicité de la fonction d'intensité spéculaire font de ce modèle une fondation des modèles modernes et un modèle assez adapté aux applications de Réalité Augmentée.
+Ce modèle de Phong, a été pendant des décennies une méthode rapide et efficace pour donner une impression de réalisme à des applications comme le jeux vidéo. Même si ce modèle n'a pas de fondements physiques précis, la séparation de l'image $I$ en trois composantes et la simplicité de la fonction d'intensité spéculaire font de ce modèle une fondation des modèles modernes et un modèle assez adapté aux applications de Réalité Augmentée.
 
 \begin{figure}
 \subfigure[Calcul de la composante spéculaire]
@@ -1093,13 +1216,13 @@ Ce modèle de Phong, a été pendant des décennies une méthode rapide et efficace p
     \includegraphics[width=0.45\linewidth]{specu_sea}
     \label{fig:specu_sea}
 }
-\caption{Calcul de la composante spéculaire en utilisant le rayon réfléchi $\vect{R}$ dans le modèle de Phong ou $\vect{H}$ le vecteur mi-chemin entre $\vect{V}$ et $\vect{L}$ (a) et spécularité visible sur l'océan de forme elliptique.}
+\caption{Calcul de la composante spéculaire en utilisant le rayon réfléchi $\vect{R}$ dans le modèle de Phong ou $\vect{H}$ le vecteur mi-chemin entre $\vect{V}$ et $\vect{L}$ (a) et (b) spécularité visible sur l'océan de forme elliptique.}
 \end{figure}
  
- Une variation du calcul de la composante spéculaire a été proposée par Blinn-Phong \cite{blinn1977models} en remplaçant le calcul de $\hat{\vect{R}}_l(\vect{P}) \cdot \hat{\vect{V}}(\vect{P})$ par $\hat{\vect{H}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})$ avec $\hat{\vect{H}}_l(\vect{P})$ le vecteur de mi-chemin entre le rayon de lumière incidente et le vecteur associé à l'observateur tel que $\hat{\vect{H}}_l(\vect{P}) = \mu(\hat{\vect{L}}_l(\vect{P}) + \hat{\vect{V}}(\vect{P}))$. Le vecteur réfléchi $\hat{\vect{R}}$ et $\hat{\vect{H}}$ sont illustrées à la figure \ref{fig:specu_vectors}. En plus d'optimiser le calcul du terme spéculaire en évitant le calcul du rayon réfléchi, les spécularités produisent des spécularités plus elliptiques contrairement à celles de Phong qui sont majoritairement rondes. Dans le cas d'une spécularité observé dans un point de vue assez incliné, sa forme décrit naturellement une ellipse (reflet du soleil observé à l'horizon par exemple sur la figure \ref{fig:specu_sea}). De plus, Blinn-Phong produit, en général, des spécularités suffisamment précisent comme évoqué dans \cite{ngan2004experimental}.
+ Une variation du calcul de la composante spéculaire a été proposée par Blinn-Phong \cite{blinn1977models} en remplaçant le calcul de $\hat{\vect{R}}_l(\vect{P}) \cdot \hat{\vect{V}}(\vect{P})$ par $\hat{\vect{H}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})$ avec $\hat{\vect{H}}_l(\vect{P})$ le vecteur de mi-chemin entre le rayon de lumière incidente et le vecteur associé à l'observateur tel que $\hat{\vect{H}}_l(\vect{P}) = \mu(\hat{\vect{L}}_l(\vect{P}) + \hat{\vect{V}}(\vect{P}))$. Le vecteur réfléchi $\hat{\vect{R}}$ et $\hat{\vect{H}}$ sont illustrées à la figure \ref{fig:specu_vectors}. En plus d'optimiser le calcul du terme spéculaire en évitant le calcul du rayon réfléchi, les spécularités produisent des spécularités plus elliptiques contrairement à celles de Phong qui sont majoritairement rondes. Dans le cas d'une spécularité observée dans un point de vue assez incliné, sa forme décrit naturellement une ellipse (reflet du soleil observé à l'horizon par exemple sur la figure \ref{fig:specu_sea}). De plus, Blinn-Phong produit, en général, des spécularités suffisamment précises comme évoqué dans \cite{ngan2004experimental}.
 
 %\subsection{Modèle de Cook-Torrance}
-D'autres modèles ayant un fondement physique plus poussé comme celui de \cite{torrance1967theory} \etal et \cite{cook1982reflectance} mais nous n'entrerons pas dans le détail sur ces modèles dans ce mémoire.
+D'autres modèles ayant un fondement physique plus poussé comme celui de \cite{torrance1967theory} et \cite{cook1982reflectance} mais nous n'entrerons pas dans le détail sur ces modèles dans ce mémoire.
 
 %=============================================================================
 \section{Illumination globale} 
@@ -1170,4 +1293,3 @@ Cette fonction $f$ évoquée dans les équation \eqref{eq:reflectance_equation} et 
 
 \fix{Parler de la  Fonction de champ lumineux?}
 \fix{Parler des harmoniques sphériques ?}
-
