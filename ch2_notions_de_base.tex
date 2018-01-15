@@ -76,7 +76,7 @@ Dans cet espace de dimension 3, le dual du point $\pTD{Q}$ est le plan $\plan{\P
 \section{Caméras perspectives}
 \label{sec:cameraPerspective}
 
-Dans le cadre de nos travaux, nous utiliserons des caméras perspectives respectant le modèle des \emph{caméras sténopé} idéales. Ce modèle considère que l'ensemble des rayons lumineux passent par un seul et unique point avant d'atteindre le capteur (voir figure~\ref{fig:ch2:projectionPerspective}). 
+Dans le cadre de nos travaux, nous utiliserons des caméras perspectives respectant le modèle des \emph{caméras sténopés} idéales. Ce modèle considère que l'ensemble des rayons lumineux passent par un seul et unique point avant d'atteindre le capteur (voir figure~\ref{fig:ch2:projectionPerspective}). 
 
 Dans la suite, nous présenterons tout d'abord les différents paramètres caractérisant ce type de caméras. Nous présenterons alors la géométrie reliant les images observées par plusieurs caméras. Enfin, nous étudierons les méthodes permettant de retrouver le déplacement de ces caméras ainsi que la structure de l'environnement à partir des images qu'elles observent.
 
@@ -220,7 +220,7 @@ Dans le cadre de ce mémoire, nous considérerons à la fois que la matrice de cali
 
 \subsection{Notion de rétroprojection}
 \label{sec:retroprojection}
-La \emph{rétroprojection} peut être vue comme l'opération inverse de la projection. Son but est d'inférer la position d'un point 3D $\pTD{Q}$ à partir de son observation $\pDD{q}$ dans l'image. Néanmoins, à partir d'un seule image, il est impossible d'obtenir la position exacte du point 3D. En effet, l'utilisation d'une seule caméra ne permet pas de retrouver la profondeur à laquelle se situe ce point. La rétroprojection d'un point de l'image se traduit sous la forme du rayon optique qui passe à la fois par le centre de la caméra $\cam{C}$ et par l'observation $\pDD{q}$. La position du point 3D est donc exprimée à un facteur $\lambda$ près qui reflète la profondeur du point sur ce rayon :
+La \emph{rétroprojection} peut être vue comme l'opération inverse de la projection. Son but est d'inférer la position d'un point 3D $\pTD{Q}$ à partir de son observation $\pDD{q}$ dans l'image. Néanmoins, à partir d'une seule image, il est impossible d'obtenir la position exacte du point 3D. En effet, l'utilisation d'une seule caméra ne permet pas de retrouver la profondeur à laquelle se situe ce point. La rétroprojection d'un point de l'image se traduit sous la forme du rayon optique qui passe à la fois par le centre de la caméra $\cam{C}$ et par l'observation $\pDD{q}$. La position du point 3D est donc exprimée à un facteur $\lambda$ près qui reflète la profondeur du point sur ce rayon :
 \begin{equation}
   \pTD{Q}(\lambda) = \lambda \pinv{\mat{P}} \pDDHom{q}
   \label{eq:notions:retroprojection}
@@ -238,7 +238,7 @@ de telle sorte que $\mat{P}\pTD{Q}(\lambda) = \lambda (\mat{P}\pinv{\mat{P}}) \p
 Au niveau informatique une image est un tableau à deux dimensions contenant un nombre fini de pixels. Sauf mention contraire, nous considérons des images en niveau de gris à valeurs réelles. Une image $\img{I}$ de dimensions $w \times h$ est donc une application bidimensionnelle :
 \begin{equation}
   \begin{aligned}
-    \img{I} : \llbracket 1,w \rrbracket \times \llbracket 1,h \rrbracket &\to  \real
+    \img{I} : \llbracket 1,w \rrbracket \times \llbracket 1,h \rrbracket &\to \mathbb{N}
     \\
     (x,y) &\mapsto \img{I}[x,y].
   \end{aligned}
@@ -250,7 +250,7 @@ Pour simplifier les expressions mathématiques, il est possible de considérer $\i
 en interpolant les valeurs entre les pixels voisins pour les coordonnées non entières. On a alors:
 \begin{equation}
   \begin{aligned}
-    \img{I} :\quad \domimg{I} &\to  \real
+    \img{I} :\quad \domimg{I} &\to  \mathbb{N}
     \\
     (x,y) &\mapsto \img{I}(x,y).
   \end{aligned}
@@ -763,9 +763,47 @@ La sinuosité décrit la courbure de plusieurs arcs reliés avec des points d'infle
 %https://www.ma.utexas.edu/users/m408m/Display13-4-3.shtml
 
 \subsection{Première et seconde forme fondamentale}
-\fix{A faire}
-%http://mathworld.wolfram.com/FundamentalForms.html
+\paragraph{Première forme fondamentale.}
+En géométrie différentielle, la première forme est le produit interne sur l'espace tangent d'une surface dans un espace euclidien de dimension trois. Elle permet le calcul de propriétés de courbure et de métrique d'une surface tel que la longueur et l'aire. La première forme fondamentale est notée:
+\begin{equation*}
+    \RN{1}(x, y) = \langle x, y \rangle.
+\end{equation*}
+Soit $X(u, v)$ une surface paramétrique. Ainsi, le produit interne de deux vecteurs tangents est:
+\begin{flalign*}
+\RN{1}(aX_u + bX_v, cX_u + dX_v) \\
+= ac \langle X_u, X_u \rangle + (ad + bc)\langle X_u, X_v\rangle + bd \langle X_v, X_v\rangle \\
+= Eac + F(ad + bc) + Gbd,
+\end{flalign*}
+où $E$, $F$ et $G$ sont les coefficients de la première forme fondamentale. La première forme fondamentale peut être également représentée en tant que matrice symétrique:
+\begin{equation*}
+\RN{1}(x, y) = x^\top
+\begin{pmatrix}
+E & F \\
+F & G
+\end{pmatrix}y
+\end{equation*}
 
+\paragraph{Seconde forme fondamentale.}
+En géométrie différentielle, la seconde forme fondamentale est une forme quadratique sur le plan tangent d'une surface lisse dans l'espace euclidien de dimension trois et noté généralement $\RN{2}$. La seconde forme fondamentale permet de définir les courbures principales.
+Soit $X(u, v)$ une surface paramétrique dans $\mathbb{R}^3$. Cette paramétrisation permet de définir un ensemble de vecteurs normaux $\vect{n}$:
+\begin{equation*}
+\vect{n} = \frac{X_u \times X_v}{|X_u \times X_v|}.
+\end{equation*}
+La seconde forme fondamentale est écrite généralement tel que:
+\begin{equation*}
+\RN{2} = Ldu^2 + 2Mdudv + Ndv^2,
+\end{equation*}
+sa représentation matrice dans la base $\{X_u, X_v\}$ sur le plan tangent est:
+\begin{equation*}
+\begin{bmatrix}
+L & M \\
+M & N
+\end{bmatrix}.
+\end{equation*}
+Les coefficients $L$, $M$ et $N$ pour un point donné dans le plan sont donnés par les projections des dérivés partielles de second ordre de $\vect{X}$ en ce point sur la droite normale de $S$ et peut être calculés à l'aide du produit scalaire tel que:
+\begin{equation}
+L = X_{uu} \cdot \vect{n}, \text{   } M = X_{uv} \cdot \vect{n}, \text{    } X_{vv} \cdot \vect{n}.
+\end{equation}
 %=============================================================================
 \subsection{Courbure normale et principale}
 Soit $\vect{u}_{\vect{p}}$ le vecteur tangent d'une surface régulière $M \in \mathbb{R}^3$. La courbure normale de $M$ dans la direction de $\vect{u}_{\vect{p}}$ est:
@@ -802,7 +840,7 @@ Supposons que la surface soit donnée par une équation $z = f(x, y)$ où $f$ est u
 \paragraph{Formes fondamentales}
 Soit une surface paramétrée au moyen de deux paramètres $u$ et $v$, et soit $\mathtt{I} = Edu^{2} + 2Fdudv + Gdv^{2}$ la première forme fondamentale, $\mathbb{II} = Ldu^{2} + 2Mdudv + Ndv^{2}$ la seconde forme fondamentale. Alors la courbure de Gauss vaut :
 \begin{equation}
-\mathcal{K} = \frac{LN - M^2}{EG - F^2}
+\mathcal{K} = \frac{\text{det } \RN{2}}{\text{det } \RN{1}} = \frac{LN - M^2}{EG - F^2}
 \end{equation}
 
 Un lien entre la courbure de Gauss $\mathcal{K}$ et la courbure moyenne $H$ sont liés à $\kappa_1$ et $\kappa_2$ par :
@@ -1131,10 +1169,20 @@ L'interaction d'une source de lumière (feu, lampe, soleil, \ldots) avec une surf
 
  Pour des applications photo-réalistes où le temps de calcul n'est pas primordial, des modèles plus complexes peuvent être utilisées pour modéliser des phénomènes de lumière comme les caustiques, les inter-réflexions ou encore la diffraction de la lumière. Les méthodes d'illumination globale plus réalistes mais aussi plus importante en complexité sont plus adaptés à cette situation. Ces méthodes  mesure de façon méthodique la fonction bidirectionnelle de distribution de la reflectance ou en anglais \textit{Bidirectional réflectance Distribution Function} (BRDF) sur l'ensemble des points de vue et des points de surface de la scène.
  
-Ces deux catégories sont illustrées à la figure  
- 
- \fix{images jeux vidéos + réalisme}.
- 
+Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisant un moteur de rendu photo-réaliste V-RAY\footnote{\url{https://www.chaosgroup.com/}} et un moteur de jeux vidéo  Unreal-engine\footnote{\url{https://www.unrealengine.com/en-US/what-is-unreal-engine-4}}.
+\begin{figure}
+    \subfigure[Rendu photo-réaliste]
+	{
+	    \includegraphics[width=0.43\linewidth]{rendering.jpg}
+	}
+	\subfigure[Rendu semi-réaliste]
+	{
+	    \includegraphics[width=0.43\linewidth]
+	{unreal_engine.PNG}
+	}
+	\caption{Rendus d'une scène 3D possibles dans domaine de la synthèse d'image (a) et du jeux vidéo  (b).}
+	\label{fig:rendering}
+\end{figure}
 
 %=============================================================================
 

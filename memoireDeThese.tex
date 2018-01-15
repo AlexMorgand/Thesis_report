@@ -53,7 +53,10 @@
   \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}
 }
 
-\newcommand{\adj}[1]{\mathop{adj(#1)}}
+\newcommand{\RN}[1]
+{
+  \textup{\uppercase\expandafter{\romannumeral#1}}
+}
 
 \newcommand{\mbf}[1]{\mathbf{#1}}
 
@@ -62,6 +65,7 @@
 
 \newcommand{\mathup}[1]{\text{\textup{#1}}}
 
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
 %\newcommand{\mat}[1]{\boldsymbol{\mathup{#1}}}
 \newcommand{\f}[1]{\mathit{#1}}
 \DeclareMathOperator*{\argmin}{arg\!\min}
