@@ -9,6 +9,7 @@ La reconstruction d'objet sous forme de quadrique est primordiale dans ce travai
 \end{chapeauChapitre}
 
 \section{Introduction}
+Dans le domaine de la vision par ordinateur, les quadriques sont très largement utilisées notamment dans la reconstruction d'objet d'une forme proche d'une quadrique (sphère, cylindre, ellipsoïde, \ldots) mais également pour approximer la forme d'objets plus complexes. Cette approximation forme une boite de délimitation (\textit{bounding box}) peut donner une première pose approximative d'un objet ou pour calculer une collision approximative entre deux objets ce qui est moins couteux que de calculer la collision entre deux maillages. Dans ce chapitre, nous évoquons les différentes méthodes de reconstruction de quadrique utilisées ainsi que les métriques et techniques utilisées pour évaluer la qualité de la reconstruction.
 \section{État de l'art}
 
 Notre modèle géométrique repose sur l'existence d'une quadrique reconstruite par l'observation d'ellipses calculées à partir des spécularités. Il est important d'évoquer l'état de l'art des méthodes de reconstruction de quadrique car le phénomène de spécularité étant hautement variable, nous avons besoin d'une méthode de reconstruction particulièrement résistante au bruit des données d'entrée.
@@ -34,7 +35,6 @@ Récemment \cite{crocco2016structure} ont présenté une méthode permettant à la fo
 \label{sec:contrainte_epipolaire}
 %=============================================================================
 
-\subsubsection{Correction épipolaire d'ellipses}
 Reconstruire une quadrique à partir de réflexions spéculaires n'est pas une tache facile. En effet, contrairement à l'approche de \cite{cross1998quadric}, notre reconstruction est réalisée à partir d'observations de réflexions spéculaires dans plusieurs images au lieu d'observations d'un objet directement.
 
 Dans l'approche de \cite{cross1998quadric}, le calcul d'ellipses est moins propice aux erreurs. En effet, les spécularités représentent des images semi-miroir des sources de lumières réfléchies sur des surfaces spéculaires. Ces spécularités ont des contours qui ne sont pas consistantes à cause de la variation d'intensité entre les images ce qui cause que les ellipses calculées ne sont pas épipolairement consistantes comme illustré dans la figure \ref{fig:epipolar_error}.
@@ -304,34 +304,34 @@ Une illustration du raffinement d'une quadrique à partir de trois points de vue 
 	\centering
 	\subfigure[]
 	{
-        \includegraphics[width=0.35\linewidth]{1.png}
+        \includegraphics[width=0.3\linewidth]{1.png}
     }
 	\subfigure[]
 	{
-        \includegraphics[width=0.35\linewidth]{1_proj.png}
+        \includegraphics[width=0.3\linewidth]{1_proj.png}
     }
 	\subfigure[]
 	{
-        \includegraphics[width=0.35\linewidth]{274.png}
+        \includegraphics[width=0.3\linewidth]{274.png}
     }
 	\subfigure[]
 	{
-        \includegraphics[width=0.35\linewidth]{274_proj.png}
+        \includegraphics[width=0.3\linewidth]{274_proj.png}
     }
 	\subfigure[]
 	{
-        \includegraphics[width=0.35\linewidth]{967.png}
+        \includegraphics[width=0.3\linewidth]{967.png}
     }
 	\subfigure[]
 	{
-        \includegraphics[width=0.35\linewidth]{967_proj.png}
+        \includegraphics[width=0.3\linewidth]{967_proj.png}
     }
 \caption{Illustration de l'évolution du raffinement non-linéaire de quadrique (à droite) à partir des contours de spécularité en vert. Nous pouvons observer l'évolution des ellipses correspondant aux projections de la quadrique en fonction des poses de caméra.}
 \label{fig:quadrique_refinement}
 \end{figure}
 Bien que cette minimisation soit fonctionnelle, la forme matricielle de $\mat{Q}$ est plus difficile à optimiser dans l'état que la forme paramétrique de la quadrique (9 degrés de libertés : position 3D, échelle en 3 dimensions et 3 angles). Cela est due au fait que les 10 éléments distincts de la matrice symétrique $\mat{Q}$ (9 en fixant la dernière case correspondant à l'échelle à 1) ne sont pas indépendants. Nous transformons la forme matricielle de $\mat{Q}$ en représentation paramétrique par l'algorithme suivant:
 \begin{algorithm}
-\caption{}
+\caption{Conversion de la forme matricielle de $\mat{Q}$ en forme paramétrique correspondant à neuf degrés de liberté.}
 \begin{algorithmic}[1]
 \Procedure{TransformationQuadriqueEnParametrique}{$\mat{Q}$}
 \State $\mat{K} \gets \mat{Q}(1:3, 1:3)$
@@ -357,24 +357,20 @@ Bien que cette minimisation soit fonctionnelle, la forme matricielle de $\mat{Q}
 \label{algo:quadric_to_natural}
 \end{algorithm}
 
-\fix{Parler du protocole expérimental pour bien estimer la différence en ellipsoide}
-
-\fix{Distance ellipsoide/ellipsoide est également super intéressante. Je pense qu'il faut mettre en annexe par contre}
-
 \subsection{Critère d'images clés}
 Lorsque les points de vue de caméra s'étendent sur un ensemble d'images où la pose se déplace faiblement, le système \eqref{eq:linearsystem} utilisée pour reconstruire la quadrique duale $\mat{Q}^*$ peut être mal conditionnée. Ce contexte peut engendrer une reconstruction de quadrique dégénérée, à la mauvaise échelle (un degré de liberté complètement disproportionné) ou l'obtention d'une mauvaise quadrique comme une hyperboloïde. Pour la phase initiale et le raffinement non-linéaire, il est important de choisir un ensemble d'images pertinentes appelé images clés (notion similaire à \cite{mouragnon2006real}). Une approche naïve serait de sélection toutes les images de la séquence ce qui engendrerait une accumulation d'erreur importante avec une augmentation du temps de calcul de l'application. En pratique, nous limitons la reconstruction initiale de quadrique par 6 images clés.
 
 Une image est considérée comme image clé lorsqu'elle répond à deux critères : estimation correcte de l'ellipse correspondante due à une bonne détection de la spécularité et bonne contrainte épipolaire.
 
 \paragraph{Qualité de détection et correspondance d'ellipse de la spécularité} A l'aide de la distance de \ref{sec:jaccard}, nous considérons l'image courante comme image clé si l'ellipse estimée recouvre une aire proche de l'aire de la spécularité détectée. En pratique, $90\%$ de recouvrement est suffisant pour obtenir une bonne correspondance. Ce processus est illustré à la figure \ref{fig:specularity_quality}.
-\paragraph{Répartition des tangentes épipolaire} To ensure our epipolar constraint to be fully effective, we want the tangents of the conic to be evenly spread around it.
+\paragraph{Répartition des tangentes épipolaire.} Afin de s'assurer que notre contrainte épipolaire est efficace, il est nécessaire d'avoir les tangentes épipolaires pour chaque ellipse réparties autour de celle-ci.
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{tangent_criterion.pdf}
-	\caption{\fix{Can you do it with real images ?} Epipolar tangency spreading criterion. We want to maximize the angle between the lines containing the center of the conic and respectively the two epipoles for the three frames. We need to have the angles ($\alpha$, $\beta$ and $\gamma$) close to $120^{\circ}$ to ensure an optimal spreading of the viewpoints and a good initialization of the quadric.}
+	\caption{\fix{Can you do it with real images ?} Critère utilisant la répartition des tangentes épipolaires afin de sélectionner les images clés. L'objectif est de maximiser l'angle entre chaque droites contenant le centre de l'ellipse et chaque  épipole  à partir de trois images. }
 	\label{fig:tangent_criterion}
 \end{figure}
-\fix{Our criterion is to maximize the angle between the lines containing the epipoles and the conic center. This criterion is applied on every keyframe and illustrated in the Fig.\ref{fig:tangent_criterion}. We need to have the angles close to $120^\circ$ to ensure an optimal spreading of the viewpoints. Combining to the epipolar correction, the quadric initialization is made in robust conditions.}
+Notre critère est de maximiser l'angle entre les droites contenant l'épipole et le centre de l'ellipse pour chaque épipole. Ce critère est appliqué pour chaque image clés et illustré dans la figure \ref{fig:tangent_criterion}. Nous devons avoir des angles ($\alpha$, $\beta$ et $\gamma$) le plus proche possible de $120^{\circ}$ afin d'assurer une répartition optimale des points de vues permettant une bonne initialisation de la quadrique.
 \begin{figure}[!ht]
 	\centering
 	\subfigure[]
@@ -398,13 +394,76 @@ Une image est considérée comme image clé lorsqu'elle répond à deux critères : es
     \label{fig:keyframe_criterion}
 \end{figure}
 
+\section{Distance 3D de quadrique}
+La distance entre deux quadriques peut être utilisée pour évaluer la qualité de reconstruction d'une quadrique par rapport à une vérité terrain ou pour un calcul de collision rapide entre deux quadriques.
+
+\subsection{Distance de centre de quadrique}
+Les quadriques sont des structures paramétriques qui peuvent être décrites en représentation naturelle comme détaillée dans \ref{algo:quadric_to_natural} qui explicite le centre, l'échelle et la rotation de la quadrique. Pour cette distance, une distance euclidienne est utilisée entre les centre des deux quadriques.
+
+\subsection{Distance globale 3D}
+Dans le cas de deux quadriques très proches, nous voulons une distance 3D très précise. Une première approche serait d'utiliser une distance 3D similaire à la distance de Jaccard. Cependant, une telle distance impliquerait de calculer des intersections de quadriques ce qui peut s'avérer couteux en temps de calcul. De plus, cette distance serait également limitée comme la distance de Jaccard 2D car elle serait nulle lorsque les deux quadriques sont non-sécantes. Pour répondre à ces problèmes, nous proposons une distance point/point 3D entre deux quadriques inspiré de notre distance 2D point/point entre deux ellipses.
+
+\subsection{Discrétisation de quadrique}
+Afin de discrétiser la quadrique en $k$ points répartis uniformément sur la surface, nous utilisons l'algorithme de la spirale de Fibonacci qui est décrite dans \cite{hannay2004fibonacci}. Prenons par exemple, la quadrique $\mathtt{Q}_1$ obtenue par un processus de reconstruction et $\mathtt{Q}_2$, la vérité terrain. Ces deux quadriques sont converties dans une représentation paramétrique (appelée aussi naturelle) décrite à l'algorithme \ref{algo:quadric_to_natural} afin de calculer la matrice de transformation $\mathtt{M}_\mathtt{Q}$ tel que:
+\begin{equation}
+\mathtt{M}_{\mathtt{Q}}^{-T}\mathtt{Q}_{sphere}\mathtt{M}_{\mathtt{Q}}^{-1} = \mathtt{Q},
+\label{eq:transfo_quad}
+\end{equation}
+avec  $\mathtt{Q}_{sphere}$ la sphère unitaire centrée à l'origine.
+Ainsi, nous calculons les transformations $\mathtt{M}_{\mathtt{Q}_1}$ et $\mathtt{M}_{\mathtt{Q}_2}$ pour $\mathtt{Q}_1$ et $\mathtt{Q}_2$ respectivement.
+ Then, we convert $\mathtt{Q}_1$ into the unit sphere using $\mathtt{M}_{\mathtt{Q}_1}^{-1}$ transformation and apply our discretization on the $\mathtt{Q}_{sphere}$ surface. Then, every points are spread of the $\mathtt{Q}_1$ surface using $\mathtt{M}_{\mathtt{Q}_1}$ as illustrated in the Fig.\ref{fig:discretization}.
+\begin{figure}[!ht]
+   \centering	    
+   	  \subfigure[]
+	  {
+  		 \includegraphics[width=0.45\linewidth]{quadric_dist}
+             \label{fig:discretization}
+        }
+        \subfigure[]
+	  { 
+  		 \includegraphics[width=0.45\linewidth]{quadric_discret}
+   	       \label{fig:sampling_full}
+        }
+             \label{fig:discretization_quadric}
+  		 
+  		 
+   \caption{(a) détails de la discrétisation d'ellipsoïde. Chaque points sont distribués uniformément. (b) illustre notre représentation de la distance globale. Les points de l'ellipsoïde 1 et 2 sont représentés en rouge et vert respectivement. Les paires sont représentées par des droites bleues.}
+\vspace{-1.5em}
+\end{figure}
+
+\subsection{Recherche de points voisins les plus proches de la deuxième ellipsoïde}
+La distance globale 3D correspond à la somme des distances euclidiennes pour chaque paire de points de l'ellipsoïde. Pour un point $\mathbf{p}_{\mathtt{Q}_1} \in \mathtt{Q}_1$, il existe un point $\mathbf{p}_{\mathtt{Q}_2} \in \mathtt{Q}_2$ formant une paire unique $(\mathbf{p}_{\mathtt{Q}_1}$, $\mathbf{p}_{\mathtt{Q}_2})$ tel que $\mathbf{p}_{\mathtt{Q}_2}$ est le point le plus proche de  $\mathbf{p}_{\mathtt{Q}_1}$.
+%\begin{equation}
+%\begin{aligned}
+%%\underset{p}{\arg\min} \{\text{$p\in Q_2$ | }\forall q  \in Q_2, q \neq\text{$p$: }d(p_{Q_1}, p) < d(p_{Q_1}, q)\}
+%p_{Q_2} = \underset{p}{\arg\min}\text{ }   d(p_{Q_1}, p)
+%\end{aligned}
+%\label{eq:argmin}
+%\end{equation}
+%with $d$ the euclidean 3D distance.
+Une moyen efficace de trouver le point le plus proche est d'appliquer la transformation  $\mathtt{M}_{\mathtt{Q}_2}^{-1}$ aux points appartenant à la surface de $\mathtt{Q}_1$. Ensuite, nous calculons les intersections entre les droites passant par les points transformés et le centre de la sphère unitaire. Ces intersections sont transformées à nouveau avec $\mathtt{M}_{\mathtt{Q}_2}$. Le résultat de notre distance est illustrée à la figure \ref{fig:sampling_full}. Nous distance globale 3D notée $GD$ par l'équation \eqref{eq:globaldistance}:
+\begin{equation}
+\begin{aligned}
+GD(\mathtt{Q}_1, \mathtt{Q}_2) = \int_{\partial \mathtt{Q}_1}\underset{q \in \partial \mathtt{Q}_2}{\min}   d(\mathbf{p}, \mathbf{q})\mathrm{d}\mathbf{p},
+\end{aligned}
+\label{eq:globaldistance}
+\end{equation}
+avec $\mathbf{p} \in \mathtt{Q}_1$, $\mathbf{q} \in \mathtt{Q}_2$ et $\mathbf{p} \neq \mathbf{q}$.
+
+Le calcul des points sur la seconde ellipsoïde ne garantie pas une répartition uniforme des points sur la surface. Afin d'assurer la symétrie de notre distance 3D (notée $QD$) est décrite par:
+\begin{equation}
+\begin{aligned}
+QD(\mathtt{Q}_1, \mathtt{Q}_2) = \max(GD(\mathtt{Q}_1, \mathtt{Q}_2), GD(\mathtt{Q}_2, \mathtt{Q}_1)),
+\end{aligned}
+\label{eq:transfo_quad}
+\end{equation}
+
 \section{Résultats}
+\fix{Il faut mettre quelque chose ?}
 
-
-\fix{A traduire obviously}
-\section{Vectorization du système de projection de la quadrique duale}
+\section{Vectorisation du système de projection de la quadrique duale}
 \label{sec:vectorization_appendix}
-A detailed process of the vectorization of equation \eqref{eq:conicdual} can be found here. We define two vectorization operators, as in \cite{henderson1979vec}, $\mathop{\text{vec}}$ for any matrix and $\mathop{\text{vech}}$ for symmetric matrices such as $\mathtt{C}$, $\mathtt{Q}$:
+Dans cette section, nous détaillons le processus de vectorisation détaillée dans le chapitre \ref{chapitre:primal_jolimas}. Nous définissons deux opérateurs de vectorisation évoqué dans \cite{henderson1979vec}, $\mathop{\text{vec}}$ pour toute matrice et $\mathop{\text{vech}}$ pour toute matrice symétriques matrices tel que la fore matricielle d'une l'ellipse (et plus généralement d'un conique) $\mathtt{C}$, et d'un ellipsoïde (plus générale une quadrique) $\mathtt{Q}$:
 \begin{equation*}
 \setlength\arraycolsep{2pt}
 \mathtt{X} =
@@ -413,11 +472,11 @@ a & b \\
 b & d \\
 \end{bmatrix}\text{, }  \mathop{\text{vec}}(\mathtt{X}) = \begin{bmatrix} a & b & b & d\end{bmatrix}^\top \text{, } \mathop{\text{vech}}(\mathtt{X}) = \begin{bmatrix}a & b & d\end{bmatrix}^\top.
 \end{equation*}
-We apply $\mathop{\text{vech}}$ to equation \eqref{eq:conicdual}:
+Nous appliquons $\mathop{\text{vech}}$ à l'équation :
 \begin{equation*}
 	\mathop{\text{vech}}(\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top) = \mathop{\text{vech}}(\mathtt{C}^*)
 \end{equation*}
-which can be rewritten as:
+qui peut être réécrit :
 \begin{equation*}
 \setlength\arraycolsep{2pt}
 	\mathtt{H}\mathop{\text{vec}}(\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top) = \mathbf{C}_v^* \text{, with } \mathtt{H} =
@@ -430,23 +489,24 @@ which can be rewritten as:
 	0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\ 
 	\end{bmatrix},
 \end{equation*}
-with $\mathtt{H} \in \mathbb{R}^{6 \times 9}$ as $\mathop{\text{vech}}(\mathtt{X}) = \mathtt{H}\mathop{\text{vec}}(\mathtt{X})$. From \cite{henderson1979vec}, with three matrices $\mathtt{A}$, $\mathtt{B}$ and $\mathtt{C}$, $\mathop{\text{vec}}(\mathtt{ABC}) = (\mathtt{C}^\top \otimes  \mathtt{A}) \mathop{\text{vec}}(\mathtt{B})$ with $\otimes$ the Kronecker product. We further develop in:
+avec $\mathtt{H} \in \mathbb{R}^{6 \times 9}$ tel que $\mathop{\text{vech}}(\mathtt{X}) = \mathtt{H}\mathop{\text{vec}}(\mathtt{X})$. 
+De \cite{henderson1979vec}, avec trois matrices $\mathtt{A}$, $\mathtt{B}$ et $\mathtt{C}$, $\mathop{\text{vec}}(\mathtt{ABC}) = (\mathtt{C}^\top \otimes  \mathtt{A}) \mathop{\text{vec}}(\mathtt{B})$ avec $\otimes$ le produit de Kronecker, nous développons :
 \begin{equation*}
 \mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathop{\text{vec}}(\mathtt{Q}^*) = \mbf{C}^*_v.
 \end{equation*}
-$\mathop{\text{vec}}$ and $\mathop{\text{vech}}$ are also linked such as $\mathop{\text{vec}} (\mathtt{X}) = \mathtt{G}\mathop{\text{vec}}(\mathtt{X})$ with \mbox{$\mathtt{G} \in \mathbb{R}^{16 \times 10}$}. Finally, we obtain the linearization:
+$\mathop{\text{vec}}$ et $\mathop{\text{vech}}$ sont aussi liés de telle façon que $\mathop{\text{vec}} (\mathtt{X}) = \mathtt{G}\mathop{\text{vec}}(\mathtt{X})$ avec \mbox{$\mathtt{G} \in \mathbb{R}^{16 \times 10}$}. Nous obtenons la linéarisation suivante:
 \begin{equation}
 \setlength\arraycolsep{2pt}
 \mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathtt{G} \mathop{\text{vech}}(\mathtt{Q}^*) = \mbf{C}^*_v
 \end{equation}
-with
+avec
 \begin{equation*}
 \setlength\arraycolsep{4.5pt}
 \setcounter{MaxMatrixCols}{16}
 \mathtt{G} =
     \begin{bmatrix}
 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
-0 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &  0\\
+0 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0\\
 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\
@@ -457,4 +517,4 @@ with
 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1\\
 	\end{bmatrix}^\top,
 \end{equation*}
-which gives the final form $\mathtt{B}\mathbf{Q}^*_v = \mathbf{C}_v^*$ with $\mathtt{B} = \mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathtt{G}$.
+ce qui donne la forme finale $\mathtt{B}\mathbf{Q}^*_v = \mathbf{C}_v^*$ avec $\mathtt{B} = \mathtt{H}(\mathtt{\Pi} \otimes  \mathtt{\Pi}) \mathtt{G}$.

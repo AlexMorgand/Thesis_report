@@ -71,13 +71,11 @@ Dans notre représentation canonique, afin de transformer l'ellipse courante asso
 }
 \subfigure[]
 {
-    \includegraphics[width=\linewidth, height=6cm]{homography.pdf}
+    \includegraphics[width=\linewidth, height=8cm]{homography.pdf}
 }
-\vspace{-1.0em}
-\caption{Ellipse transformation from its shape on a curved surface $S$ to the canonical representation onto the tangent plane $T_\mathbf{P_B}(S)$ at the brightest point $\mbf{P_B}$. From the fitted ellipse  to the specularity (blue), we apply the transformation $\mathtt{M}$ to obtain the corrected ellipse (green) in the tangent plane $T_\mathbf{P_B}(S)$.}
+\caption{Transformation d'ellipse de sa forme sur la surface courbe $S$ en représentation canonique sur le plan tangent $T_\mathbf{P_B}(S)$ au point d'intensité maximale $\mbf{P_B}$. A partir de l'ellipse correspondante à la spécularité (en bleu), nous appliquons la transformation $\mathtt{M}$ afin d'obtenir l'ellipse corrigée (en vert) dans le plan tangent $T_\mathbf{P_B}(S)$.}
 \label{fig:warping}
 \end{figure}
-\vspace{-1.5em}
 
 %===============================================================================
 \section{Lien entre déformation, spécularité et courbure de la surface} %%%%%%%%%%
@@ -125,7 +123,7 @@ Nous montrons deux exemples de prédiction de spécularité sur une séquence synthé
     \includegraphics[width=0.37\linewidth]{approach_res}
 }
 
-\caption{Specularity predictions on both synthetic and real sequences. (a) presents the object of interest: a synthetic ellipsoid (top) and a real rocket replica (bottom). Image pairs for each sequence showing specularity prediction results (blue ellipse) of \cite{morgand2017multiple} (b) and our approach (c). Our approach estimates the shape and position of the specularity substantially more accurately.}
+\caption{Prédictions de spécularité sur des séquences synthétiques et réelles. (a) présente l'objet d'intérêt: un ellipsoïde synthétique (en haut) et une réplique de fusée réelle (en bas). Nous présentons une paire d'images pour chaque séquence montrant les résultats de prédiction (ellipses bleues) de JOLIMAS dual, dans (b) et JOLIMAS canonique, dans (c). La nouvelle approche estime la forme et la position des spécularité de façon beaucoup plus précise comparée à JOLIMAS dual.}
 \label{fig:results}
 \end{figure}
 
@@ -151,7 +149,7 @@ Nous montrons deux exemples de prédiction de spécularité sur une séquence synthé
 \section{Conclusion}					%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:conclusion_general}		%%%%%%%%%%%%%%%%%%%%%%
 %=======================================================================
-We presented a canonical representation of the Dual JOLIMAS model to handle specularity prediction for any surface curvature. An immediate application would be to do retexturing as in \cite{morgand2017multiple}. We could use the improved JOLIMAS model for inverse rendering as a good initialization for local illuminations models such as Blinn-Phong or Cook-Torrance. A study of the impact of the material (roughness, reflectance) on the specularity outline could greatly improve the genericity of the model.
+Nous avons présenté une représentation canonique de l'approche précédente JOLIMAS dual afin de prédire les spécularités pour n'importe quelle courbure d'une surface. Nous pourrions utilisée cette version améliorée du modèle JOLIMAS afin d'avoir une initialisation précise pour calculer des modèles d'illuminations locale comme Blinn-Phong et Cook-Torrance afin de permettre un rendu des spécularités et d'autres éléments de lumières comme les ombres de meilleure qualité. Il serait également intéressant d'étudier l'impact du type de matériau (rugosité et réflectance) sur la forme de la spécularité ce qui pourrait grandement améliorer la généricité du modèle.
 
 
 
