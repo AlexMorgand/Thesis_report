@@ -553,7 +553,7 @@ où $\antiSym{\vect{t}}$ est la matrice antisymétrique construite à partir du vec
 Dès lors, deux cas de figure sont possibles. Si le déplacement entre les caméras est connu, la matrice essentielle permet de réduire la recherche de point d'intérêt correspondant à 1 dimension (le long de la droite épipolaire). Dans le cas contraire, une estimation de la matrice essentielle (grâce à l'appariement d'au moins 5 points) permet de retrouver le déplacement relatif entre les caméras. Cette notion sera développée dans la section~\ref{sec:deplacementAssociations2D2D}.
 
 
-\paragraph{Homographies 2D.}
+\paragraph{Homographies 2D}
 Dans le cas où la scène observée est planaire, la relation qui existe entre deux caméras est définie
 par une \emph{homographie} $\mathit{H}$ (ou \emph{transformation projective}) 2D qui représente une transformation linéaire inversible de $\espace{P}{2}$ dans $\espace{P}{2}$ qui conserve l'alignement. Le théorème suivant permet de caractériser de façon matricielle les homographies 2D :  
 \begin{theorem}
@@ -576,7 +576,7 @@ Un des cas courants d'utilisation des homographies 2D est celui décrit dans la f
 \begin{figure}[htbp]
 	\begin{center}
 		\includegraphics[width=0.7\linewidth]{homographie}
-		\caption[Homographies 2D]{\textbf{Homographies 2D.} Les coordonnées des observations correspondantes de points 3D situés sur un même plan de l'espace sont reliées par une homographie 2D.}
+		\caption[Homographies 2D]{Les coordonnées des observations correspondantes de points 3D situés sur un même plan de l'espace sont reliées par une homographie 2D.}
 		\label{fig:ch2:homographie2D}
 	\end{center}
 \end{figure}
@@ -770,9 +770,9 @@ En géométrie différentielle, la première forme est le produit interne sur l'espa
 \end{equation*}
 Soit $X(u, v)$ une surface paramétrique. Ainsi, le produit interne de deux vecteurs tangents est:
 \begin{flalign*}
-\RN{1}(aX_u + bX_v, cX_u + dX_v) \\
-= ac \langle X_u, X_u \rangle + (ad + bc)\langle X_u, X_v\rangle + bd \langle X_v, X_v\rangle \\
-= Eac + F(ad + bc) + Gbd,
+& \RN{1}(aX_u + bX_v, cX_u + dX_v) \\
+&= ac \langle X_u, X_u \rangle + (ad + bc)\langle X_u, X_v\rangle + bd \langle X_v, X_v\rangle \\
+&= Eac + F(ad + bc) + Gbd,
 \end{flalign*}
 où $E$, $F$ et $G$ sont les coefficients de la première forme fondamentale. La première forme fondamentale peut être également représentée en tant que matrice symétrique:
 \begin{equation*}
@@ -971,17 +971,6 @@ L'incrément de Gauss-Newton est donc:
 \label{sec:notions:lm}
 La méthode d'optimisation non linéaire de Levenberg-Marquardt \citep{marquardt1963algorithm} combine les deux approches précédemment citées afin de profiter de leur avantage respectif. Ainsi, lorsque la solution est éloignée, c'est l'algorithme de descente de gradient qui sera privilégié. En se rapprochant de la solution, c'est la méthode de Gauss-Newton qui sera prépondérante afin d'accélérer la convergence.
 
-\subsubsection{Approches multi-résolution}
-Le principal problème des approches non linéaires est le risque de tomber dans un minimum local. L'idée des approches \emph{multi-résolution}, ou multi-échelle, est d'effectuer d'abord l'optimisation sur une version lissée du signal puis de diminuer progressivement le lissage jusqu'au signal original. Sous l'hypothèse que le minimum global est plus large que les minimums locaux, cela permet de guider l'estimation vers le bon bassin de convergence.
-
-En traitement d'image, on utilise des \emph{pyramides d'images} (voir figure~\ref{fig:notions:pyr}) cons\-truites en lissant et décimant itérativement  l'image de base.
-
-\begin{figure}
-\centering
-\includegraphics[width=.4\linewidth]{pyramid}
-\caption[Pyramide d'image pour un traitement multi-résolution]{Pyramide d'image pour un traitement multi-résolution. L'image de base (en bas) est successivement redimensionnée. Le traitement commence par le sommet de la pyramide et augmente progressivement la résolution pour éviter les minimums locaux.}\label{fig:notions:pyr}
-\end{figure}
-
 \subsection{Variantes des moindres carrés}
 \label{sec:notions:nlls}
 Un problème de minimisation aux moindres carrés minimise une fonction de la forme:
@@ -1171,6 +1160,7 @@ L'interaction d'une source de lumière (feu, lampe, soleil, \ldots) avec une surf
  
 Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisant un moteur de rendu photo-réaliste V-RAY\footnote{\url{https://www.chaosgroup.com/}} et un moteur de jeux vidéo  Unreal-engine\footnote{\url{https://www.unrealengine.com/en-US/what-is-unreal-engine-4}}.
 \begin{figure}
+\centering
     \subfigure[Rendu photo-réaliste]
 	{
 	    \includegraphics[width=0.43\linewidth]{rendering.jpg}
@@ -1189,25 +1179,98 @@ Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisan
 \subsection{Phénomène de réflexion spéculaire}
 Un des phénomène lumineux les plus visibles par un l'\oe{}il humain ou une caméra est la réflexion spéculaire. Elle se caractérise par une réflexion quasi totale de la lumière dans une direction principale (comportement proche de celui d'un miroir) sur une surface réfléchissante comme une plaque de métal, du plastique ou encore du bois ciré. Une \textbf{réflexion spéculaire (appelée également spécularité)} est dépendante du point de vue d'observation. Ce type de réflexion est sous associée au phénomène de \textbf{réflexion diffuse} où la réflexion se produit dans toutes les directions et qui est ainsi indépendant du point de vue d'observation. Effectuer une séparation efficace de ces deux composantes représente un des problèmes photométriques les plus complexes. Un détail plus complet d'une méthode de détection de spécularité est développée en annexe \ref{annexe:specularity_detection}.
 
+\subsection{Réflectivité bidirectionnelle (BRDF)}
+Cette fonction $f$ évoquée dans les équation \eqref{eq:reflectance_equation} et \eqref{eq:rendering_equation} caractérise la réflexion d'une surface. Elle prend en entrée une direction de la lumière incidente $\omega_i$ et une direction réfléchie $\omega_r$ et indique le ratio de la radiance sortant suivant $\omega_r$ en fonction de l'irradiance incidente de la surface suivant la direction $\omega_i$. Cette fonction prend généralement en entrée 4 paramètres représentant $\omega_i$ et $\omega_r$ en coordonnées sphériques.
+
+ Sans rentrer dans trop de détails, selon la précision et la puissance de calcul disponible nous pouvons citer dans les BRDF connues les harmoniques sphériques ou encore les modèles d'illumination locale évoqués précédemment.
+
+
+\fix{Parler de la  Fonction de champ lumineux?}
+\fix{Parler des harmoniques sphériques ?}
+
+%=============================================================================
+\section{Illumination globale} 
+\label{sec:illumination_globale} 
+
+En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant un rôle important dans le photo-réalisme, sont ignorés. L'illumination globale est caractérisée par la modélisation des rebonds de la lumière entre les sources de lumières et les objets ce qui permet de synthétiser des phénomènes d'ombre plus avancées et nuancées, d'inter réflexion et de réfraction. L'illumination globale modélise l'illumination indirecte \textit{e.g} la manière dont la lumière rebondie d'une surface sur une autre à l'opposé des méthodes d'illumination directe comme les modèles d'illumination locale que nous évoquerons à la section \ref{sec:modèles_dillumination_locale}. Parmis les effets plus avancées que l'illumination globale peut rendre, nous pouvons citer les caustiques ou les inter-réflexions diffuses (\textit{color bleeding}) comme illustré à la figure \ref{fig:caustic} et \ref{fig:color_bleeding}.
+
+\begin{figure}
+    \subfigure[Caustique crée par un verre d'eau]
+    {
+        \includegraphics[width=0.45\linewidth]{caustic}
+        \label{fig:caustic}
+    }
+    \subfigure[\textit{Color bleeding} d'une surface rouge sur une statue]
+    {
+        \includegraphics[width=0.45\linewidth]{color_bleeding}
+        \label{fig:color_bleeding}
+    }
+\caption{Phénomènes lumineux modélisable par l'illumination globale comme les caustiques (a) et l'inter-réflexion diffuse (b).}
+\end{figure}
+\fix{On peut rajouter plus de détail sur les deux phénomènes - scribe-lecture3}
+
+%=============================================================================
+\subsection{L'équation de rendu}
+\label{sec:rendering_equation}
+Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. l'équation de réflectance est définie par: \fix{ajouté variable l pour la lumière?}
+\begin{equation}
+L_r(\vect{P}, \omega_r) = L_e(\vect{P}, \omega_r) + \sum L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)(\omega_i \cdot \hat{\vect{N}}(\vect{P})),
+\label{eq:reflectance_equation}
+\end{equation}
+avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ dans la direction $\omega_r$ causée par la radiance incidence $L_i$ des sources de lumière dans la direction $\omega_i$, $f$ la fonction bidirectionnelle de distribution de la reflectance (BRDF) qui donne la proportion de lumière réfléchie de $\omega_i$ à $\omega_r$ au point $\vect{P}$ et $L_e$ la radiance émise. Une version simplifié de cette équation est illustré à la figure \ref{fig:reflectance_equation}.
+
+\begin{figure}
+\centering
+    \subfigure[]
+    {
+        \includegraphics[width=0.3\linewidth]{reflectance_equation}
+        \label{fig:reflectance_equation}
+    }
+    \subfigure[]
+    {
+        \includegraphics[width=0.3\linewidth]{rendering_equation}
+        \label{fig:rendering_equation}
+    }
+    \subfigure[]
+    {
+        \includegraphics[width=0.3\linewidth]{hemisphere}
+        \label{fig:hemisphere}
+    }
+\caption{Illustration du calcul de l'équation de reflectance et de rendu.}
+\end{figure}
+
+Cette formulation est trop simpliste vu qu'elle ne prend en compte que les sources de lumière directe et non les portions de lumière réfléchie des autres surfaces proches. Au lieu de prendre en compte la somme des sources de lumière, il est plus naturel de prendre en compte un panel d'angle et d'intégrer la fonction de réflectance sur ce panel d'angle tel que:
+\begin{flalign}
+L_r(\vect{P}, \omega_r) &= L_e(\vect{P}, \omega_r) + \int_\Omega L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)\text{ cos}\theta_id\omega_i \\
+                        &= L_e(\vect{P}, \omega_r) + \int_\Omega L_r(\vect{P'}, -\omega_i)f(\vect{P}, \omega_i, \omega_r)\text{ cos}\theta_id\omega_i,
+\label{eq:rendering_equation}
+\end{flalign}
+avec $\vect{P'}$ un point d'une autre surface produisant réfléchissant de la radiance sur la surface content $\vect{P}$. Nous considérons ainsi les surfaces diffuses comme potentiellement émettant de la radiance de la même manière qu'une source de lumière ce qui permet de généraliser l'équation et décrire le déplacement de la lumière de toute la scène. Une illustration de l'équation de rendu est  visible à la figure \ref{fig:rendering_equation} et \ref{fig:hemisphere}.
+
+Nous n'évoquerons pas ici la résolution de l'équation de rendu. Ce sujet est traité de façon plus longue dans le livre de Hughes \etal \cite{hughes2014computer}.
+
 %=============================================================================
 \section{Modèles d'illumination locale} 
 \label{sec:modèles_dillumination_locale} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 \subsection{Modèle dichromatique}
-Le modèle de réflexion dichromatique de \cite{shafer1985using} est décrit par:
+Le modèle de réflexion dichromatique de \cite{shafer1985using} est un modèle physique décrit par:
 \begin{flalign*}
 L(\lambda, i, e, g) & = L_i(\lambda, i, e, g) + L_b(\lambda, i, e, g) \\
                     & = m_i(i, e, g)c_i(\lambda) + m_b(i, e, g)c_b(\lambda)
 \end{flalign*}
-Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de a la lumière réfléchie est la somme de deux partie indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendantes et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. \fix{Peut être parler du modèle dichromatique dans Kim}. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
+Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de a la lumière réfléchie est la somme de deux partie indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendantes et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
+Pour des applications de vision par ordinateur, dans un soucis d'optimisation et de simplicité, il est préférable d'abstraire certains paramètres comme la puissance spectrale relative, le facteur d'échelle et la longueur d'onde. Par la suite, nous présentons les modèles de réflectance de Phong et Blinn-Phong qui sont des cas spéciaux du modèle proposé par \cite{shafer1985using}.
+
+%https://books.google.fr/books?id=Z-36P9InswAC&pg=PA11&lpg=PA11&dq=dichromatic+model+vs+phong&source=bl&ots=dKtNIYurS-&sig=xz1qcGcSIAYGtSkbo7S3Sn7TUHg&hl=en&sa=X&ved=0ahUKEwiAm8f_i-7ZAhXFJMAKHQ-TBoM4ChDoAQg3MAM#v=onepage&q=dichromatic%20model%20vs%20phong&f=false
 
 \subsection{Modèle de Phong et Blinn-Phong}
-La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de Phong \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchie de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
+La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchie de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
 
 
 \begin{figure}
 \centering
-\subfigure[Terme ambiante]
+\subfigure[Terme ambiant]
 {
     \includegraphics[width=0.22\linewidth]{phong_ambiant}
 }
@@ -1238,7 +1301,7 @@ Dans la composante diffuse, les sources de lumière interagissent avec la géométr
 \begin{equation}
 I_d(\vect{P}) = k_d i_d \sum_{l = 1}^{n} (\hat{\vect{L}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})),
 \end{equation}
-avec $k_d$ un scalaire de réflexion diffuse qui correspond au ratio de réflexion de la composante diffuse de la lumière incidente (appelée aussi réflectance Lambertienne \fix{ref?}), $\hat{\vec{L}}_l$ la direction normalisée de la lumière d'indice $l$ parmi $n$ lumières en direction d'un point de la surface tel que $\hat{\vect{L}}_l(\vect{P}) =  \mu{(\vect{L}_l - \vect{P})}$ et $\hat{\vect{N}}(\vect{P})$ la normale de la surface au point $\vect{P}$ et $i_d$ l'intensité de la composante diffuse (niveau de gris ou RGB).
+avec $k_d$ un scalaire de réflexion diffuse qui correspond au ratio de réflexion de la composante diffuse de la lumière incidente (appelée aussi réflectance Lambertienne \cite{lambert1760photometria}), $\hat{\vec{L}}_l$ la direction normalisée de la lumière d'indice $l$ parmi $n$ lumières en direction d'un point de la surface tel que $\hat{\vect{L}}_l(\vect{P}) =  \mu{(\vect{L}_l - \vect{P})}$ et $\hat{\vect{N}}(\vect{P})$ la normale de la surface au point $\vect{P}$ et $i_d$ l'intensité de la composante diffuse (niveau de gris ou RGB).
 
 Nous pouvons observer que ce terme n'a besoin d'un calculée qu'une seule fois pour chaque point de la surface.
 
@@ -1271,73 +1334,3 @@ Ce modèle de Phong, a été pendant des décennies une méthode rapide et efficace p
 
 %\subsection{Modèle de Cook-Torrance}
 D'autres modèles ayant un fondement physique plus poussé comme celui de \cite{torrance1967theory} et \cite{cook1982reflectance} mais nous n'entrerons pas dans le détail sur ces modèles dans ce mémoire.
-
-%=============================================================================
-\section{Illumination globale} 
-\label{sec:illumination_globale} 
-
-En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant un rôle important dans le photo-réalisme, sont ignorés. L'illumination globale est caractérisée par la modélisation des rebonds de la lumière entre les sources de lumières et les objets ce qui permet de synthétiser des phénomènes d'ombre, de réflexion et de réfraction. Nous pouvons citer les caustiques ou les inter-réflexions diffuses (\textit{color bleeding}) comme illustré à la figure \ref{fig:caustic} et \ref{fig:color_bleeding}.
-
-\begin{figure}
-    \subfigure[Caustique crée par un verre d'eau]
-    {
-        \includegraphics[width=0.45\linewidth]{caustic}
-        \label{fig:caustic}
-    }
-    \subfigure[\textit{Color bleeding} d'une surface rouge sur une statue]
-    {
-        \includegraphics[width=0.45\linewidth]{color_bleeding}
-        \label{fig:color_bleeding}
-    }
-\caption{Phénomènes lumineux modélisable par l'illumination globale comme les caustiques (a) et l'inter-réflexion diffuse (b).}
-\end{figure}
-\fix{On peut rajouter plus de détail sur les deux phénomènes - scribe-lecture3}
-
-
-%=============================================================================
-\subsection{L'équation de rendu}
-\label{sec:rendering_equation}
-Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. l'équation de réflectance est définie par: \fix{ajouté variable l pour la lumière?}
-\begin{equation}
-L_r(\vect{P}, \omega_r) = L_e(\vect{P}, \omega_r) + \sum L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)(\omega_i \cdot \hat{\vect{N}}(\vect{P})),
-\label{eq:reflectance_equation}
-\end{equation}
-avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ dans la direction $\omega_r$ causée par la radiance incidence $L_i$ des sources de lumière dans la direction $\omega_i$, $f$ la fonction bidirectionnelle de distribution de la reflectance (BRDF) qui donne la proportion de lumière réfléchie de $\omega_i$ à $\omega_r$ au point $\vect{P}$ et $L_e$ la radiance émise. Une version simplifié de cette équation est illustré à la figure \ref{fig:reflectance_equation}.
-
-\begin{figure}
-    \subfigure[]
-    {
-        \includegraphics[width=0.3\linewidth]{reflectance_equation}
-        \label{fig:reflectance_equation}
-    }
-    \subfigure[]
-    {
-        \includegraphics[width=0.3\linewidth]{rendering_equation}
-        \label{fig:rendering_equation}
-    }
-    \subfigure[]
-    {
-        \includegraphics[width=0.3\linewidth]{hemisphere}
-        \label{fig:hemisphere}
-    }
-\caption{Illustration du calcul de l'équation de reflectance et de rendu.}
-\end{figure}
-
-Cette formulation est trop simpliste vu qu'elle ne prend en compte que les sources de lumière directe et non les portions de lumière réfléchie des autres surfaces proches. Au lieu de prendre en compte la somme des sources de lumière, il est plus naturel de prendre en compte un panel d'angle et d'intégrer la fonction de réflectance sur ce panel d'angle tel que:
-\begin{flalign}
-L_r(\vect{P}, \omega_r) &= L_e(\vect{P}, \omega_r) + \int_\Omega L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)\text{ cos}\theta_id\omega_i \\
-                        &= L_e(\vect{P}, \omega_r) + \int_\Omega L_r(\vect{P'}, -\omega_i)f(\vect{P}, \omega_i, \omega_r)\text{ cos}\theta_id\omega_i,
-\label{eq:rendering_equation}
-\end{flalign}
-avec $\vect{P'}$ un point d'une autre surface produisant réfléchissant de la radiance sur la surface content $\vect{P}$. Nous considérons ainsi les surfaces diffuses comme potentiellement émettant de la radiance de la même manière qu'une source de lumière ce qui permet de généraliser l'équation et décrire le déplacement de la lumière de toute la scène. Une illustration de l'équation de rendu est  visible à la figure \ref{fig:rendering_equation} et \ref{fig:hemisphere}.
-
-Nous n'évoquerons pas ici la résolution de l'équation de rendu. Ce sujet est traité de façon plus longue dans le livre de Hughes \etal \cite{hughes2014computer}.
-
-\subsection{Réflectivité bidirectionnelle (BRDF)}
-Cette fonction $f$ évoquée dans les équation \eqref{eq:reflectance_equation} et \eqref{eq:rendering_equation} caractérise la réflexion d'une surface. Elle prend en entrée une direction de la lumière incidente $\omega_i$ et une direction réfléchie $\omega_r$ et indique le ratio de la radiance sortant suivant $\omega_r$ en fonction de l'irradiance incidente de la surface suivant la direction $\omega_i$. Cette fonction prend généralement en entrée 4 paramètres représentant $\omega_i$ et $\omega_r$ en coordonnées sphériques.
-
- Sans rentrer dans trop de détails, selon la précision et la puissance de calcul disponible nous pouvons citer dans les BRDF connues les harmoniques sphériques ou encore les modèles d'illumination locale évoqués précédemment.
-
-
-\fix{Parler de la  Fonction de champ lumineux?}
-\fix{Parler des harmoniques sphériques ?}
