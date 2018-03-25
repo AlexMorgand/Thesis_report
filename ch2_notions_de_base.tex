@@ -6,7 +6,7 @@
 \graphicspath{{images/Ch2/}}
 
 \begin{chapeauChapitre}
-	Dans ce chapitre, nous introduisons les notions de base et les notations nécessaires à la compréhension du mémoire. Après avoir présenté les caméras perspectives et géométrie associée, nous rappellerons le formalisme des coniques et quadriques. Par la suite, nous donnerons quelques détails  pour décrire l'interaction lumière/matière, l'illumination locale, globale ainsi qu'un rappel de notion de courbure d'une surface. Nous terminerons par un rappel des plus importantes techniques d'optimisation utilisées. Plus de détails sur ces notions peuvent être trouvées dans le livre de \cite{Hartley2004}.
+	Dans ce chapitre, nous introduisons les notions de base et les notations nécessaires à la compréhension du mémoire. Après avoir présenté les caméras perspectives et géométrie associée, nous rappellerons le formalisme des coniques et quadriques. Par la suite, nous donnerons quelques détails  pour décrire l'interaction lumière/matière, l'illumination locale, globale ainsi qu'un rappel de notion de courbure d'une surface. Nous terminerons par un rappel des plus importantes techniques d'optimisation utilisées. Plus de détails sur ces notions peuvent être trouvés dans le livre de \cite{Hartley2004}.
 \end{chapeauChapitre}
 
 
@@ -44,7 +44,7 @@ Nous appellerons $\pi$ la fonction de \emph{déhomogénisation} permettant de pass
   \end{array}
 \end{equation}
 En particulier $\forall\vect{x}\in\espace{R}{n}: \pi(\vectHom{x}) = \vect{x}$.
-Nous nous intéressons maintenant aux cas particulier de cette géométrie en deux puis trois dimensions.
+Nous nous intéressons maintenant aux cas particuliers de cette géométrie en deux puis trois dimensions.
 
 \subsection{Le plan projectif}
 \label{sec:planProjectif}
@@ -87,7 +87,7 @@ La projection perspective vise à calculer, pour tout point $\mathcal{Q} \in \esp
 
 Cette projection peut être vue comme un enchaînement de trois transformations géométriques (figure \ref{fig:ch2:projectionPerspective}) :\autoParSpace
 \begin{itemize}
-	\item La première transformation est un changement de repère qui consiste à exprimer les coordonnées de $\mathcal{Q}$ dans le repère lié à la caméra. Ce changement de repère est défini par les \emph{paramètres extrinsèques} de la caméra. Dans la suite du mémoire, en cas d'ambiguité, les exposant $\monde{W}$ ou  $\cam{C}$ indiqueront le repère dans lequel les coordonnées du point 3D sont exprimées (respectivement monde ou caméra). \autoParSpace
+	\item La première transformation est un changement de repère qui consiste à exprimer les coordonnées de $\mathcal{Q}$ dans le repère lié à la caméra. Ce changement de repère est défini par les \emph{paramètres extrinsèques} de la caméra. Dans la suite du mémoire, en cas d'ambiguïté, les exposant $\monde{W}$ ou  $\cam{C}$ indiqueront le repère dans lequel les coordonnées du point 3D sont exprimées (respectivement monde ou caméra). \autoParSpace
 
 	\item La deuxième transformation est la \emph{projection centrale} du point 3D. Elle revient à passer du point 3D (exprimé dans le repère caméra) au point d'intersection du rayon de projection et du capteur. Les coordonnées 2D du point résultant sont alors exprimées dans le plan de la rétine (en mm). \autoParSpace
 
@@ -142,7 +142,7 @@ Les paramètres extrinsèques d'une caméra caractérisent la pose de celle-ci dans 
 \begin{figure}[htbp]
 	\begin{center}
 		\includegraphics[width=0.75\linewidth]{roll_pitch_yaw.png}
-		\caption[Définition des angles roulis, tangage et lacet]{\textbf{Définition des angles roulis, tangage et lacet.}}
+		\caption[Définition des angles roulis, tangage et lacet]{\textbf{Définition des angles: roulis, tangage et lacet.}}
 		\label{fig:ch2:roulis_tangage_lacet}
 	\end{center}
 \end{figure}
@@ -210,7 +210,7 @@ Les paramètres intrinsèques définissent les propriétés géométriques du capteur d
 \end{equation}
 Nous retrouvons dans la matrice de calibrage les différents paramètres intrinsèques, à savoir : 
 \begin{itemize}
-		\item $f_0$ la \emph{distance focale}. Exprimée en pixel par unité de mesure, elle décrit la distance orthogonale entre le centre et la rétine de la caméra.
+		\item $f_0$ la \emph{distance focale}. Exprimée en pixels par unité de mesure, elle décrit la distance orthogonale entre le centre et la rétine de la caméra.
 		\item $\transpose{(u_0 \ v_0)}$ le \emph{point principal}. Souvent approximé comme étant le centre du capteur, il est plus précisément l'intersection entre l'axe optique et la rétine de la caméra (figure~\ref{fig:ch2:projectionPerspective}).
 \end{itemize}
 
@@ -235,7 +235,7 @@ de telle sorte que $\mat{P}\pTD{Q}(\lambda) = \lambda (\mat{P}\pinv{\mat{P}}) \p
 \section{Image}
 \label{sec:notions:images}
 \subsection{Définition et notations}
-Au niveau informatique une image est un tableau à deux dimensions contenant un nombre fini de pixels. Sauf mention contraire, nous considérons des images en niveau de gris à valeurs réelles. Une image $\img{I}$ de dimensions $w \times h$ est donc une application bidimensionnelle :
+Au niveau informatique, une image est un tableau à deux dimensions contenant un nombre fini de pixels. Sauf mention contraire, nous considérons des images en niveau de gris à valeurs réelles. Une image $\img{I}$ de dimensions $w \times h$ est donc une application bidimensionnelle :
 \begin{equation}
   \begin{aligned}
     \img{I} : \llbracket 1,w \rrbracket \times \llbracket 1,h \rrbracket &\to \mathbb{N}
@@ -306,7 +306,7 @@ Les opérations suivantes sur les images seront utiles par la suite :
     \forall \win : \llbracket -m,m \rrbracket \times \llbracket -n,n \rrbracket \rightarrow \real \\
     (\I \ast \win)[x,y] = \sum_{i=-m}^m \sum_{j=-n}^n \win[i,j] \cdot \I[x-i,y-j].\hspace*{\fill}
   \end{flalign*}
-  En coordonnées réelles la définition est similaire:
+  En coordonnées réelles, la définition est similaire:
   \begin{equation}
     \forall \win : \domimg{\win} \rightarrow \real\qquad
     (\I \ast \win)(x,y) = \mathop{\iint}_{\mathclap{(x',y') \in \domimg{\win}}} \win(x',y') \cdot \I(x-x',y-y') \diff x \diff y.
@@ -335,7 +335,7 @@ Les opérations suivantes sur les images seront utiles par la suite :
 \fix{On peut encore en rajouter ici, à partir de la page 19 de cross + signature de quadriques}.
 
 \subsection{Conique}
-Une conique est une famille de courbe plane générée en prenant toute les sections possibles d'un cône infini avec un plan. La famille des coniques non-dégénérées inclue les paraboles, hyperboles et ellipses. Nous évoquerons les coniques dégénérés par la suite.
+Une conique est une famille de courbes planes générées en prenant toute les sections possibles d'un cône infini avec un plan. La famille des coniques non-dégénérées inclut les paraboles, hyperboles et ellipses. Nous évoquerons les coniques dégénérés par la suite.
 Chaque point $(x, y)^\top$ de la conique respecte l'équation :
 \begin{equation}
 ax^2 + 2bxy + cy^2 + 2dx + 2ey + f = 0,
@@ -350,7 +350,7 @@ ou sous forme matricielle :
 \vect{x}^\top\mathtt{C}\vect{x} = 0,
 \label{eq:conic_matrix_form}
 \end{equation}
-avec les coefficients de la matrice $\mathtt{C}$ donné par :
+avec les coefficients de la matrice $\mathtt{C}$ donnée par :
 \begin{equation}
 \begin{bmatrix}
 a & b & d \\
@@ -358,11 +358,11 @@ b & c & e \\
 d & e & f \\
 \end{bmatrix}
 \end{equation}
-Plusieurs types de coniques sont illustrées à la figure \ref{fig:conic}.
-\begin{figure}
+Plusieurs types de coniques sont illustrés à la figure \ref{fig:conic}.
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{conic.png}
-\caption{Exemple de coniques. De gauche à droite nous avons un cercle, une ellipse, une hyperbole et une parabole}
+\caption{Exemple de coniques. De gauche à droite, nous avons un cercle, une ellipse, une hyperbole et une parabole}
 \label{fig:conic}
 \end{figure}
 
@@ -374,7 +374,7 @@ Considérons une transformation projective 2D $\mathtt{H}$ transformant un point 
 \mathtt{x}'^{\top}\mathtt{H}^{-\top}\mathtt{C}\mathtt{H}^{-1}\vect{x}' = 0.
 \label{eq:homo_conique}
 \end{equation}
-Puisque la matrice $\mathtt{H}^{-\top}\mathtt{C}\mathtt{H}^{-1}$ est symétrique (comme à l'équation \eqref{eq:conic_matrix_form}) l'équation \eqref{eq:homo_conique} définie une nouvelle conique, $\mat{C}' = \mat{H}^{-\top}\mat{C}\mat{H^{-1}}$. En général, une transformation projective d'une conique donne également une conique.
+Puisque la matrice $\mathtt{H}^{-\top}\mathtt{C}\mathtt{H}^{-1}$ est symétrique (comme à l'équation \eqref{eq:conic_matrix_form}) l'équation \eqref{eq:homo_conique} définit une nouvelle conique, $\mat{C}' = \mat{H}^{-\top}\mat{C}\mat{H^{-1}}$. En général, une transformation projective d'une conique donne également une conique.
 
 \subsubsection{Droite tangente à une conique}
 La droite $\vect{l}$ tangente à la conique $\mat{C}$ au point $\vect{x}$ (appartenant à la conique) est donné par :
@@ -385,7 +385,7 @@ La droite $\vect{l}$ tangente à la conique $\mat{C}$ au point $\vect{x}$ (appart
 Cette formule est justifiée par le fait que la ligne $\vect{l}$ passe par $\vect{x}$ car $\vect{l}^\top\vect{x} = \vect{x}^\top\mat{C}\vect{x} = 0$ si $\vect{x}$ appartient à la conique. Il est nécessaire de montrer que si $\vect{l}$ est tangent à $\mat{C}$, cette ligne n'intersecte pas la conique en un autre point. La preuve par contradiction est la suivante : si $\vect{l}$ intersecte $\mat{C}$ à un autre point $\vect{y}$, alors $\vect{y}^\top\mat{C}\vect{y} = 0$. Afin de satisfaire cette équation, nous devons avoir $(\vect{x} + \alpha\vect{y})^\top\mat{C}(\vect{x} + \alpha\vect{y}) = 0$ pour tout $\alpha$ ce qui signifie que soit $\vect{x}$ et $\vect{y}$ sont confondus soit que toute la droite $\vect{l}$ appartient à $\mat{C}$. Ce dernier cas n'est possible que pour les coniques dégénérées.
 
 \subsubsection{Enveloppe de la conique}
-Vu qu'il existe une droite tangente pour chaque points de la conique, il semble logique que la conique soit définie par les droites tangentes. Ce constat est un résultat standard en géométrie projective :
+Vu qu'il existe une droite tangente pour chaque point de la conique, il semble logique que la conique soit définie par les droites tangentes. Ce constat est un résultat standard en géométrie projective :
 \textit{Pour tout théorème de géométrie projective en 2 dimensions, il existe un théorème dual qui est décrit par inter-changer les rôles des points et des lignes du théorème originel.}
 
 Pour une conique non-dégénérée, l'équation  \eqref{eq:ligne_sur_conique} peut être inversée afin de trouver le point où la droite $\vect{l}$ est tangente à la conique $\mat{C}$ : $\vect{x} = \mat{C}^{-1}\vect{l}$. Par injection dans l'équation \eqref{eq:conic_matrix_form}, nous avons :
@@ -410,12 +410,12 @@ Une conique dégénérée est définie par:
 \begin{equation}
 \mat{C} = \vect{l}\vect{m}^\top + \vect{m}\vect{l}^\top,
 \end{equation}
-avec $\vect{l}$ et $\vect{m}$ deux droites. On peut retrouver cette relation en observant que tout les points sur $\vect{l}^\top\vect{x} = 0$ sont sur la conique $\vect{x}^\top\mat{C}\vect{x} = (\vect{x}^\top\vect{l})(\vect{m}^\top\vect{x}) + (\vect{x}^\top\vect{m})(\vect{l}^\top\vect{x}) = 0$. Tous les points sur $\vect{m}^\top\vect{x} = 0$ sont aussi sur la conique. La matrice $\mat{C}$ est symétrique et de rang 2 (dans le cas où $\vect{l}$ et $\vect{m}$ ne sont pas confondus). Dans le cas ultérieur, $\mat{C}$ sera de rang 1.
+avec $\vect{l}$ et $\vect{m}$ deux droites. On peut retrouver cette relation en observant que tous les points sur $\vect{l}^\top\vect{x} = 0$ sont sur la conique $\vect{x}^\top\mat{C}\vect{x} = (\vect{x}^\top\vect{l})(\vect{m}^\top\vect{x}) + (\vect{x}^\top\vect{m})(\vect{l}^\top\vect{x}) = 0$. Tous les points sur $\vect{m}^\top\vect{x} = 0$ sont aussi sur la conique. La matrice $\mat{C}$ est symétrique et de rang 2 (dans le cas où $\vect{l}$ et $\vect{m}$ ne sont pas confondus). Dans le cas ultérieur, $\mat{C}$ sera de rang 1.
 
 Si le rang de $\mat{C}$ est de 1, l'espace nul est de dimension 2 correspondant à une droite (homogène). Cette conique correspond à une paire de lignes confondues. La conique a ainsi seulement 2 degrés de liberté.
 
 \subsubsection{Enveloppes de coniques dégénérées}
-L'équation \eqref{eq:conique_dual_line} définie l'enveloppe de la conique $\mat{C}^*$ pour une conique $\mat{C}$ qui n'est pas forcément de rang plein. Une démonstration complète peut être trouvée dans \cite{cross2000surface} que l'adjoint de la matrice $3 \times 3$ est non nulle si le rang de la matrice est plus grande que 1. La conséquence de ce résultat est que l'enveloppe d'une conique de rang 2 (pair de droites distincts) est définie, à l'opposé de l'enveloppe d'une conique de rang 1 (pair de droites confondues) n'est pas définie.
+L'équation \eqref{eq:conique_dual_line} définit l'enveloppe de la conique $\mat{C}^*$ pour une conique $\mat{C}$ qui n'est pas forcément de rang plein. Une démonstration complète peut être trouvée dans \cite{cross2000surface} que l'adjoint de la matrice $3 \times 3$ est non nul si le rang de la matrice est plus grand que 1. La conséquence de ce résultat est que l'enveloppe d'une conique de rang 2 (paire de droites distinctes) est définie, à l'opposé de l'enveloppe d'une conique de rang 1 (paire de droites confondues) n'est pas définie.
 
 \subsection{Quadriques}
 Un point 3D $(x, y, z)^\top$ sur la surface d'une quadrique suit l'équation:
@@ -442,11 +442,11 @@ g & h & i & j \\
 \end{equation}
 Une quadrique possède 9 degrés de liberté et est décrite par une matrice $4 \times 4$ de 10 éléments distincts. 
 
-Les quadriques inclues des formes comme les sphères, les ellipsoïdes, les hyperboloïdes et paraboloïdes. Plusieurs types de quadriques sont illustrées à la figure \ref{fig:quadric}.
-\begin{figure}
+Les quadriques incluent des formes comme les sphères, les ellipsoïdes, les hyperboloïdes et paraboloïdes. Plusieurs types de quadriques sont illustrées à la figure \ref{fig:quadric}.
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{quadric.png}
-\caption{Exemple de quadriques non-dégénérées. De gauche à droite nous avons un sphère, une ellipsoïde, un hyperboloïde et une paraboloïde.}
+\caption{Exemples de quadriques non-dégénérées. De gauche à droite, nous avons une sphère, une ellipsoïde, une hyperboloïde et une paraboloïde.}
 \label{fig:quadric}
 \end{figure}
 
@@ -466,11 +466,11 @@ L'enveloppe de la quadrique ou "quadrique duale" est donné de manière similaire 
 
 
 \subsubsection{Quadriques dégénérées}
-Comme pour une conique, une quadrique dégénérée est caractérisée par la singularité de la matrice $\mat{Q}$. Un cylindre, un cône ou une paire de plan (distincts ou confondus) sont des exemples de quadriques dégénérées. La dégénérescence est invariante à la transformation projective \fix{(ce qu'on peut voir dans les signatures d'une quadrique)}. \fix{Images de quadrics dégénérées}. Une quadrique dégénérée a $9 - 1 = 8$ degrés de libertés au maximum (la contrainte de singularité fournit une contrainte unique sur les éléments de $\mat{Q}$). Plusieurs types de quadriques dégénérées sont illustrées à la figure \ref{fig:degen_quadric}.
-\begin{figure}
+Comme pour une conique, une quadrique dégénérée est caractérisée par la singularité de la matrice $\mat{Q}$. Un cylindre, un cône ou une paire de plans (distincts ou confondus) sont des exemples de quadriques dégénérées. La dégénérescence est invariante à la transformation projective \fix{(ce qu'on peut voir dans les signatures d'une quadrique)}. \fix{Images de quadrics dégénérées}. Une quadrique dégénérée a $9 - 1 = 8$ degrés de liberté au maximum (la contrainte de singularité fournit une contrainte unique sur les éléments de $\mat{Q}$). Plusieurs types de quadriques dégénérées sont illustrées à la figure \ref{fig:degen_quadric}.
+\begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{degen_quadric.png}
-\caption{Exemple de quadriques dégénérées. De gauche à droite nous avons un cylindre, un cone et une paire de plans (de rang 2).}
+\caption{Exemples de quadriques dégénérées. De gauche à droite nous avons un cylindre, un cône et une paire de plans (de rang 2).}
 \label{fig:degen_quadric}
 \end{figure}
 
@@ -482,7 +482,7 @@ On peut noter qu'une enveloppe d'une quadrique de rang 1 ou 2 est non-définie ca
 %\fix{A remplir si nécessaire}
 
 % =============================================================================
-\section{Géométrie multi-vue} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Géométrie multivue} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:localisation_reconstruiction} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 Lorsqu'une même scène est observée par plusieurs vues, il est possible d'estimer le déplacement relatif entre les différentes caméras et de calculer la géométrie 3D de l'environnement observé.  Ce cas de figure peut apparaître dans différentes configurations : \autoParSpace
@@ -556,12 +556,12 @@ Dès lors, deux cas de figure sont possibles. Si le déplacement entre les caméras
 \paragraph{Homographies 2D}
 Dans le cas où la scène observée est planaire, la relation qui existe entre deux caméras est définie
 par une \emph{homographie} $\mathit{H}$ (ou \emph{transformation projective}) 2D qui représente une transformation linéaire inversible de $\espace{P}{2}$ dans $\espace{P}{2}$ qui conserve l'alignement. Le théorème suivant permet de caractériser de façon matricielle les homographies 2D :  
-\begin{theorem}
-		  Une fonction $\mathit{H} : \espace{P}{2} \to \espace{P}{2}$ est une homographie si et seulement si il existe une matrice $\matrice{H}$ de taille $3\times3$ telle que pour tout point $\pDDHom{q}$ de $\espace{P}{2}$, $\mathit{H}(\pDDHom{q}) = \matrice{H} \pDDHom{q}$.
-\end{theorem}
+%\begin{theorem}
+		  Une fonction $\mathit{H} : \espace{P}{2} \to \espace{P}{2}$ est une homographie si et seulement s'il existe une matrice $\matrice{H}$ de taille $3\times3$ telle que pour tout point $\pDDHom{q}$ de $\espace{P}{2}$, $\mathit{H}(\pDDHom{q}) = \matrice{H} \pDDHom{q}$.
+%\end{theorem}
 La matrice $\matrice{H}$ est homogène : elle est définie à un facteur près et possède donc 8 degrés de liberté.
 
-Un des cas courants d'utilisation des homographies 2D est celui décrit dans la figure~\ref{fig:ch2:homographie2D}. Nous nous plaçons ici dans le cas de deux caméras observant un plan $\plan{\Pi}$ de l'espace. La projection centrale du plan de l'espace au plan image (et réciproquement) définit une homographie 2D (les coordonnées des points 2D étant exprimées dans le repère 2D relatif à chacun des plans). Un résultat intéressant est alors que, pour tout point 3D $\pTD{P}$ appartenant au plan $\plan{\Pi}$, la fonction passant des coordonnées de son obervation $\pDD{q}[1]$ dans l'image 1 aux coordonnées de son observation $\pDD{q}[2]$ dans l'image 2 est également une homographie. En effet, la composition de 2 homographies est une homographie. Le lien entre les observations peut donc s'écrire :
+Un des cas courants d'utilisation des homographies 2D est celui décrit dans la figure~\ref{fig:ch2:homographie2D}. Nous nous plaçons ici dans le cas de deux caméras observant un plan $\plan{\Pi}$ de l'espace. La projection centrale du plan de l'espace au plan image (et réciproquement) définit une homographie 2D (les coordonnées des points 2D étant exprimées dans le repère 2D relatif à chacun des plans). Un résultat intéressant est alors que, pour tout point 3D $\pTD{P}$ appartenant au plan $\plan{\Pi}$, la fonction passant des coordonnées de son observation $\pDD{q}[1]$ dans l'image 1 aux coordonnées de son observation $\pDD{q}[2]$ dans l'image 2 est également une homographie. En effet, la composition de 2 homographies est une homographie. Le lien entre les observations peut donc s'écrire :
 \begin{equation}
 	\begin{split}
 		\pDDHom{q}[2] & \equi  \matrice{H}_{1 \rightarrow 2} \pDDHom{q}[1] \autoReturn
@@ -573,7 +573,7 @@ Un des cas courants d'utilisation des homographies 2D est celui décrit dans la f
 	\end{split}
 \end{equation}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\begin{center}
 		\includegraphics[width=0.7\linewidth]{homographie}
 		\caption[Homographies 2D]{Les coordonnées des observations correspondantes de points 3D situés sur un même plan de l'espace sont reliées par une homographie 2D.}
@@ -644,9 +644,9 @@ Le déplacement relatif entre les caméras est donc défini comme suit :
 \label{sec:deplacementAssociations2D2D}
 Lorsque la structure de l'environnement est inconnu, il est tout de même possible de calculer le déplacement relatif entre deux caméras. Cela nécessite d'associer les observations des 2 caméras qui correspondent aux mêmes points 3D de l'environnement. Comme nous l'avons vu précédemment (section \ref{sec:geometrieEpipolaire}), ceci permet de calculer la matrice fondamentale (algorithme des 8 points, \cite{hartley1997defense}) ou essentielle (algorithme des 5 points, \cite{nister2004efficient}). Il est alors possible d'extraire d'une de ces matrices le déplacement inter-caméra $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$.
 
-Dans le cas de caméras non-calibrées, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ sont calculés à partir de la matrice fondamentale (\cite{Hartley2004}). Dans ce cas, le déplacement inter-caméra ne peut être retrouvé qu'à une transformation projective près. En particulier, ceci induit qu'il est impossible de retrouver les rapports de distance et les angles.
+Dans le cas de caméras non-calibrées, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ sont calculés à partir de la matrice fondamentale (\cite{Hartley2004}). Dans ce cas, le déplacement intercaméras ne peut être retrouvé qu'à une transformation projective près. En particulier, ceci induit qu'il est impossible de retrouver les rapports de distance et les angles.
 
-Le calibrage des caméras étant connu dans notre étude, il est préférable d'utiliser la matrice essentielle. La décomposition en valeurs singulières SVD (\cite{faugeras1993three}) de celle-ci permet en effet d'en extraire 4 couples solution possibles pour $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$. Parmi ces 4 couples, on retient le couple permettant de reconstruire les 5 points ayant servi au calcul de $\matrice{E}$ devant les 2 caméras . Le détail de cette décomposition peut être trouvé dans l'article de \cite{nister2004efficient}.
+Le calibrage des caméras étant connu dans notre étude, il est préférable d'utiliser la matrice essentielle. La décomposition en valeurs singulières SVD (\cite{faugeras1993three}) de celle-ci permet en effet d'en extraire quatre couples de solutions possibles pour $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$. Parmi ces 4 couples, on retient le couple permettant de reconstruire les 5 points ayant servi au calcul de $\matrice{E}$ devant les 2 caméras . Le détail de cette décomposition peut être trouvé dans l'article de \cite{nister2004efficient}.
 
 Dans le cas calibré, le déplacement relatif entre les 2 caméras (et donc toute la structure 3D sous-jacente) est défini à un facteur près. En effet, dans le cas du calcul du déplacement par associations 2D/2D, le facteur d'échelle de la scène (c'est-à-dire sa métrique) n'est pas observable. En pratique, cette échelle est donc fixée arbitrairement. 
 
@@ -688,7 +688,7 @@ L'utilisation d'associations 2D/3D plutôt que 2D/2D présente plusieurs avantages
 \label{sec:notion_de_courbure}
 
 Dans l'étude métrique des courbes du plan et de l'espace, la courbure mesure la manière dont une courbe, ou arc géométrique, s'éloigne localement d'une ligne droite. Elle évalue le rapport entre la variation de la direction de la tangente à la courbe et un déplacement d'une longueur infinitésimale sur celle-ci : plus ce rapport est important, plus la courbure est importante. En langage imagé, la courbure indique de combien il faut tourner le volant d'une voiture pour aborder un virage (volant tourné modérément pour une courbure faible et fortement pour une courbure forte).
-Plus précisément, si $\f{f}$ est une courbe régulière de classe $\mat{C}^k$ avec $k \geq 2$ c'est-à-dire une courbe paramétrée par une fonction dérivable au moins deux fois, dont la dérivée première n'est jamais nulle et dont la dérivée seconde est continue - on sait que $\f{f}$ possède localement une paramétrisation normale, c'est-à-dire qu'au voisinage d'un point $\vect{M}$, il existe une fonction $\f{g}$ paramétrisant $\f{f}$ et telle que $\|\f{g} '\| = 1$. Si $\f{g}(s) = \vect{M}$, la courbure de $\f{f}$ au point $\vect{M}$ est :
+Plus précisément, si $\f{f}$ est une courbe régulière de classe $\mat{C}^k$ avec $k \geq 2$, \textit{e.g} une courbe paramétrée par une fonction dérivable au moins deux fois, dont la dérivée première n'est jamais nulle et dont la dérivée seconde est continue. On sait que $\f{f}$ possède localement une paramétrisation normale, c'est-à-dire qu'au voisinage d'un point $\vect{M}$, il existe une fonction $\f{g}$ paramétrisant $\f{f}$ et telle que $\|\f{g} '\| = 1$. Si $\f{g}(s) = \vect{M}$, la courbure de $\f{f}$ au point $\vect{M}$ est :
 \begin{equation}
     \gamma = \|\f{g}''(s)\| \gamma = \|\f{g}''(s)\|
 \end{equation}
@@ -721,7 +721,7 @@ La courbure algébrique est alors donnée par le rapport de ces deux variations
 \end{equation}
 Nous illustrons le cas du graphe d'une fonction à la figure \ref{fig:curv2}.
 
-\begin{figure}
+\begin{figure}[H]
     \subfigure[]
     {
         \includegraphics[width=0.3\linewidth]{angle_tangente.pdf}
@@ -737,7 +737,7 @@ Nous illustrons le cas du graphe d'une fonction à la figure \ref{fig:curv2}.
         \includegraphics[width=0.3\linewidth]{curv1.jpg}
         \label{fig:curv1}
     }
-    \caption{Dans (a), nous montrons que l'angle entre les deux tangentes est égale à l'angle au centre. Dans (b), nous montrons que plus un arc est courbé plus la pente de la tangente varie vite. Dans (c), un exemple de courbure est illustré. Au point $\vect{P}$, le rayon de courbure de la courbe $C$ est égal à $R$.}
+    \caption{Dans (a), nous montrons que l'angle entre les deux tangentes est égal à l'angle au centre. Dans (b), nous montrons que plus un arc est courbé, plus la pente de la tangente varie vite. Dans (c), un exemple de courbure est illustré. Au point $\vect{P}$, le rayon de courbure de la courbe $C$ est égal à $R$.}
     \label{fig:curvature_simple}
 \end{figure}
 
@@ -762,9 +762,9 @@ La sinuosité décrit la courbure de plusieurs arcs reliés avec des points d'infle
 
 %https://www.ma.utexas.edu/users/m408m/Display13-4-3.shtml
 
-\subsection{Première et seconde forme fondamentale}
+\subsection{Première et seconde formes fondamentales}
 \paragraph{Première forme fondamentale.}
-En géométrie différentielle, la première forme est le produit interne sur l'espace tangent d'une surface dans un espace euclidien de dimension trois. Elle permet le calcul de propriétés de courbure et de métrique d'une surface tel que la longueur et l'aire. La première forme fondamentale est notée:
+En géométrie différentielle, la première forme est le produit interne sur l'espace tangent d'une surface dans un espace euclidien de dimension trois. Elle permet le calcul de propriétés de courbure et de métrique d'une surface telles que la longueur et l'aire. La première forme fondamentale est notée:
 \begin{equation*}
     \RN{1}(x, y) = \langle x, y \rangle.
 \end{equation*}
@@ -789,7 +789,7 @@ Soit $X(u, v)$ une surface paramétrique dans $\mathbb{R}^3$. Cette paramétrisati
 \begin{equation*}
 \vect{n} = \frac{X_u \times X_v}{|X_u \times X_v|}.
 \end{equation*}
-La seconde forme fondamentale est écrite généralement tel que:
+La seconde forme fondamentale est écrite généralement telle que:
 \begin{equation*}
 \RN{2} = Ldu^2 + 2Mdudv + Ndv^2,
 \end{equation*}
@@ -800,7 +800,7 @@ L & M \\
 M & N
 \end{bmatrix}.
 \end{equation*}
-Les coefficients $L$, $M$ et $N$ pour un point donné dans le plan sont donnés par les projections des dérivés partielles de second ordre de $\vect{X}$ en ce point sur la droite normale de $S$ et peut être calculés à l'aide du produit scalaire tel que:
+Les coefficients $L$, $M$ et $N$ pour un point donné dans le plan sont donnés par les projections des dérivés partielles de second ordre de $\vect{X}$ en ce point sur la droite normale de $S$ et peuvent être calculés à l'aide du produit scalaire tels que:
 \begin{equation}
 L = X_{uu} \cdot \vect{n}, \text{   } M = X_{uv} \cdot \vect{n}, \text{    } X_{vv} \cdot \vect{n}.
 \end{equation}
@@ -810,11 +810,11 @@ Soit $\vect{u}_{\vect{p}}$ le vecteur tangent d'une surface régulière $M \in \ma
 \begin{equation}
 H = S(\vect{u}_{\vect{p}}) \cdot\vect{u}_{\vect{p}},
 \end{equation}
-avec $S$ l'opérateur de forme correspond à la dérivée négative tel que :
+avec $S$ l'opérateur de forme correspond à la dérivée négative telle que :
 \begin{equation}
 S(\vect{v}) = -D_{\vect{v}}\vect{N},
 \end{equation}
-avec $\vect{N}$ la normale au point de surface donnée. Prenons $x$ un patch régulier (\fix{a définir ?}) du $M$ avec $p = x(u_x, v_y)$ et:
+avec $\vect{N}$ la normale au point de surface donné. Prenons $x$ un patch régulier (\fix{a définir ?}) du $M$ avec $p = x(u_x, v_y)$ et:
 \begin{equation}
 \vect{v}_{\vect{p}} = a \vect{x}_\vect{u}(u_0, v_0) + b \vect{x}_\vect{v}(u_0, v_0),
 \end{equation}
@@ -823,7 +823,7 @@ où $\vect{v}_\vect{p} \in M_\vect{p}$. La courbure normale dans la direction $\v
 H(\vect{v}\vect{p}) = \frac{ea^2 + 2fab +gb^2}{Ea^2 + 2 Fab + Gb^2},
 \end{equation}
 où $E$, $F$ et $G$ sont les coefficients de la première forme fondamentale et $e$, $f$ et $g$ sont les coefficients de la deuxième forme fondamentale.
-Les valeurs maximales et minimales de la courbure normale d'un point sur une surface régulière sont appelées les courbures principales $\kappa_1$ et $\kappa_2$.
+Les valeurs maximale et minimale de la courbure normale d'un point sur une surface régulière sont appelées les courbures principales $\kappa_1$ et $\kappa_2$.
 
 %http://mathworld.wolfram.com/PrincipalCurvatures.html
 
@@ -843,7 +843,7 @@ Soit une surface paramétrée au moyen de deux paramètres $u$ et $v$, et soit $\ma
 \mathcal{K} = \frac{\text{det } \RN{2}}{\text{det } \RN{1}} = \frac{LN - M^2}{EG - F^2}
 \end{equation}
 
-Un lien entre la courbure de Gauss $\mathcal{K}$ et la courbure moyenne $H$ sont liés à $\kappa_1$ et $\kappa_2$ par :
+La courbure de Gauss $\mathcal{K}$ et la courbure moyenne $H$ sont liées à $\kappa_1$ et $\kappa_2$ par :
 \begin{flalign*}
 \mathcal{K} = \kappa_1 \kappa_2 \\
 H = \frac{1}{2}(\kappa_1 + \kappa_2).
@@ -896,11 +896,11 @@ La pseudo-inverse de la matrice $\mat{A}$ s'obtient facilement à partir de la dé
 \begin{equation}
   \pinv{\mat{A}} = \mat{V} \inv{\mat{S}} \transpose{\mat{U}}.
 \end{equation}
-\paragraph{Système d'équations linéaires homogène.} On appelle système d'équations linéaire homogène un problème sous la forme:
+\paragraph{Système d'équations linéaires homogène.} On appelle système d'équations linéaires homogène un problème sous la forme:
 \begin{equation}
   \mat{A} \x = 0
 \end{equation}
-où $\mat{A}$ est connue. Résoudre le système revient à estimer le noyau de $\mat{A}$. La décomposition en valeur singulière permet une résolution simple. Soit $r$ le rang de la matrice $\mat{A}$, la matrice $\mat{S}$ possède $n-r$ colonnes nulles. Les colonnes de $\mat{V}$ correspondant forment une base du noyau de $\mat{A}$.
+où $\mat{A}$ est connue. Résoudre le système revient à estimer le noyau de $\mat{A}$. La décomposition en valeurs singulières permet une résolution simple. Soit $r$ le rang de la matrice $\mat{A}$, la matrice $\mat{S}$ possède $n-r$ colonnes nulles. Les colonnes de $\mat{V}$ correspondantes forment une base du noyau de $\mat{A}$.
 
 
 \subsection{Méthodes non linéaires}
@@ -934,7 +934,7 @@ où la matrice hessienne $\mat{H}$ est définie par:
     \pdiff{x_n x_1}{^2 \cost{}(\x)} & \cdots & \gdiff[2]{x_n}{\cost{}(\x)}
   \end{pmatrix}.
 \end{equation}
-Un extremum est atteint si et seulement si le gradient de l'équation~\eqref{eq:notions:taylor} par rapport à $\Delta\x$ est nul, c'est à dire:
+Un extremum est atteint si et seulement si le gradient de l'équation~\eqref{eq:notions:taylor} par rapport à $\Delta\x$ est nul, \textit{e.g}:
 \begin{equation}
   \mat{J}(\x) + \mat{H}(\x)\Delta\x = 0
   \quad\Leftrightarrow\quad
@@ -955,7 +955,7 @@ L'incrément de Newton est donc:
 \end{equation}
 Plus sensible à la condition initiale que la descente de gradient, la méthode de Newton assure néanmoins une convergence plus efficace lorsque l'approximation quadratique est valide, ce qui est habituellement le cas lorsque les paramètres sont proches de la solution.
 
-La variante dite de Gauss-Newton permet d'éviter le calcul coûteux de la hessienne. Elle s'applique uniquement aux problèmes de moindres carrés, c'est à dire avec un coût de la forme:
+La variante dite de Gauss-Newton permet d'éviter le calcul coûteux de la hessienne. Elle s'applique uniquement aux problèmes de moindres carrés, \textit{e.g} avec un coût de la forme:
 \begin{equation}
   \cost{}(\x) = \sum_{i=1}^m \f{f_i}(\x)^2
 \end{equation}
@@ -981,8 +981,8 @@ Un problème de minimisation aux moindres carrés minimise une fonction de la form
 Nous nous intéressons ici à deux problèmes qui peuvent perturber la convergence: l'échelle des données en entrée et la présence de données aberrantes.
 
 \subsubsection{Moindres carrés pondérés}
-Il peut y avoir un problème d'échelle si les $\f{f_i}$ ont des ordres de grandeur différents, voire des unités différentes. Cela peut entraîner la domination de la fonction de coup par certains termes, les autres étant négligés.
-Pour palier à ce problème, on peut normaliser chaque terme $\f{f_i}$ par son incertitude. Si on assimile les termes $\f{f_i}$ à des variables aléatoires gaussiennes indépendantes, l'incertitude est mesurée par la déviation standard $\sigma_i$ (estimée par ailleurs). La fonction de coût normalisée est donc:
+Il peut y avoir un problème d'échelle si les $\f{f_i}$ ont des ordres de grandeur différents, voire des unités différentes. Cela peut entraîner la domination de la fonction de coût par certains termes, les autres étant négligés.
+Pour pallier à ce problème, on peut normaliser chaque terme $\f{f_i}$ par son incertitude. Si on assimile les termes $\f{f_i}$ à des variables aléatoires gaussiennes indépendantes, l'incertitude est mesurée par la déviation standard $\sigma_i$ (estimée par ailleurs). La fonction de coût normalisée est donc:
 \begin{equation}
   \cost{WLS}(\x) = \sum_{i=1}^m \left(\frac{\f{f_i}(\x)}{\sigma_i}\right)^2.
 \end{equation}
@@ -1006,7 +1006,7 @@ où $\vect{f}(\x) = \transpose{(\f{f_1},\dots,\f{f_m})}$ et $\|.\|_{\Cov}$ désign
 
 \subsubsection{Optimisation robuste}
 \label{sec:notions:robust}
-Les moindres carrés sont souvent utilisés pour optimiser les paramètres d'un modèle relativement à des données en entrée. Si ces données sont imparfaites et contiennent des données non conformes au modèle (on parle de données aberrantes), ces dernières peuvent grandement perturber une minimisation aux moin\-dres carrés: la contribution de chaque résidu étant critique, les grands résidus ont une influence disproportionnée. Pour palier à ce problème, il existe des méthodes pour supprimer explicitement les données non conformes au modèle \citep[RANSAC]{fischler1981random} mais nous nous concentrons ici sur les méthodes implicites utilisant des estimateurs robustes, ou \emph{M-estimateurs}. 
+Les moindres carrés sont souvent utilisés pour optimiser les paramètres d'un modèle relativement à des données en entrée. Si ces données sont imparfaites et contiennent des données non conformes au modèle (on parle de données aberrantes), ces dernières peuvent grandement perturber une minimisation aux moin\-dres carrés: la contribution de chaque résidu étant critique, les grands résidus ont une influence disproportionnée. Pour pallier à ce problème, il existe des méthodes pour supprimer explicitement les données non conformes au modèle \citep[RANSAC]{fischler1981random} mais nous nous concentrons ici sur les méthodes implicites utilisant des estimateurs robustes, ou \emph{M-estimateurs}. 
 
 Ceux-ci prennent la forme d'une fonction $\rho$ modulant les résidus ; la fonction de coût~\eqref{eq:notions:ls} modifiée est de la forme:
 \begin{equation}
@@ -1150,16 +1150,16 @@ La lumière correspond à un type particulier de radiation électromagnétique à une
 \begin{equation}
 E = hf = \frac{hc}{\lambda},
 \end{equation}
-avec $\lambda$ la longueur d'onde de la lumière en mètre, $c$ la vitesse de la lumière dans le vide et $h$ la constante de Plank.
+avec $\lambda$ la longueur d'onde de la lumière en mètres, $c$ la vitesse de la lumière dans le vide et $h$ la constante de Plank.
 
 En infographie, nous nous intéressons particulièrement au phénomène macroscopique et ignorons l'indivisibilité des photons.
 
-L'interaction d'une source de lumière (feu, lampe, soleil, \ldots) avec une surface peut être modélisée de différentes façon selon le besoin. Pour les besoins d'un jeu vidéo ou d'une application de réalité augmentée où la notion d'images par seconde est importante, il est préférable d'avoir une représentation de lumière simplifiée et une interaction avec l'environnement, et plus particulièrement les matériaux, rapide et relativement réaliste. Dans ces cas là, l'ajout de réflexions spéculaires et d'ombres simples suffisent pour ajouter du réalisme. Nous utilisons en général des modèles d'illumination locale pour ces cas là.
+L'interaction d'une source de lumière (feu, lampe, soleil, \ldots) avec une surface peut être modélisée de différentes façons selon le besoin. Pour les besoins d'un jeu vidéo ou d'une application de réalité augmentée où la notion d'images par seconde est importante, il est préférable d'avoir une représentation de lumière simplifiée et une interaction avec l'environnement, et plus particulièrement les matériaux, rapide et relativement réaliste. Dans ces cas-là, l'ajout de réflexions spéculaires et d'ombres simples suffit pour ajouter du réalisme. Nous utilisons en général des modèles d'illumination locale pour ces cas-là.
 
- Pour des applications photo-réalistes où le temps de calcul n'est pas primordial, des modèles plus complexes peuvent être utilisées pour modéliser des phénomènes de lumière comme les caustiques, les inter-réflexions ou encore la diffraction de la lumière. Les méthodes d'illumination globale plus réalistes mais aussi plus importante en complexité sont plus adaptés à cette situation. Ces méthodes  mesure de façon méthodique la fonction bidirectionnelle de distribution de la reflectance ou en anglais \textit{Bidirectional réflectance Distribution Function} (BRDF) sur l'ensemble des points de vue et des points de surface de la scène.
+ Pour des applications photo-réalistes où le temps de calcul n'est pas primordial, des modèles plus complexes peuvent être utilisés pour modéliser des phénomènes de lumière comme les caustiques, les inter-réflexions ou encore la diffraction de la lumière. Les méthodes d'illumination globale plus réalistes mais aussi plus importantes en complexité sont plus adaptées à cette situation. Ces méthodes  mesurent de façon méthodique la fonction bidirectionnelle de distribution de la reflectance ou en anglais \textit{Bidirectional réflectance Distribution Function} (BRDF) sur l'ensemble des points de vue et des points de surface de la scène.
  
 Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisant un moteur de rendu photo-réaliste V-RAY\footnote{\url{https://www.chaosgroup.com/}} et un moteur de jeux vidéo  Unreal-engine\footnote{\url{https://www.unrealengine.com/en-US/what-is-unreal-engine-4}}.
-\begin{figure}
+\begin{figure}[H]
 \centering
     \subfigure[Rendu photo-réaliste]
 	{
@@ -1177,12 +1177,12 @@ Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisan
 %=============================================================================
 
 \subsection{Phénomène de réflexion spéculaire}
-Un des phénomène lumineux les plus visibles par un l'\oe{}il humain ou une caméra est la réflexion spéculaire. Elle se caractérise par une réflexion quasi totale de la lumière dans une direction principale (comportement proche de celui d'un miroir) sur une surface réfléchissante comme une plaque de métal, du plastique ou encore du bois ciré. Une \textbf{réflexion spéculaire (appelée également spécularité)} est dépendante du point de vue d'observation. Ce type de réflexion est sous associée au phénomène de \textbf{réflexion diffuse} où la réflexion se produit dans toutes les directions et qui est ainsi indépendant du point de vue d'observation. Effectuer une séparation efficace de ces deux composantes représente un des problèmes photométriques les plus complexes. Un détail plus complet d'une méthode de détection de spécularité est développée en annexe \ref{annexe:specularity_detection}.
+Un des phénomènes lumineux les plus visibles par un l'\oe{}il humain ou une caméra est la réflexion spéculaire. Elle se caractérise par une réflexion quasi-totale de la lumière dans une direction principale (comportement proche de celui d'un miroir) sur une surface réfléchissante comme une plaque de métal, du plastique ou encore du bois ciré. Une \textbf{réflexion spéculaire (appelée également spécularité)} est dépendante du point de vue d'observation. Ce type de réflexion est sous-associée au phénomène de \textbf{réflexion diffuse} où la réflexion se produit dans toutes les directions et qui est ainsi indépendant du point de vue d'observation. Effectuer une séparation efficace de ces deux composantes représente un des problèmes photométriques les plus complexes. Un détail plus complet d'une méthode de détection de spécularité est développé en annexe \ref{annexe:specularity_detection}.
 
 \subsection{Réflectivité bidirectionnelle (BRDF)}
-Cette fonction $f$ évoquée dans les équation \eqref{eq:reflectance_equation} et \eqref{eq:rendering_equation} caractérise la réflexion d'une surface. Elle prend en entrée une direction de la lumière incidente $\omega_i$ et une direction réfléchie $\omega_r$ et indique le ratio de la radiance sortant suivant $\omega_r$ en fonction de l'irradiance incidente de la surface suivant la direction $\omega_i$. Cette fonction prend généralement en entrée 4 paramètres représentant $\omega_i$ et $\omega_r$ en coordonnées sphériques.
+Cette fonction $f$ évoquée dans les équations \eqref{eq:reflectance_equation} et \eqref{eq:rendering_equation} caractérise la réflexion d'une surface. Elle prend en entrée une direction de la lumière incidente $\omega_i$ et une direction réfléchie $\omega_r$ et indique le ratio de la radiance sortant suivant $\omega_r$ en fonction de l'irradiance incidente de la surface suivant la direction $\omega_i$. Cette fonction prend généralement en entrée 4 paramètres représentant $\omega_i$ et $\omega_r$ en coordonnées sphériques.
 
- Sans rentrer dans trop de détails, selon la précision et la puissance de calcul disponible nous pouvons citer dans les BRDF connues les harmoniques sphériques ou encore les modèles d'illumination locale évoqués précédemment.
+ Sans entrer dans trop de détails, selon la précision et la puissance de calcul disponible nous pouvons citer dans les BRDF connues les harmoniques sphériques ou encore les modèles d'illumination locale évoqués précédemment.
 
 
 \fix{Parler de la  Fonction de champ lumineux?}
@@ -1192,9 +1192,9 @@ Cette fonction $f$ évoquée dans les équation \eqref{eq:reflectance_equation} et 
 \section{Illumination globale} 
 \label{sec:illumination_globale} 
 
-En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant un rôle important dans le photo-réalisme, sont ignorés. L'illumination globale est caractérisée par la modélisation des rebonds de la lumière entre les sources de lumières et les objets ce qui permet de synthétiser des phénomènes d'ombre plus avancées et nuancées, d'inter réflexion et de réfraction. L'illumination globale modélise l'illumination indirecte \textit{e.g} la manière dont la lumière rebondie d'une surface sur une autre à l'opposé des méthodes d'illumination directe comme les modèles d'illumination locale que nous évoquerons à la section \ref{sec:modèles_dillumination_locale}. Parmis les effets plus avancées que l'illumination globale peut rendre, nous pouvons citer les caustiques ou les inter-réflexions diffuses (\textit{color bleeding}) comme illustré à la figure \ref{fig:caustic} et \ref{fig:color_bleeding}.
+En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant un rôle important dans le photo-réalisme, sont ignorés. L'illumination globale est caractérisée par la modélisation des rebonds de la lumière entre les sources de lumière et les objets, ce qui permet de synthétiser des phénomènes d'ombres plus avancées et nuancées, d'inter réflexion et de réfraction. L'illumination globale modélise l'illumination indirecte \textit{e.g} la manière dont la lumière rebondit d'une surface sur une autre à l'opposé des méthodes d'illumination directe comme les modèles d'illumination locale que nous évoquerons à la section \ref{sec:modèles_dillumination_locale}. Parmi les effets plus avancés que l'illumination globale peut rendre, nous pouvons citer les caustiques ou les inter-réflexions diffuses (\textit{color bleeding}) comme illustré aux figures \ref{fig:caustic} et \ref{fig:color_bleeding}.
 
-\begin{figure}
+\begin{figure}[H]
     \subfigure[Caustique crée par un verre d'eau]
     {
         \includegraphics[width=0.45\linewidth]{caustic}
@@ -1205,21 +1205,21 @@ En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant
         \includegraphics[width=0.45\linewidth]{color_bleeding}
         \label{fig:color_bleeding}
     }
-\caption{Phénomènes lumineux modélisable par l'illumination globale comme les caustiques (a) et l'inter-réflexion diffuse (b).}
+\caption{Phénomènes lumineux modélisables par l'illumination globale comme les caustiques (a) et l'inter-réflexion diffuse (b).}
 \end{figure}
 \fix{On peut rajouter plus de détail sur les deux phénomènes - scribe-lecture3}
 
 %=============================================================================
 \subsection{L'équation de rendu}
 \label{sec:rendering_equation}
-Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. l'équation de réflectance est définie par: \fix{ajouté variable l pour la lumière?}
+Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. L'équation de réflectance est définie par: \fix{ajouter variable l pour la lumière?}
 \begin{equation}
 L_r(\vect{P}, \omega_r) = L_e(\vect{P}, \omega_r) + \sum L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)(\omega_i \cdot \hat{\vect{N}}(\vect{P})),
 \label{eq:reflectance_equation}
 \end{equation}
-avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ dans la direction $\omega_r$ causée par la radiance incidence $L_i$ des sources de lumière dans la direction $\omega_i$, $f$ la fonction bidirectionnelle de distribution de la reflectance (BRDF) qui donne la proportion de lumière réfléchie de $\omega_i$ à $\omega_r$ au point $\vect{P}$ et $L_e$ la radiance émise. Une version simplifié de cette équation est illustré à la figure \ref{fig:reflectance_equation}.
+avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ dans la direction $\omega_r$ causée par la radiance incidence $L_i$ des sources de lumière dans la direction $\omega_i$, $f$ la fonction bidirectionnelle de distribution de la reflectance (BRDF) qui donne la proportion de lumière réfléchie de $\omega_i$ à $\omega_r$ au point $\vect{P}$ et $L_e$ la radiance émise. Une version simplifiée de cette équation est illustrée à la figure \ref{fig:reflectance_equation}.
 
-\begin{figure}
+\begin{figure}[H]
 \centering
     \subfigure[]
     {
@@ -1239,13 +1239,13 @@ avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ da
 \caption{Illustration du calcul de l'équation de reflectance et de rendu.}
 \end{figure}
 
-Cette formulation est trop simpliste vu qu'elle ne prend en compte que les sources de lumière directe et non les portions de lumière réfléchie des autres surfaces proches. Au lieu de prendre en compte la somme des sources de lumière, il est plus naturel de prendre en compte un panel d'angle et d'intégrer la fonction de réflectance sur ce panel d'angle tel que:
+Cette formulation est trop simpliste car elle ne prend en compte que les sources de lumière directe et non les portions de lumière réfléchie des autres surfaces proches. Au lieu de prendre en compte la somme des sources de lumière, il est plus naturel de prendre en compte un panel d'angles et d'intégrer la fonction de réflectance sur ce panel d'angles tel que:
 \begin{flalign}
 L_r(\vect{P}, \omega_r) &= L_e(\vect{P}, \omega_r) + \int_\Omega L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)\text{ cos}\theta_id\omega_i \\
                         &= L_e(\vect{P}, \omega_r) + \int_\Omega L_r(\vect{P'}, -\omega_i)f(\vect{P}, \omega_i, \omega_r)\text{ cos}\theta_id\omega_i,
 \label{eq:rendering_equation}
 \end{flalign}
-avec $\vect{P'}$ un point d'une autre surface produisant réfléchissant de la radiance sur la surface content $\vect{P}$. Nous considérons ainsi les surfaces diffuses comme potentiellement émettant de la radiance de la même manière qu'une source de lumière ce qui permet de généraliser l'équation et décrire le déplacement de la lumière de toute la scène. Une illustration de l'équation de rendu est  visible à la figure \ref{fig:rendering_equation} et \ref{fig:hemisphere}.
+avec $\vect{P'}$ un point d'une autre surface produisant de la radiance sur la surface contenant $\vect{P}$. Nous considérons ainsi les surfaces diffuses comme pouvant potentiellement émettre de la radiance de la même manière qu'une source de lumière, ce qui permet de généraliser l'équation et de décrire le déplacement de la lumière de toute la scène. Une illustration de l'équation de rendu est  visible à la figure \ref{fig:rendering_equation} et \ref{fig:hemisphere}.
 
 Nous n'évoquerons pas ici la résolution de l'équation de rendu. Ce sujet est traité de façon plus longue dans le livre de Hughes \etal \cite{hughes2014computer}.
 
@@ -1259,16 +1259,16 @@ Le modèle de réflexion dichromatique de \cite{shafer1985using} est un modèle phy
 L(\lambda, i, e, g) & = L_i(\lambda, i, e, g) + L_b(\lambda, i, e, g) \\
                     & = m_i(i, e, g)c_i(\lambda) + m_b(i, e, g)c_b(\lambda)
 \end{flalign*}
-Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de a la lumière réfléchie est la somme de deux partie indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendantes et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
-Pour des applications de vision par ordinateur, dans un soucis d'optimisation et de simplicité, il est préférable d'abstraire certains paramètres comme la puissance spectrale relative, le facteur d'échelle et la longueur d'onde. Par la suite, nous présentons les modèles de réflectance de Phong et Blinn-Phong qui sont des cas spéciaux du modèle proposé par \cite{shafer1985using}.
+Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de la lumière réfléchie est la somme de deux parties indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et de la magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendants et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
+Pour des applications de vision par ordinateur, dans un souci d'optimisation et de simplicité, il est préférable d'abstraire certains paramètres comme la puissance spectrale relative, le facteur d'échelle et la longueur d'onde. Par la suite, nous présentons les modèles de réflectance de Phong et Blinn-Phong, qui sont des cas spéciaux du modèle proposé par \cite{shafer1985using}.
 
 %https://books.google.fr/books?id=Z-36P9InswAC&pg=PA11&lpg=PA11&dq=dichromatic+model+vs+phong&source=bl&ots=dKtNIYurS-&sig=xz1qcGcSIAYGtSkbo7S3Sn7TUHg&hl=en&sa=X&ved=0ahUKEwiAm8f_i-7ZAhXFJMAKHQ-TBoM4ChDoAQg3MAM#v=onepage&q=dichromatic%20model%20vs%20phong&f=false
 
 \subsection{Modèle de Phong et Blinn-Phong}
-La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchie de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
+La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchi de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
 
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 \subfigure[Terme ambiant]
 {
@@ -1291,30 +1291,30 @@ La physique expliquant la réflexion de la lumière sur une surface est extrêmemen
 \end{figure}
 
 \subsubsection{Composante ambiante}
-La lumière ambiante est constant sur l'ensemble de la scène ce qui rend le calcul de la composante ambiante triviale et rapide. Elle est définie par:
+La lumière ambiante est constante sur l'ensemble de la scène, ce qui rend le calcul de la composante ambiante triviale et rapide. Elle est définie par:
 \begin{equation}
 I_a = k_ai_a,
 \end{equation}
-avec $k_a$ un scalaire de réflexion ambiante ce qui correspond au ratio de réflexion que la composante ambiante présente sur chaque points de la scène et $i_a$ l'intensité de la composante ambiante (niveau de gris ou RGB).
+avec $k_a$ un scalaire de réflexion ambiante, ce qui correspond au ratio de réflexion que la composante ambiante présente sur chaque point de la scène et $i_a$ l'intensité de la composante ambiante (niveau de gris ou RGB).
 \subsubsection{Composante diffuse}
-Dans la composante diffuse, les sources de lumière interagissent avec la géométrie de la surface tel que pour un point $\vect{P}$ de la surface:
+Dans la composante diffuse, les sources de lumière interagissent avec la géométrie de la surface telle que pour un point $\vect{P}$ de la surface:
 \begin{equation}
 I_d(\vect{P}) = k_d i_d \sum_{l = 1}^{n} (\hat{\vect{L}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})),
 \end{equation}
 avec $k_d$ un scalaire de réflexion diffuse qui correspond au ratio de réflexion de la composante diffuse de la lumière incidente (appelée aussi réflectance Lambertienne \cite{lambert1760photometria}), $\hat{\vec{L}}_l$ la direction normalisée de la lumière d'indice $l$ parmi $n$ lumières en direction d'un point de la surface tel que $\hat{\vect{L}}_l(\vect{P}) =  \mu{(\vect{L}_l - \vect{P})}$ et $\hat{\vect{N}}(\vect{P})$ la normale de la surface au point $\vect{P}$ et $i_d$ l'intensité de la composante diffuse (niveau de gris ou RGB).
 
-Nous pouvons observer que ce terme n'a besoin d'un calculée qu'une seule fois pour chaque point de la surface.
+Nous pouvons observer que ce terme n'a besoin d'être calculé qu'une seule fois pour chaque point de la surface.
 
 \subsubsection{Composante spéculaire}
-La composante spéculaire est le terme le plus coûteux et correspond à la somme des intensités calculées pour chaque source de lumières tel que pour un point $\vect{P}$ de la surface:
+La composante spéculaire est le terme le plus coûteux et correspond à la somme des intensités calculées pour chaque source de lumière telle que pour un point $\vect{P}$ de la surface:
 \begin{equation}
 I_s(\vect{P}) = k_s i_s \sum_{l = 1}^{n} (\hat{\vect{R}}_l(\vect{P}) \cdot \hat{\vect{V}}(\vect{P}))^s,
 \end{equation}
 avec $k_s$ un scalaire de réflexion spéculaire qui correspond au ratio de réflexion de la composante spéculaire de la lumière incidente et $i_s$ l'intensité de la composante spéculaire (niveau de gris ou RGB), $\hat{\vect{R}}_l = 2(\hat{\vect{L}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})\hat{\vect{N}}(\vect{P}) - \hat{\vect{L}}_l(\vect{P})$ le rayon réfléchi du rayon lumineux incident, $\hat{\vect{V}}(\vect{P}) =  \mu{(\vect{V} - \vect{P})}$ le point de vue de l'observateur et $s$ l'exposant spéculaire.
 
-Nous pouvons remarquer que l'intensité spéculaire diminue quand l'observateur s'éloigne du rayon réfléchi (l'angle entre $\hat{\vect{V}}(\vect{P})$ et $\hat{\vect{R}}_l(\vect{P})$ augmente). Afin de contrôler la vitesse d'atténuation, un exposant spéculaire $s$ est utilisé qui est en général associé à un type de matériau. Pour une réflexion légère comme sur un pomme par exemple, ce coefficient aura une valeur autour de 10 alors que pour une surface métallique, cette valeur tournera autour de 100 à 1000.
+Nous pouvons remarquer que l'intensité spéculaire diminue quand l'observateur s'éloigne du rayon réfléchi (l'angle entre $\hat{\vect{V}}(\vect{P})$ et $\hat{\vect{R}}_l(\vect{P})$ augmente). Afin de contrôler la vitesse d'atténuation, un exposant spéculaire $s$ est utilisé qui est en général associé à un type de matériau. Pour une réflexion légère comme sur une pomme par exemple, ce coefficient aura une valeur autour de 10 alors que pour une surface métallique, cette valeur tournera autour de 100 à 1000.
 
-Ce modèle de Phong, a été pendant des décennies une méthode rapide et efficace pour donner une impression de réalisme à des applications comme le jeux vidéo. Même si ce modèle n'a pas de fondements physiques précis, la séparation de l'image $I$ en trois composantes et la simplicité de la fonction d'intensité spéculaire font de ce modèle une fondation des modèles modernes et un modèle assez adapté aux applications de Réalité Augmentée.
+Ce modèle de Phong a été pendant des décennies une méthode rapide et efficace pour donner une impression de réalisme à des applications comme le jeu vidéo. Même si ce modèle n'a pas de fondements physiques précis, la séparation de l'image $I$ en trois composantes et la simplicité de la fonction d'intensité spéculaire font de ce modèle une fondation des modèles modernes et un modèle assez adapté aux applications de Réalité Augmentée.
 
 \begin{figure}
 \subfigure[Calcul de la composante spéculaire]
@@ -1330,7 +1330,7 @@ Ce modèle de Phong, a été pendant des décennies une méthode rapide et efficace p
 \caption{Calcul de la composante spéculaire en utilisant le rayon réfléchi $\vect{R}$ dans le modèle de Phong ou $\vect{H}$ le vecteur mi-chemin entre $\vect{V}$ et $\vect{L}$ (a) et (b) spécularité visible sur l'océan de forme elliptique.}
 \end{figure}
  
- Une variation du calcul de la composante spéculaire a été proposée par Blinn-Phong \cite{blinn1977models} en remplaçant le calcul de $\hat{\vect{R}}_l(\vect{P}) \cdot \hat{\vect{V}}(\vect{P})$ par $\hat{\vect{H}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})$ avec $\hat{\vect{H}}_l(\vect{P})$ le vecteur de mi-chemin entre le rayon de lumière incidente et le vecteur associé à l'observateur tel que $\hat{\vect{H}}_l(\vect{P}) = \mu(\hat{\vect{L}}_l(\vect{P}) + \hat{\vect{V}}(\vect{P}))$. Le vecteur réfléchi $\hat{\vect{R}}$ et $\hat{\vect{H}}$ sont illustrées à la figure \ref{fig:specu_vectors}. En plus d'optimiser le calcul du terme spéculaire en évitant le calcul du rayon réfléchi, les spécularités produisent des spécularités plus elliptiques contrairement à celles de Phong qui sont majoritairement rondes. Dans le cas d'une spécularité observée dans un point de vue assez incliné, sa forme décrit naturellement une ellipse (reflet du soleil observé à l'horizon par exemple sur la figure \ref{fig:specu_sea}). De plus, Blinn-Phong produit, en général, des spécularités suffisamment précises comme évoqué dans \cite{ngan2004experimental}.
+ Une variation du calcul de la composante spéculaire a été proposée par Blinn-Phong \cite{blinn1977models} en remplaçant le calcul de $\hat{\vect{R}}_l(\vect{P}) \cdot \hat{\vect{V}}(\vect{P})$ par $\hat{\vect{H}}_l(\vect{P}) \cdot \hat{\vect{N}}(\vect{P})$ avec $\hat{\vect{H}}_l(\vect{P})$ le vecteur de mi-chemin entre le rayon de lumière incidente et le vecteur associé à l'observateur tel que $\hat{\vect{H}}_l(\vect{P}) = \mu(\hat{\vect{L}}_l(\vect{P}) + \hat{\vect{V}}(\vect{P}))$. Les vecteurs réfléchis $\hat{\vect{R}}$ et $\hat{\vect{H}}$ sont illustrés à la figure \ref{fig:specu_vectors}. En plus d'optimiser le calcul du terme spéculaire en évitant le calcul du rayon réfléchi, les spécularités prennent une forme plus elliptique contrairement à celles de Phong qui sont majoritairement rondes. Dans le cas d'une spécularité observée dans un point de vue assez incliné, sa forme décrit naturellement une ellipse (reflet du soleil observé à l'horizon par exemple sur la figure \ref{fig:specu_sea}). De plus, Blinn-Phong produit, en général, des spécularités suffisamment précises comme évoqué dans \cite{ngan2004experimental}.
 
 %\subsection{Modèle de Cook-Torrance}
-D'autres modèles ayant un fondement physique plus poussé comme celui de \cite{torrance1967theory} et \cite{cook1982reflectance} mais nous n'entrerons pas dans le détail sur ces modèles dans ce mémoire.
+D'autres modèles ayant un fondement physique plus poussé existent, comme celui de \cite{torrance1967theory} et \cite{cook1982reflectance} mais nous n'entrerons pas dans le détail de ces modèles dans ce mémoire.
