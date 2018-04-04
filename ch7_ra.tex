@@ -50,7 +50,7 @@ Une composante additionnelle de notre modèle est sa capacité à prédire plusieurs
 
 
 \section{Filtrage multi-vues}
-Pour des images surexposées, notre méthode de détection de spécularité peut confondre les textures blanches avec des spécularités. Afin d'assurer la robustesse de cette détection, un processus multi-vue sur les spécularités candidates s'impose. En détails, à l'opposé des contours 3D d'une texture, les contours 3D d'une spécularité se déplacent sur la surface lorsque la caméra se déplace. Ce phénomène est justifié du fait qu'une spécularité correspond à la réflexion d'une source de lumière qui elle est fixe. La specularité que nous observons correspond à un objet situé en dessous de la surface et non sur la surface, d'où le déplacement. En calculant l'homographie associé au plan où se présente la spécularité entre deux relativement éloignées, nous transformons les contours des spécularités candidates (warping). Si le contours est suffisamment proche, le candidat est une texture. Dans le cas contraire, c'est une spécularité.
+Pour des images surexposées, notre méthode de détection de spécularité peut confondre les textures blanches avec des spécularités. Afin d'assurer la robustesse de cette détection, un processus multi-vue sur les spécularités candidates s'impose. En détails, à l'opposé des contours 3D d'une texture, les contours 3D d'une spécularité se déplacent sur la surface lorsque la caméra se déplace. Ce phénomène est justifié du fait qu'une spécularité correspond à la réflexion d'une source de lumière qui elle est fixe. La specularité que nous observons correspond à un objet situé en dessous de la surface et non sur la surface, d'où le déplacement. En calculant l'homographie associé au plan où se présente la spécularité entre deux poses relativement éloignées, nous transformons (warping) les contours des spécularités candidates . Si le contours est suffisamment proche, le candidat est une texture. Dans le cas contraire, c'est une spécularité.
 \fix{Illustration ?}
 \fix{CVPR 1 ou TVCG + montrer des résultats de tracking}
 
@@ -59,13 +59,13 @@ Pour des images surexposées, notre méthode de détection de spécularité peut conf
 \section{Gestions de lumières à état changeant}
 \label{sec:etat_changeant} 
 %==============
-Nous adressons ici l'analyse de l'état des spécularité en comparant la détection de spécularité dans une image et la prédiction produite par notre quadrique reconstruite. Cette analyse présente de nombreux intérêts:
+Nous adressons ici l'analyse de l'état des spécularités en comparant la détection de spécularité dans une image et la prédiction produite par notre quadrique reconstruite. Cette analyse présente de nombreux intérêts:
 \begin{itemize}
-    \item Si les ellipses associées respectivement avec la prédiction et la détection ont la même forme mais une position différente, cela signifie que la pose de caméra n'est pas assez précise.
-    \item Si les ellipses associées respectivement avec la prédiction et la détection ont la même position mais une forme différente, cela signifie que l'intensité de la lumière a changée ou que la reflectance du matériau est différente.
+    \item Si les ellipses associées respectivement avec la prédiction et la détection ont la même forme mais une position différente, cela signifie probablement que la pose de caméra n'est pas assez précise.
+    \item Si les ellipses associées respectivement avec la prédiction et la détection ont la même position mais une forme différente, cela signifie probablement que l'intensité de la lumière a changée ou que le matériau est différent.
     \item Si l'ellipse associée à la détection n'est plus présente, cela signifie que la source de lumière a été éteinte ou occultée.
 \end{itemize} 
-Ce dernier point sera abordé dans cette section. Il est reconnu que dans le domaine de la vision par ordinateur, les sources de lumière à état changeant (allumées et éteintes) car cela provoque des variations d'intensité conséquence dans l'image observée. De plus, une caméra doit également s'adapter au nouveau contexte lumineux ce qui affectera le résultat des différentes applications de vision par ordinateur comme la segmentation, la reconstruction et la localisation. Actuellement, aucune solution n'explicite clairement ce problème. En utilisant la prédiction de spécularité de notre modèle JOLIMAS, nous pouvons suivre la spécularité créée par une source de lumière même si elle est éteinte ou allumée en comparant la prédiction et la détection de spécularité. Nous testons la capacité de notre modèle à prédire les spécularités des sources de lumières à état changeant (allumées et éteintes) dans la figure \ref{fig:realdata_kitchen}. Dans cette séquences, trois sources de lumières sont utilisées (deux lampes de bureau et une lampe néon) sur un comptoir de cuisine. Durant cette séquence, nous allumons et éteignions chaque source de lumière à tour de rôle avant d'éteindre toutes les sources de lumière en une seule fois à la fin de la séquence. Nous illustrons la séquence dans la figure \ref{fig:changing_state}. Les résultats de cette séquence montre la capacité de notre modèle à gérer les changements d'état de lumière rapide tel que les clignotements de la lampe néon lors de l'allumage  dans un contexte multi-lumière.
+Ce dernier point sera abordé dans cette section. Il semble intuitif, qu'une source de lumière à état changeant (allumée ou éteinte) provoque des variations d'intensité conséquence dans l'image observée ce qui impacte fortement les algorithmes de vision par ordinateur. De plus, une caméra doit également s'adapter au nouveau contexte lumineux ce qui affectera le résultat des différentes applications de vision par ordinateur comme la segmentation, la reconstruction et la localisation. Actuellement, aucune solution n'explicite clairement ce problème. En utilisant la prédiction de spécularité de notre modèle JOLIMAS, nous pouvons suivre la spécularité créée par une source de lumière même si elle est éteinte ou allumée en comparant la prédiction et la détection de spécularité. Nous illustrons la capacité de notre modèle à prédire les spécularités des sources de lumières à état changeant (allumées et éteintes) dans la figure \ref{fig:changing_state}. Dans cette séquences, trois sources de lumières sont utilisées (deux lampes de bureau et une lampe néon) sur un comptoir de cuisine. Durant cette séquence, nous allumons et éteignions chaque source de lumière à tour de rôle avant d'éteindre toutes les sources de lumière en une seule fois à la fin de la séquence. Les résultats de cette séquence montre la capacité de notre modèle à gérer les changements d'état de lumière rapide tel que les clignotements de la lampe néon lors de l'allumage  dans un contexte multi-lumière.
 \begin{figure}[!ht]
 	\subfigure[]
 	{
@@ -197,10 +197,42 @@ As illustrated in figure \ref{fig:retexturing_example}, our retexturing applicat
 \label{sec:changements_ra}
 %===============================================================================
 
+
+%===============================================================================
+\section{Limitations}
+\label{sec:limitations_ra}
+%===============================================================================
+
+
+\subsection{Croisements de spécularités}
+Si la caméra observe une scène dans une direction tel que deux sources de lumières ont un alignement similaire, les deux spécularités résultantes peuvent se croiser dans l'image. Ce phénomène met en échec le suivi et donc la labelisation de spécularités. Actuellement, ce problème n'est pas géré dans notre application mais pourrait être adressé si les sources de lumière sont de couleurs différentes. Cependant, pour des sources de lumière similaires (forme et couleur), la seule façon de distinguer clairement les spécularités est d'utiliser une information 3D (reconstruire une source de lumière ponctuelle à partir de deux points de vue par triangulation par exemple) afin de s'assure de la cohérence du mouvement des la spécularité. Dans tous les cas, les images où les spécularités se croisent doivent être exclues de notre reconstruction.
+
+\fix{More ? Parler du formalisme pour le multi plan qui sera résolu par JOLIMAS dual}
+
 %===============================================================================
 \section{Résultats}
 \label{sec:resultats_ra}
 %===============================================================================
+
+
+
+
+\subsection{Temps d'exécution}
+Dans la table \ref{tab:computation_time}, nous présentons le temps d'exécution de chaque étape de notre méthode incluant la détection de spécularité, le calcul de point d'intensité maximale, la reconstruction de quadrique et le retexturing. Nous calculons les résultats sur un processeur Intel i7  de fréquence 2.70 GHz sur des séquences réelles présentées dans la figure \ref{fig:sequences}. La reconstruction de quadrique prend 76.2 millisecondes en moyenne et est réalisée quand un minimum de 6 images clés est atteint. La quadrique est raffinée pour chaque nouvelle image clé mais prend cette fois ci 15 millisecondes en moyenne car seulement quelques itérations sont nécessaires contrairement au raffinement initial. Notre analyse a été réalisée sans utilisation de GPU ou de parallélisation.
+
+\begin{table}[!ht]
+\caption{Calcul du temps d'exécution de la prédiction de spécularité de JOLIMAS dual. Notre méthode tourne en temps réel.}
+ \centering
+  \begin{tabular}{c|c|} 
+      \hline
+        \multicolumn{1}{|c|}{ Étape de reconstruction de JOLIMAS dual} & Temps d'exécution (ms) \\      \hline
+      \multicolumn{1}{|c|}{\specialcell{Détection de specularité }} & 12.1\\      \hline
+       \multicolumn{1}{|c|}{\specialcell{Correction du point d'intensité maximale}} & 8.3 \\      \hline
+       \multicolumn{1}{|c|}{\specialcell{Reconstruction de quadrique}}    & 76.2  \\      \hline
+       \multicolumn{1}{|c|}{\specialcell{Prédiction de spécularité}}    & 2.4 \\      \hline
+  \end{tabular}
+  \label{tab:computation_time}
+\end{table}
 
 %===============================================================================
 \section{Perspectives}
@@ -212,3 +244,5 @@ As illustrated in figure \ref{fig:retexturing_example}, our retexturing applicat
 \section{Conclusion}
 \label{sec:conclusion_ra}
 %===============================================================================
+
+\fix{La capacité de prédiction de spécularité de notre modèle nous permet également de détecter les lumières à état changeant (allumées et éteintes) dans un contexte multi-lumières. Nous montrerons dans le chapitre \ref{chapitre:RA} que le modèle JOLIMAS pouvait être utilisé pour améliorer le rendu des application de réalité augmentée. En complément, notre prédiction de spécularité pourrait améliorer grandement les algorithmes de localisation de caméra. Pour des applications d'infographie, le calcul du terme spéculaire de façon plus localisée pourrait optimiser le rendu par l'intermédiaire de notre procédé de prédiction.}

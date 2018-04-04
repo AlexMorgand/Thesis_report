@@ -4,7 +4,7 @@
 \graphicspath{{images/Ch4/}}
 
 \begin{chapeauChapitre}
-Prédire les spécularités dans une image, à partir d'une pose de camera et de la géométrie de la scène connues, est un problème complexe et ouvert. Cette prédiction est néanmoins essentielle pour de nombreuses applications en réalité augmentée. Une approche récente appelée JOLIMAS répond partiellement à ce problème sous l'hypothèse que les spécularités ont une forme elliptique et que la scène est composée d'un objet plan. JOLIMAS modélise une spécularité comme étant l'image d'une quadrique fixe dans l'espace. Nous proposons JOLIMAS dual, un nouveau modèle géométrique qui adresse la limitation aux plans. Ce modèle repose sur le fait que les spécularités conservent leurs formes elliptiques sur des surfaces convexes et que chaque surface peut être divisé en plusieurs partie convexes. La géométrie de JOLIMAS dual utilise une quadrique pour chaque surface convexe et chaque source lumineuse, et prédit les spécularités en utilisant des caméras virtuelles permettant de gérer la courbure de la surface. Nous évaluons l'efficacité et la précision du JOLIMAS dual sur de multiples séquences synthétiques et réelles composées de divers type objets et sous différents éclairages.
+Prédire les spécularités dans une image, à partir d'une pose de camera et de la géométrie de la scène connues, est un problème complexe et ouvert. Cette prédiction, est néanmoins essentielle pour de nombreuses applications en réalité augmentée. L'approche JOLIMAS, présentée au chapitre \ref{chapitre:primal_jolimas}, répond partiellement à ce problème sous l'hypothèse que les spécularités ont une forme elliptique et que la scène est composée d'un objet plan. JOLIMAS modélise une spécularité comme étant l'image d'une quadrique fixe dans l'espace. Dans ce chapitre, nous présentons JOLIMAS dual, un modèle géométrique qui adresse la limitation aux plans. Ce modèle repose sur le fait que les spécularités conservent leurs formes elliptiques sur des surfaces convexes et que chaque surface peut être divisé en plusieurs partie convexes. La géométrie de JOLIMAS dual utilise une quadrique pour chaque surface convexe et chaque source lumineuse, et prédit les spécularités en utilisant des caméras virtuelles permettant de gérer la courbure de la surface. Nous évaluons l'efficacité et la précision du JOLIMAS dual sur de multiples séquences synthétiques et réelles composées de divers type objets et sous différents éclairages.
 
 Ce chapitre a fait l'objet de deux publications internationales ISMAR \citeyearpar{morgand2017multiple} publiée également dans TVCG en édition spéciale et une publication nationale ORASIS \citeyearpar{morgand2017modele}.
 \end{chapeauChapitre}
@@ -19,28 +19,15 @@ Le SLAM (\textit{Simultaneous Localization And Mapping}) a récemment gagné en ma
 Les méthodes existantes de prédiction de spécularité \cite{jachnik2012realtime, boom2013point, richter2016instant} n'exprime pas les spécularités de manière explicite mais les inclues dans un processus de modélisation de la lumière en utilisant des modèles d'illuminations issus de l'infographie. Elles supposent une illumination distante et requièrent le calcul de nombreux paramètres sur les matériaux, les sources de lumière et ne fournissent pas une solution géométrique flexible pour prédire les spécularités pour de nouveaux points de vue. Ces méthodes sont classées dans deux catégories: illumination globale et reconstruction de source de lumière. Une troisième catégorie d'approches existe où le problème de prédiction de spécularité est considéré comme un problème de reconstruction multi-vues.
 Dans le chapitre précédent \ref{chapitre:primal_jolimas}, nous avons montré qu'une spécularité sur une surface plane peut être convenablement approchée par une ellipse sous un éclairage provenant d'une ampoule ou d'un néon. Nous avons présenté notre modèle empirique appelé \textit{JOint LIght-MAterial Specularity} (JOLIMAS) pour abstraire l'interaction lumière-matière et traiter le problème de prédiction de spécularité géométriquement. Ce modèle utilise une quadrique fixe dont la projection prédit la forme des spécularités sur des points de vue existants et nouveaux. La reconstruction de quadrique est obtenue avec au moins trois points de vue. Nous nous référerons à ce modèle comme étant {\em JOLIMAS primal}.
 
-Dans ce chapitre, nous mettons en avant deux contributions pour la modélisation géométrique de la forme d'une spécularité. Dans une premier temps, nous étudions la principale limitation de {\em JOLIMAS primal} : son incapacité à fonctionner pour des surfaces non-plans dans la section \ref{sec:approche_proposee_dual}. Dans un second temps, nous traitons cette limitation par {\em JOLIMAS dual}. Ce nouveau modèle est une généralisation du primal aux surfaces convexes par morceaux tout en conservant sa fonctionnalité sur des surfaces planes. L'idée principale est que les spécularités conservent leur forme elliptiques sur des surfaces convexes. Notre modèle se base sur une représentation  virtuelle des caméras qui associe une caméra virtuelle à chaque spécularité avec la pose de la caméra réelle et la géométrie de la surface connues. Du fait que chaque surface peut être divisée en parties convexes, nous pouvons modéliser et prédire les spécularités sur des objets plus complexes comme illustré à la figure \ref{fig:teaser}. En pratique, nous représentons une surface par un maillage et utilisons un procédé de décomposition convexe approximative comme expliqué dans la section \ref{sec:jolimas_piecewise}. Nous reconstruisons une quadrique pour chaque partie convexe et chaque source de lumière. Nous expliquons le détail de notre modèle de prédiction de spécularité et le calcul de notre représentation pour de nouveaux points de vue.% dans la section \ref{sec:prediction}.
+Dans ce chapitre, nous mettons en avant deux contributions pour la modélisation géométrique de la forme d'une spécularité. Dans une premier temps, nous étudions la principale limitation de {\em JOLIMAS primal} : son incapacité à fonctionner pour des surfaces non-planes dans la section \ref{sec:approche_proposee_dual}. Dans un second temps, nous traitons cette limitation par {\em JOLIMAS dual}. Ce nouveau modèle est une généralisation du primal aux surfaces convexes par morceaux tout en conservant sa fonctionnalité sur des surfaces planes. L'idée principale est que les spécularités conservent leur forme elliptiques sur des surfaces convexes. Notre modèle se base sur une représentation  virtuelle des caméras qui associe une caméra virtuelle à chaque spécularité avec la pose de la caméra réelle et la géométrie de la surface connues. Du fait que chaque surface peut être divisée en parties convexes, nous pouvons modéliser et prédire les spécularités sur des objets plus complexes comme illustré à la figure \ref{fig:teaser}. En pratique, nous représentons une surface par un maillage et utilisons un procédé de décomposition convexe approximative comme expliqué dans la section \ref{sec:jolimas_piecewise}. Nous reconstruisons une quadrique pour chaque partie convexe et chaque source de lumière. Nous expliquons le détail de notre modèle de prédiction de spécularité et le calcul de notre représentation pour de nouveaux points de vue.% dans la section \ref{sec:prediction}.
  Cette prédiction n'est pas triviale car les caméras virtuelles utilisées pour la prédiction requièrent le calcul du point d'intensité maximale d'une spécularité inconnue pour un nouveau point de vue. Nous détaillerons le calcul de ce point particulier par utilisation de notre quadrique reconstruite. L'efficacité et la précision de notre méthode est validée sur de nombreux exemples synthétiques et réels incluant divers types objets et divers conditions lumineuses dans la section  \ref{sec:experimental_results}.
 
-\begin{figure}[!ht]
-   \centering	   
-      \subfigure[]
-	  {
-	      \includegraphics[width=0.465\linewidth]{neon_rocket}
-	  }   
-      \subfigure[]
-	  {
-	      \includegraphics[width=0.473\linewidth]{spot_vase.png}
-	  }   
-	  \caption{Prédiction de spécularité sur deux surfaces non-planes. Sous l'hypothèse que les spécularités ont une forme elliptique sur les surfaces convexes, nous reconstruisons une quadrique dont la projection perspective correspond aux spécularités pour de nouveaux points de vue. Une quadrique est créée pour chaque surface convexe et chaque source de lumière. (a) présente une séquence réelle d'une réplique de fusée (au milieu) éclairée par un néon (en haut). Dans (b), nous utilisons une ampoule (en haut) pour illuminer un vase en verre (au milieu). Notre modèle a la capacité de prédire les spécularités (en bas) sur les différentes parties de la fusée et du vase pour de nouveaux points de vue (ellipses blues).}
-	  \label{fig:teaser}
-\end{figure}
 
 %=============================================================================
 \section{Approche proposée} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:approche_proposee_dual}            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
-Notre modèle étend notre approche précédente présentée dans la chapitre \ref{chapitre:primal_jolimas}  aux surfaces non-plans tout en reprenant l'approximation de spécularités de forme elliptique même pour des sources étendues. Nous proposons JOLIMAS dual qui utilise des caméras virtuelles obtenues par symétrie des caméras réelles selon le plan tangent à un point particulier de la surface à l'opposé de JOLIMAS primal \cite{morgand2016empirical}, qui utilise des caméras réelles. Notre approche améliore la reconstruction en terme de généricité avec un nombre de points de vue nécessaire inférieur à la version primale grâce à une meilleure répartition des caméras virtuelles. De nouvelles caméras virtuelles peuvent être ajoutées par l'utilisation de spécularités sur des objets similaires (courbure et matériaux) à partir de la même source de lumière.
+Notre modèle étend notre approche précédente présentée dans la chapitre \ref{chapitre:primal_jolimas}  aux surfaces non-plans tout en reprenant l'approximation de spécularités de forme elliptique même pour des sources étendues. Nous proposons JOLIMAS dual qui utilise des caméras virtuelles obtenues par symétrie des caméras réelles selon le plan tangent à un point particulier de la surface à l'opposé de JOLIMAS primal du chapitre précédent \ref{chapitre:primal_jolimas}, qui utilise des caméras réelles. Notre approche améliore la reconstruction en terme de généricité avec un nombre de points de vue nécessaire inférieur à la version primale grâce à une meilleure répartition des caméras virtuelles. De nouvelles caméras virtuelles peuvent être ajoutées par l'utilisation de spécularités sur des objets similaires (courbure et matériaux) à partir de la même source de lumière.
 
 \section{JOLIMAS dual}
 \label{sec:dual_jolimas}
@@ -52,7 +39,7 @@ Une scène 3D typique contient une caméra de pose $\mathtt{\Pi} = \begin{bmatrix}
 Pour une surface plane, nous pouvons interpréter une spécularité comme étant une image miroir de la source de lumière. Cependant, pour des surfaces courbes, cette image miroir est distordue et incohérente avec la vraie position et forme de la source de lumière. A partir des spécularités, nous ne pouvons pas reconstruire un objet 3D cohérent localisé autour de la source de lumière dans l'état. L'idée principale de JOLIMAS dual est d'utiliser des caméras virtuelles pour reconstruire la quadrique de façon cohérente avec la source de lumière. Ces caméras virtuelles sont calculées par symétrie de la vraie caméra avec la surface. Contrairement aux surfaces planes, la normale varie le long de la surface courbe ce qui rend le choix de la caméra virtuelle ambigu. Pour une pose de caméra et une spécularité donnée, quel point de la surface devons-nous choisir pour calculer cette caméra virtuelle ?
 
 \subsection{Le point d'intensité maximale}
-Sur des surfaces convexes, plusieurs propriétés peuvent être mise en évidence. Premièrement, une specularity conserve une forme elliptique de la même manière que sur les surfaces planes comme illustré à la figure \ref{fig:conic_shape}. Deuxièmement, une source de lumière est associée à une unique spécularité. Enfin, si nous transformions une surface plane en une surface convexe, la forme de la spécularité ne serait affectée que par son échelle.
+Sur des surfaces convexes, plusieurs propriétés peuvent être mise en évidence. Premièrement, une specularité conserve une forme elliptique de la même manière que sur les surfaces planes comme illustré à la figure \ref{fig:conic_shape}. Deuxièmement, une source de lumière est associée à une unique spécularité. Enfin, si nous transformions une surface plane en une surface convexe, la forme de la spécularité ne serait affectée que par son échelle.
 \begin{figure}[!ht]
 \centering
     \subfigure[]
@@ -67,7 +54,7 @@ Sur des surfaces convexes, plusieurs propriétés peuvent être mise en évidence. P
 \caption{Spécularités sur des surfaces convexes tel qu'une balle en mousse (a) et un ballon d'eau chaude (b). L'hypothèse de spécularités elliptiques est toujours valide pour ces surfaces comme le montre les ellipses sur les gros plans (a) et (b). Pour chaque surface convexe, il y a une source de lumière pour chaque spécularité (une source de lumière dans (a) et deux sources de lumières dans (b)).}
 \label{fig:conic_shape}
 \end{figure}
-Plusieurs études comme celles de notre chapitre précédent \ref{chapitre:primal_jolimas} et \cite{kim2013specular, tian2013real} ont souligné l'importance d'un point spécifique appelée le point d'intensité maximale qui est unique pour chaque spécularité pour des surfaces planes mais aussi convexes. Pour chaque direction autour de ce point, l'intensité de la spécularité décroit. Ce point est très importante en optique car pour une pose de caméra et une position de source lumineuse données, il suit la loi de la réflexion:
+Plusieurs études comme celles du chapitre \ref{chapitre:primal_jolimas} et \cite{kim2013specular, tian2013real} ont souligné l'importance d'un point spécifique appelée le point d'intensité maximale qui est unique pour chaque spécularité pour des surfaces planes mais aussi convexes (voir annexe \ref{annexe:analysis_phong_blinn}). Pour chaque direction autour de ce point, l'intensité de la spécularité décroit. Ce point est très importante en optique car pour une pose de caméra et une position de source lumineuse données, il suit la loi de la réflexion:
 \begin{equation}
 \hat{\mbf{L}}(\mbf{P}) = 2(\hat{\mbf{N}}(\mbf{P})^\top \hat{\mbf{V}}(\mbf{P}))\hat{\mbf{N}}(\mbf{P}) - \hat{\mbf{V}}(\mbf{P}).
 \label{eq:snell_descartes}
@@ -93,9 +80,9 @@ Ceci implique que le point d'intensité maximale n'est pas affecté par la distors
 }
 \label{fig:snell_general}
 \end{figure}
-Dans l'annexe de ce chapitre, nous démontrons que le point d'intensité maximale du modèle d'illumination de Phong est unique et localisée à l'intersection de la ligne contenant la position de la source de lumière $\mbf{L}$ et le symétrique de la position de la caméra $\tilde{\mbf{V}}$ dans le cas de surfaces planaires. Pour des surfaces convexes, cette propriété est conservée si le point de la surface utilisé pour calculer $\tilde{\mbf{V}}$ coïncide avec le point d'intersection comme illustré à la figure \ref{fig:snell_general}.
+Dans l'annexe \ref{annexe:analysis_phong_blinn}, nous démontrons que le point d'intensité maximale du modèle d'illumination de Phong est unique et localisée à l'intersection de la ligne contenant la position de la source de lumière $\mbf{L}$ et le symétrique de la position de la caméra $\tilde{\mbf{V}}$ dans le cas de surfaces planaires. Pour des surfaces convexes, cette propriété est conservée si le point de la surface utilisé pour calculer $\tilde{\mbf{V}}$ coïncide avec le point d'intersection comme illustré à la figure \ref{fig:snell_general}.
 
-En pratique, le calcul du point le plus intense se doit d'être le plus précis possible car les caméras virtuelles sont sensibles aux erreurs de normale. Nous présentons une méthode d'estimation de ce point  d'intensité maximale à partir d'aprioris géométriques sur le maillage dans la section \ref{sec:bp_computation}.
+Notons qu'en pratique, le calcul du point le plus intense se doit d'être le plus précis possible car les caméras virtuelles sont sensibles aux erreurs de normale. Nous présentons une méthode d'estimation de ce point  d'intensité maximale à partir d'aprioris géométriques sur le maillage dans la section \ref{sec:bp_computation}.
 
 
 %=============================================================================
@@ -113,11 +100,11 @@ Nous calculons JOLIMAS dual à partir de la caméra virtuelle estimée à partir du 
 \end{equation}
 Pour une source de lumière unique, le pipeline de l'estimation de notre modèle est:
 \begin{itemize}
-\item Détection de spécularité calculant simultanément le point le plus intense pour chaque spécularité
-\item Estimation des caméras virtuelles initiales par symétrie des caméras réelles avec la surface pour chaque point d'intensité maximale
-\item Correction épipolaire à partir de \cite{reyes2005projective} et reconstruction de la quadrique à partir de \cite{cross1998quadric} pour au moins 3 points de vue
-\item Correction des points d'intensité maximale de chaque spécularité à partir de la reconstruction de quadrique (décrite dans \ref{sec:bp_computation})
-\item Raffinement non-linéaire à partir de tous les points de vue disponibles
+\item Détection de spécularité calculant simultanément le point le plus intense pour chaque spécularité.
+\item Estimation des caméras virtuelles initiales par symétrie des caméras réelles avec la surface pour chaque point d'intensité maximale.
+\item Correction épipolaire à partir de \cite{reyes2005projective} et reconstruction de la quadrique à partir de \cite{cross1998quadric} pour au moins 3 points de vue.
+\item Correction des points d'intensité maximale de chaque spécularité à partir de la reconstruction de quadrique (décrite dans \ref{sec:bp_computation}).
+\item Raffinement non-linéaire à partir de tous les points de vue disponibles.
 \end{itemize}
 Un exemple de notre représentation de caméra virtuelle est présenté à la figure  \ref{fig:main_schema}. Ce pipeline est répété pour chaque source de lumière.
 Un récapitulatif du pipeline est illustré à la figure \ref{fig:pipeline}.
@@ -170,7 +157,7 @@ Le point $\vect{P}$ est reconstruit au milieu de $[\vect{H_1}\vect{H_2}]$ tel qu
  \begin{equation} 
 	\mbf{P} = \frac{1}{2}[(\mbf{t}^0 + \lambda\mbf{d}^0) + (\mbf{t}^1 + \mu\mbf{d}^1)].
 \end{equation}
-Cette reconstruction de la position de la source de lumière $\vect{L}$ peut être réalisée à partir de 3+ observations en prenant les différentes paires de caméras virtuelles et en faisant la moyenne des points triangulés obtenus par chaque paire. En pratique, $\mbf{P_{B,1}}$ et $\mbf{P_{B,2}}$ sont initialisé en prenant le centre de gravité de la zone d'intensité maximale (lorsque le point d'intensité maximale n'est pas unique) de la spécularité associée.
+Cette reconstruction de la position de la source de lumière $\vect{L}$ peut être réalisée à partir de au moins trois observations en prenant les différentes paires de caméras virtuelles et en faisant la moyenne des points triangulés obtenus par chaque paire. En pratique, $\mbf{P_{B,1}}$ et $\mbf{P_{B,2}}$ sont initialisé en prenant le centre de gravité de la zone d'intensité maximale (lorsque le point d'intensité maximale n'est pas unique) de la spécularité associée.
 
 
 \subsection{Raffinement de la position de la lumière et du point d'intensité maximale}
@@ -186,9 +173,9 @@ $$
 \end{bmatrix} \begin{bmatrix}
 \mbf{V} \\
 1
-\end{bmatrix},
+\end{bmatrix}.
 $$
-et $\delta$ la distance euclidienne 3D. Le calcul du point le plus intense doit être réalisé pour chaque surface convexe et chaque source de lumière. Notre estimation du point d'intensité maximale est décrite dans l'algorithme \ref{algo:bp}.
+Le calcul du point le plus intense doit être réalisé pour chaque surface convexe et chaque source de lumière. Notre estimation du point d'intensité maximale est décrite dans l'algorithme \ref{algo:bp}.
 \begin{algorithm}
 \caption{Version simplifiée du calcul du point d'intensité maximale à partir d'une pose de caméra, le modèle CAO et la position de la source de lumière obtenue par triangulation la première fois puis en prenant le centre de la quadrique par la suite.}
 \begin{algorithmic}[1]
@@ -207,7 +194,7 @@ et $\delta$ la distance euclidienne 3D. Le calcul du point le plus intense doit 
 \end{algorithm}
 
 \subsection{Interpolation de normale}
-Afin de calculer des caméras virtuelles cohérentes, une information de normale de surface précise est importante. Sur un maillage, cette information n'est fournit uniquement par les arrêtes et les faces du modèle CAO. Afin de trouver le point d'intensité maximale le plus juste, nous devons retrouver la variation de normale précisément sur les différents polygones du maillage. Pour répondre à ce problème, nous utilisons une interpolation de normale entre les différents polygones du maillage ce qui est une approche similaire à l'interpolation de normale utilisée par \cite{phong1975illumination}
+Afin de calculer des caméras virtuelles cohérentes, une information de normale de surface précise est importante. Sur un maillage, cette information n'est fournit uniquement par les arrêtes et les faces du modèle CAO. Afin de trouver le point d'intensité maximale le plus juste, nous devons retrouver la variation de normale précisément sur les différents polygones du maillage. Pour répondre à ce problème, nous utilisons une interpolation de normale entre les différents polygones du maillage ce qui est une approche similaire à l'interpolation de normale utilisée par \cite{phong1975illumination}.
 Nous commençons à partir d'un point $\mbf{P}$ de normale inconnue $\hat{\mbf{N}}(\mbf{P})$ sur un polygone du maillage. Après avoir calculé les normales $\hat{\mbf{N}}_i$ pour chaque sommet $i$ du triangle, nous traçons une ligne incluant $\mbf{P}$ dans une direction donnée (l'axe $\mbf{y}$ par exemple) qui intersecte plusieurs arrêtes du polygone. Pour ces points d'intersection, nous calculons leurs normales par interpolation linéaire. La normale finale $\hat{\mbf{N}}(\mbf{P})$ est calculée à partir de l'interpolation linéaire des normales des points d'intersection le long de la ligne, comme illustré à la figure \ref{fig:normal_interpolation}.
 
 \begin{figure}[!ht]
@@ -226,7 +213,7 @@ Nous commençons à partir d'un point $\mbf{P}$ de normale inconnue $\hat{\mbf{N}}
 \end{figure}
 
 %=============================================================================
-\section{Surfaces convexes par morceau} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Surfaces convexes par morceaux} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:jolimas_piecewise}            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 \subsection{Principe}
@@ -276,7 +263,7 @@ Selon \cite{lien2007approximate}, chaque maillage 3D peut être approximé par la 
 \label{sec:experimental_results}
 % =============================================================================
 
-Dans cette section, la prédiction de spécularité est testée sur des données synthétiques et réelles pour évaluer les améliorations par rapport aux travaux antérieurs, la sensibilité du modèle aux changements de courbure et la robustesse de notre méthode à un point d'intensité maximal bruité. La prédiction de spécularité est évaluée en utilisant la distance 2D entre les contours de la spécularité et l'ellipse prédite comme définie dans le chapitre précédent \ref{chapitre:primal_jolimas}. Cette erreur de prédiction est décrite en tant que pourcentage en calculant l'erreur moyenne par point de contour comparée à la taille de l'image.
+Dans cette section, la prédiction de spécularité est testée sur des données synthétiques et réelles pour évaluer les améliorations par rapport au modèle JOLIMAS primal présenté au chapitre \ref{chapitre:primal_jolimas}, la sensibilité du modèle aux changements de courbure et la robustesse de notre méthode à un point d'intensité maximal bruité. La prédiction de spécularité est évaluée en utilisant la distance 2D entre les contours de la spécularité et l'ellipse prédite comme définie dans le chapitre précédent \ref{chapitre:primal_jolimas}. Cette erreur de prédiction est décrite en tant que pourcentage en calculant l'erreur moyenne par point de contour comparée à la taille de l'image.
 
 \subsection{Comparaison avec JOLIMAS primal}
 Nous utilisons une séquence comportant 300 images illustrée à la figure  \ref{fig:curvature_seq}. Dans cette séquence, une surface plane est courbée progressivement afin d'évaluer la fonctionnalité de notre modèle dual sur des surfaces planes et convexes. Pour chaque image, nous reconstruisons une quadrique à partir de 6 points de vue et nous calculons la distance 2D entre la spécularité prédite et la spécularité détectée. Notre méthode a une erreur moyenne de $1\%$ pixels en comparaison à JOLIMAS primal qui accumule $33\%$ d'erreur par ellipse.
@@ -312,8 +299,22 @@ Nous choisissons différents objets avec des courbures et matériaux variés sous d
 
 L'ensemble des résultats est illustré sur la figure \ref{fig:teaser} et \ref{fig:sequences}. Un résumé des résultats de notre modèle dual comparé au modèle primal donné par le tableau \ref{tab:real_res}.
 
+\begin{figure}[!ht]
+   \centering	   
+      \subfigure[]
+	  {
+	      \includegraphics[width=0.465\linewidth]{neon_rocket}
+	  }   
+      \subfigure[]
+	  {
+	      \includegraphics[width=0.473\linewidth]{spot_vase.png}
+	  }   
+	  \caption{Prédiction de spécularité sur deux surfaces non-planes. Sous l'hypothèse que les spécularités ont une forme elliptique sur les surfaces convexes, nous reconstruisons une quadrique dont la projection perspective correspond aux spécularités pour de nouveaux points de vue. Une quadrique est créée pour chaque surface convexe et chaque source de lumière. (a) présente une séquence réelle d'une réplique de fusée (au milieu) éclairée par un néon (en haut). Dans (b), nous utilisons une ampoule (en haut) pour illuminer un vase en verre (au milieu). Notre modèle a la capacité de prédire les spécularités (en bas) sur les différentes parties de la fusée et du vase pour de nouveaux points de vue (ellipses blues).}
+	  \label{fig:teaser}
+\end{figure}
+
 \paragraph{Réplique de fusée.}
-Dans cette séquence comportant 1410 images, une réplique de fusée en métal est illuminé par un néon. Comme illustré à la figure \ref{fig:acd2}, notre maillage de la fusée est divisé en 7 morceaux convexes. Cependant, seulement 3 morceaux convexes sont utilisés car les pièces restantes ne présentent pas de spécularité. Nous atteignons une précision de 2.1\% au niveau de l'erreur de prédiction comparée à $32.8\%$ pour le modèle primal.
+Dans cette séquence comportant 1410 images, une réplique de fusée en métal est illuminée par un néon. Comme illustré à la figure \ref{fig:acd2}, notre maillage de la fusée est divisé en 7 morceaux convexes. Cependant, seulement 3 morceaux convexes sont utilisés car les pièces restantes ne présentent pas de spécularité. Nous atteignons une précision de 2.1\% au niveau de l'erreur de prédiction comparée à $32.8\%$ pour le modèle primal.
 
 \paragraph{Mug.}
 Pour cette séquence comportant 300 images, un mug en porcelaine est illuminée par 2 sources de lumière : une lampe de bureau et un néon différent de celui utilisé pour la séquence de la fusée. Notre méthode est capable de prédire les deux spécularités précisément avec une erreur de prédiction de 1.3\% puisque la courbure de l'objet d'intérêt est constant. JOLIMAS primal est capable de prédire les spécularités avec la taille appropriée mais avec une mauvaise position présentant une erreur moyenne de $18.3\%$.
@@ -355,30 +356,13 @@ Dans cette séquence de 415 images, trois boules de billards sont éclairées par d
   \label{tab:real_res}
 \end{table}
 
-\subsection{Temps d'exécution}
-Dans la table \ref{tab:computation_time}, nous présentons le temps d'exécution de chaque étape de notre méthode incluant la détection de spécularité, le calcul de point d'intensité maximale, la reconstruction de quadrique et le retexturing. Nous calculons les résultats sur un processeur Intel i7  de fréquence 2.70 GHz sur des séquences réelles présentées dans la figure \ref{fig:sequences}. La reconstruction de quadrique prend 76.2 millisecondes en moyenne et est réalisée quand un minimum de 6 images clés est atteint. La quadrique est raffinée pour chaque nouvelle image clé mais prend cette fois ci 15 millisecondes en moyenne car seulement quelques itérations sont nécessaires contrairement au raffinement initial. Notre analyse a été réalisée sans utilisation de GPU ou de parallélisation.
-
-\begin{table}[!ht]
-\caption{Calcul du temps d'exécution de la prédiction de spécularité de JOLIMAS dual. Notre méthode tourne en temps réel.}
- \centering
-  \begin{tabular}{c|c|} 
-      \hline
-        \multicolumn{1}{|c|}{ Étape de reconstruction de JOLIMAS dual} & Temps d'exécution (ms) \\      \hline
-      \multicolumn{1}{|c|}{\specialcell{Détection de specularité }} & 12.1\\      \hline
-       \multicolumn{1}{|c|}{\specialcell{Correction du point d'intensité maximale}} & 8.3 \\      \hline
-       \multicolumn{1}{|c|}{\specialcell{Reconstruction de quadrique}}    & 76.2  \\      \hline
-       \multicolumn{1}{|c|}{\specialcell{Prédiction de spécularité}}    & 2.4 \\      \hline
-  \end{tabular}
-  \label{tab:computation_time}
-\end{table}
-
 %=============================================================================
 \section{Limites de l'approche} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:limites_de_lapproche}            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 Notre modèle dual de JOLIMAS améliore significativement par rapport à JOLIMAS primal mais rencontre quelques limites et présente quelques cas difficiles. La limitation principale de JOLIMAS dual est le fait qu'il faut reconstruire une quadrique par surface convexe et par source de lumière. Ceci pourrait être vu comme une incohérence dans le modèle et peut être inefficace en terme de temps d'exécution pour des objets plus complexe comportant de nombreuses parties convexes. Il est plus cohérent et efficace d'avoir une quadrique par source de lumière pour toutes les surfaces convexes à la fois. Dans l'exemple du vase illustré à la figure \ref{fig:teaser}, nous utilisons les sept spécularités pour reconstruire la quadrique associée à la source de lumière et pour une seule image. A proprement parler, JOLIMAS dual ne permet pas cependant ce type de reconstruction car notre modèle ne gère pas les changement de courbure. En terme d'images, il faut que les spécularités observées respectent la géométrie épipolaire. En pratique, nous avons vu que des variations légères de la courbure de la surface peut être géré par JOLIMAS dual pour des surfaces lisses. Notons que pour des changements plus importants transformant une surface convexe en concave, nous ne pouvons pas gérer le changement topologique de la spécularité de la forme de la spécularité car il est difficile de modéliser clairement ce phénomène par une projection de quadrique. Un exemple de ce cas est illustré à la figure 
 \ref{fig:hard_case2}.
-Notre modèle est mis en échec lorsque la surface en question est constitué de matériaux de reflectance  différentes. Ce cas va provoquer un changement d'échelle de la spécularité lorsqu'elle se déplacera d'un matériau à un autre et ainsi impactera négativement la reconstruction de quadrique de notre modèle. Un exemple de ce cas est illustré à la figure \ref{fig:hard_case1}
+Notre modèle est mis en échec lorsque la surface en question est constitué de différents matériaux. Ce cas va provoquer un changement d'échelle de la spécularité lorsqu'elle se déplacera d'un matériau à un autre et ainsi impactera négativement la reconstruction de quadrique de notre modèle. Un exemple de ce cas est illustré à la figure \ref{fig:hard_case1}
 
 \begin{figure}[!ht]
    \centering	  
@@ -404,4 +388,4 @@ Notre modèle est mis en échec lorsque la surface en question est constitué de ma
 Nos travaux futurs s'intéresseront à l'étude de l'impact des changements de rugosité et de courbure sur les spécularités. Pendant la reconstruction de la quadrique, il serait judicieux d'inclure les  changements de courbure et de rugosité car ces deux éléments impactent fortement  la forme de la spécularité. Pour gérer ces changements de courbures, il serait intéressant de trouver une solution analytique reliant la courbure de la surface à la forme de la spécularité, proche des travaux de \cite{blake1988geometry}. Nous verrons l'avancement de cette étude dans le chapitre suivant \ref{chapitre:modele_general}. De plus, il serait intéressant d'étudier les matériaux et la rapport qu'ils ont sur la forme de la spécularité. Dans le modèle dual, la reconstruction est limité à un matériau spécifique car la forme de la spécularité est fortement influencée par le type de matériau. Une première approche serait d'utiliser des méthodes de segmentation de matériaux comme \cite{bell2015material, georgoulis2016delight} pour signaler à notre algorithme à quel moment la spécularité va changer de forme. Il serait intéressant d'utiliser un algorithme d'apprentissage sur une base de donnés d'images de spécularité de différents matériaux sous divers types de sources de lumière et diverses intensités pour prédire au mieux les changements à appliquer au spécularité pour correspond au matériau actuel. Il pourrait être intéressant de comparer notre prédiction de spécularité aux contours de spécularité observés afin d'apprendre un motif de rugosité (carte des normales appelée communément \textit{normal map} ou placage de surface appelé communément \textit{bump map}) et l'inclure ces éléments dans le processus de prédiction de spécularité.
 
 \paragraph{Conlusion.}
-Nous avons adressé le besoin de prédiction de spécularité pour les applications de réalité augmentée et de vision par ordinateur en présentant un nouveau modèle géométrique de forme de spécularité appelé JOLIMAS dual.  Ce modèle est capable de prédire la forme d'une spécularité sur des surfaces planes mais également sur des surfaces convexes. Il étend JOLIMAS primal sous l'hypothèse que les spécularités conservent une forme elliptique sur une surface convexe. L'idée générale du modèle est qu'il représente une spécularité en tant qu'image réfléchie de la source de lumière sur une surface spéculaire ayant un comportement proche de celui d'un miroir. Cette source de lumière virtuelle peut être modélisée par une quadrique dont la projection perspective correspond à la forme de la spécularité pour les points de vues existants et nouveaux en fonction de la pose de la caméra. Notre approche précédente, JOLIMAL primal, présentée dans \ref{chapitre:primal_jolimas} était limitée aux surfaces planes. Pour des surfaces non-planaires, les ellipses correspondant aux spécularités ne sont pas épipolairement consistantes ce qui met en échec JOLIMAS primal. En utilisant une représentation de caméra virtuelle à partir d'un point spécifique de la spécularité : le plus d'intensité maximale, qui suit la loi de réflexion en optique et qui n'est pas affecté par la distorsion induite par la courbure de la surface. Cependant, le calcul de ce point n'est pas trivial due à la présence de bruit dans les poses de caméra et dans les normales des maillages. Pour toutes ces raisons, nous avons implémenté une méthode d'estimation du point le plus intense respectant les règles de l'optique. Pour s'assurer de la généricité de notre modèle, nous utilisons une décomposition convexe approximative pour diviser le maillage en morceaux convexes. Afin de prédire chaque spécularité, nous reconstruisons une quadrique pour chaque morceau convexe et chaque source de lumière. La spécularité prédite (en tant qu'ellipse) est obtenue en projetant la quadrique reconstruite en utilisant la pose de caméra virtuelle du nouveau point de vue. Notre prédiction de spécularité a été évaluée en termes de robustesse et de précision sur des séquences synthétiques et réelles. Nous avons testé notre modèle dans des contextes variés avec plusieurs sources de lumière et plusieurs objets. 
+Nous avons adressé le besoin de prédiction de spécularité pour les applications de réalité augmentée et de vision par ordinateur en présentant un nouveau modèle géométrique de forme de spécularité appelé JOLIMAS dual.  Ce modèle est capable de prédire la forme d'une spécularité sur des surfaces planes mais également sur des surfaces convexes. Il étend JOLIMAS primal sous l'hypothèse que les spécularités conservent une forme elliptique sur une surface convexe. L'idée générale du modèle est qu'il représente une spécularité en tant qu'image réfléchie de la source de lumière sur une surface spéculaire ayant un comportement proche de celui d'un miroir. Cette source de lumière virtuelle peut être modélisée par une quadrique dont la projection perspective correspond à la forme de la spécularité pour les points de vues existants et nouveaux en fonction de la pose de la caméra. Notre approche précédente, JOLIMAS primal, présentée dans le chapitre \ref{chapitre:primal_jolimas} était limitée aux surfaces planes. Pour des surfaces non-planaires, les ellipses correspondant aux spécularités ne sont pas épipolairement consistantes ce qui met en échec JOLIMAS primal. En utilisant une représentation de caméra virtuelle à partir d'un point spécifique de la spécularité : le plus d'intensité maximale, qui suit la loi de réflexion en optique et qui n'est pas affecté par la distorsion induite par la courbure de la surface. Cependant, le calcul de ce point n'est pas trivial due à la présence de bruit dans les poses de caméra et dans les normales des maillages. Pour toutes ces raisons, nous avons implémenté une méthode d'estimation du point le plus intense respectant les règles de l'optique. Pour s'assurer de la généricité de notre modèle, nous utilisons une décomposition convexe approximative pour diviser le maillage en morceaux convexes. Afin de prédire chaque spécularité, nous reconstruisons une quadrique pour chaque morceau convexe et chaque source de lumière. La spécularité prédite (en tant qu'ellipse) est obtenue en projetant la quadrique reconstruite en utilisant la pose de caméra virtuelle du nouveau point de vue. Notre prédiction de spécularité a été évaluée en termes de robustesse et de précision sur des séquences synthétiques et réelles. Nous avons testé notre modèle dans des contextes variés avec plusieurs sources de lumière et plusieurs objets. 

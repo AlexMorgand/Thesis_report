@@ -59,8 +59,8 @@ Dans l'approche de \cite{cross1998quadric}, le calcul d'ellipses est moins propi
 
 Ce problème pourrait affecter la qualité de la reconstruction de quadrique à partir des spécularités. En conséquence, la consistance épipolaire devrait être vérifiée pour chaque vue utilisées pour l'initialisation afin d'obtenir un résultat optimal. Sans correspondance entre les contours d'ellipses, le système linéaire \eqref{eq:linearsystem} peut retourner des résultats incohérents. L'espace dual permet une formulation élégante du problème mais à cause de la nature algébrique des équations, un bruit même léger sur l'estimation des ellipses peut causer de grandes erreurs dans la quadrique reconstruite.
 
-Une ellipse est définie de façon unique à partir de 5 points non-alignés et 5 droites non-colinéaires dans l'espace dual. Pour trois point de vues, chaque ellipse est contrainte par deux paires de droites provenant des autres points de vues ce rendant le problème d'estimation de la conique duale sous-contrainte. Une des solutions proposées par \cite{reyes2005projective} est d'estimer les lignes épipolaires de façon plus précises à partir des ellipses provenant des autres points de vue et une droite supplémentaire provenant de la tangente d'un point de contour de l'ellipse de l'image actuelle. En utilisant ces 5 lignes, nous pouvons calculer une conique duale unique. Ce procédé est répété pour chaque point de contour et chaque point de vue. L'ellipse corrigée est celle minimisant notre distance ellipse/Point discutée dans la section \ref{sec:dist_conic_point}. Nous pouvons noter que l'efficacité du calcul d'ellipse dépend fortement de la qualité des points de contour de la spécularité.
-Les ellipses obtenues pour chaque point de vues seront utilisées dans le processus de reconstruction car elles respectent les contraintes épipolaires. Ce procédé est itératif, fiable et efficace. Nous illustrons une étape du procédé de correction à la figure \ref{fig:reyes_epipolar}. Dans notre contexte, nous ne pouvons pas nous limiter à seulement trois points de vue. Ainsi, nous incluons un raffinement non-linéaire à partir de 3+ points de vue afin d'améliorer la reconstruction de quadrique.
+Une ellipse est définie de façon unique à partir de 5 points non-alignés et 5 droites non-colinéaires dans l'espace dual. Pour trois point de vues, chaque ellipse est contrainte par deux paires de droites provenant des autres points de vues ce qui rend le problème d'estimation de la conique duale sous-contrainte. Une des solutions proposées par \cite{reyes2005projective} est d'estimer les lignes épipolaires de façon plus précises à partir des ellipses provenant des autres points de vue et une droite supplémentaire provenant de la tangente d'un point de contour de l'ellipse de l'image actuelle. En utilisant ces 5 lignes, nous pouvons calculer une conique duale unique. Ce procédé est répété pour chaque point de contour et chaque point de vue. L'ellipse corrigée est celle minimisant notre distance ellipse/Point discutée dans la section \ref{sec:dist_conic_point}. Nous pouvons noter que l'efficacité du calcul d'ellipse dépend fortement de la qualité des points de contour de la spécularité.
+Les ellipses obtenues pour chaque point de vues seront utilisées dans le processus de reconstruction car elles respectent les contraintes épipolaires. Ce procédé est itératif, fiable et efficace. Nous illustrons une étape du procédé de correction à la figure \ref{fig:reyes_epipolar}. Dans notre contexte, nous ne pouvons pas nous limiter à seulement trois points de vue. Ainsi, nous incluons un raffinement non-linéaire à partir de au moins trois points de vue afin d'améliorer la reconstruction de quadrique.
 \begin{figure}[!ht]
 \centering
     \includegraphics[width=0.7\linewidth]{reyes_epipolar}
@@ -100,7 +100,7 @@ J(A, B) =  \frac{| A \cap B |}{|A \cup B |}.
 
 \subsubsection{Paramétrisation d'ellipse et distance point/ellipse}
 \label{sec:dist_conic_point}
-Calculer une distance point/ellipse entre les contours d'une spécularité et son ellipse associée n'est pas optimal en pratique. En effet, calculer la distance entre un point (élément discret) et une ellipse (élément paramétrique) requiert de calculer la racine d'ordre 4 d'un polynôme ce qui est couteux en temps de calculs et ne permet pas une dérivée analytique.
+Calculer une distance point/ellipse entre les contours d'une spécularité et son ellipse associée n'est pas optimal en pratique. En effet, calculer la distance entre un point (élément discret) et une ellipse (élément paramétrique) requiert de calculer la racine d'ordre 4 d'un polynôme ce qui est couteux en temps de calculs et ne permet pas une dérivée analytique comme évoqué dans \cite{sturm2007conic}.
 Pour ces raisons, une distance point/point est préférable par soucis de simplicité et d'optimisation. Pour discrétiser l'ellipse en différents points, une paramétrisation d'ellipse est nécessaire.
 
 \subsubsection{Paramétrisation d'ellipse pour l'association point/point}
@@ -173,7 +173,7 @@ Ainsi $\mat{H}$ est obtenu en convertissant $\mat{C}$ en représentation naturell
 % \end{aligned}
 \label{eq:homocomputation}
 \end{equation}
-Cette paramétrisation a pour objectif d'associer les points de contours de la spécularité avec les points associés les plus proches de l'ellipse. Cette étape est réalisée une seule fois afin de fournir un état initial au processus de raffinement non-linéaire. Ces points seront utilisés comme paramètres dans le raffinement pour contraindre d'avantage la quadrique à raffiner. Ainsi, nous appliquerons également ce $\mat{H}$ pour les points de contours de la spécularité. Ce principe est illustré dans la figure \ref{fig:conic_param}. 
+Cette paramétrisation a pour objectif d'associer les points de contours de la spécularité avec les points associés les plus proches de l'ellipse. Cette étape est réalisée une seule fois afin de fournir un état initial au processus de raffinement non-linéaire. Ces points seront utilisés comme paramètres dans le raffinement pour contraindre d'avantage la quadrique à raffiner. Ainsi, nous appliquerons également $\mat{H}$ pour les points de contours de la spécularité. Ce principe est illustré dans la figure \ref{fig:conic_param}. 
 Les différentes étapes de cet algorithme représentée dans la figure \ref{fig:conic_param} sont:
 \begin{enumerate}
     \item Calcul de l'homographie $\mat{H}$ transformant l'ellipse $\mat{C}$ en cercle unitaire $\mat{C}_{unit}$ et transformation des points de contours (en noir à gauche) par $\mat{H}$ en points de contours à droite autour du cercle unitaire $\mat{C}_{unit}$
@@ -248,17 +248,17 @@ En reprenant les exemples de la figure \ref{fig:conic_param_limitation}, nous ob
 \end{figure}
 
 \subsubsection{Distance point/point d'ellipses}
-Notre distance correspond à la somme des distances euclidiennes pour chaque paire de point $q'_{i,j}$ (points de contours de la spécularité) et $\vect{q}_{i, j} \in \mat{C}$ tel que :
+Notre distance correspond à la somme des distances euclidiennes pour chaque paire de point $\vect{q}'_{i,j}$ (points de contours de la spécularité) et $\vect{q}_{i, j} \in \mat{C}$ tel que :
 \begin{equation}
 \begin{aligned}
 \sum^{m}_{j = 1}{d(\vect{q}'_{j}, \vect{q}_{j})}, 
 \end{aligned}
 \label{eq:latentdistance}
 \end{equation}
-avec $m$ le nombre de points de contours pour l'ellipse $\mat{C}$. Cette distance est illustrée sur la figure \ref{fig:point_point_distance}.
+avec $m$ le nombre de points de contours pour l'ellipse $\mat{C}$. Cette distance est illustrée à la figure \ref{fig:point_point_distance}.
 
 \subsection{Raffinement non-linéaire}
-Le raffinement non-linéaire est crucial pour gérer des données d'entrée bruitées et pour corriger l'initialisation de quadrique sur un panel de points de vue plus large. Pour des données réelles, le processus d'initialisation n'est pas suffisant. Notre contexte diffère fortement de \cite{cross1998quadric} due à l'aspect bruité des spécularités ce qui correspond à un problème de modélisation. En détails, un contour de spécularité est difficilement consistant d'une image à l'autre à cause d'une dépendance forte de la forme de la spécularité aux paramètres de caméra, des propriétés des matériaux et des conditions d'illumination. Afin d'améliorer notre initialisation de quadrique, nous utilisons un raffinement non-linéaire qui minimise notre distance Ellipse/Point évoqué à la section \ref{sec:dist_conic_point} entre les projections de la quadrique pour chaque points de vue et les contours associés. Notre fonction de coût pour la minimisation est proche de celle de \cite{reyes2005projective} mais nous n'utilisons pas un ajustement de faisceau car nous assumons que les poses de caméra sont suffisamment robustes. De plus, en dehors de la fonction de coût, \cite{reyes2005projective} ne donne pas énormément de détail sur l'implémentation du raffinement non-linéaire et notamment sur le calcule de la distance Ellipse/Point.
+Le raffinement non-linéaire est crucial pour gérer des données d'entrée bruitées et pour corriger l'initialisation de quadrique sur un panel de points de vue plus large. Pour des données réelles, le processus d'initialisation n'est pas suffisant. Notre contexte diffère fortement de \cite{cross1998quadric} due à l'aspect bruité des spécularités ce qui correspond à un problème de modélisation. En détails, un contour de spécularité est difficilement consistant d'une image à l'autre à cause d'une dépendance forte de la forme de la spécularité aux paramètres de caméra, des propriétés des matériaux et des conditions d'illumination. Afin d'améliorer notre initialisation de quadrique, nous utilisons un raffinement non-linéaire qui minimise notre distance Ellipse/Point évoqué à la section \ref{sec:dist_conic_point} entre les projections de la quadrique pour chaque points de vue et les contours associés. Notre fonction de coût pour la minimisation est proche de celle de \cite{reyes2005projective} mais nous n'utilisons pas un ajustement de faisceaux car nous assumons que les poses de caméra sont suffisamment robustes. De plus, en dehors de la fonction de coût, \cite{reyes2005projective} ne donne pas énormément de détail sur l'implémentation du raffinement non-linéaire et notamment sur le calcul de la distance Ellipse/Point.
 
 \subsubsection{Fonction de coût avec la distance de Jaccard}
 Cette distance a pour objectif de maximiser le recouvrement de la spécularité détectée et l'ellipse estimée par projection perspective de la quadrique sur différents points de vue. Une fonction de coût utilisant la distance de Jaccard est décrite dans l'équation \eqref{eq:jaccardistance}:
@@ -277,7 +277,7 @@ La distance de Jaccard fournit des résultats précis seulement quand les ensemble
 
 \subsubsection{Fonction de coût avec variables latentes}
 
-Afin de contraindre d'avantage le raffinement et de réduire la dimensionnalité de la minimisation, nous utilisons des variables latentes sous forme de points 2D $\mathbf{q'}_{i, j}$ contraint à être appartenir à l'ellipse  $\mathtt{C}$ et comparé avec les contours de spécularité $\mathbf{q}_{i, j}$. Cette formulation nous permet de poser les contraintes suivantes durant la minimisation:
+Afin de contraindre d'avantage le raffinement, nous utilisons des variables latentes sous forme de points 2D $\mathbf{q'}_{i, j}$ contraints à appartenir à l'ellipse  $\mathtt{C}$ et comparés avec les contours de spécularité $\mathbf{q}_{i, j}$. Cette formulation nous permet de poser les contraintes suivantes durant la minimisation:
 
 \begin{equation}
 \begin{aligned}
@@ -293,7 +293,7 @@ Les paramètres de notre minimisation est la représentation matricielle de la qua
 \begin{aligned}
 & \underset{\mathtt{Q}, \mathbf{q}_{1, 1}^{\prime}, \ldots, \mathbf{q}_{n, m_n}^{\prime}}{\text{min}}
 & & \sum^{n}_{i = 1}\sum^{m_i}_{j = 1}{d(\mathbf{q}'_{i, j}, \mathbf{q}_{i, j})^2},  \\
-& \text{subject to}
+& \text{sous}
 & & \mathbf{q}_{i, j}^{\prime\top}\mathtt{C}_j\mathbf{q}_{i, j}^{\prime} = 0
 \end{aligned}
 \right.

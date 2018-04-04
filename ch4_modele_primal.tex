@@ -4,40 +4,19 @@
 \graphicspath{{images/Ch3/}}
 
 \begin{chapeauChapitre}
-	Comme évoqué dans le chapitre état de l'art \ref{chapitre:etat_de_lart}, à l'opposé des méthodes d'illumination local et d'illumination globale, il est intéressant de considérer la lumière comme un élément géométrique car le comportement d'une spécularité est très similaire au comportant d'un objet réfléchie dans un miroir. Nous explorons cette piste dans le chapitre dans un exemple relativement simple (une surface planaire) mais permettant de mettre en évidence nos première hypothèses et la principe général de notre modèle géométrique pour la prédiction de spécularités.
+	Comme évoqué dans le chapitre \ref{chapitre:etat_de_lart} état de l'art, à l'opposé des méthodes d'illumination local et d'illumination globale, il est intéressant de considérer la lumière comme un élément géométrique car le comportement d'une spécularité est très similaire au comportant d'un objet réfléchie dans un miroir. Nous explorons cette piste dans le chapitre dans un exemple relativement simple (une surface planaire) mais permettant de mettre en évidence nos première hypothèses et le principe général de notre modèle géométrique pour la prédiction de spécularités.
 \end{chapeauChapitre}
 
 \section{Introduction}
 Le phénomène photométrique des spécularités est souvent présent dans les images. En effet, ces éléments se manifestent sur une surface lorsque les imperfections de celle-ci sont plus petites que la longueur d'onde incidente. Dans ces conditions, la lumière est complètement réfléchie sous une forme spéculaire (l'angle du rayon de lumière incident avec la normale de la surface à un point de surface donné est égal à l'angle de rayon réfléchi avec la normale) . Si cette lumière réfléchie rencontre l'objectif de la caméra, une spécularité est créée dans l'image. De ce fait, ces éléments sont importants dans plusieurs domaines. En vision par ordinateur et traitement d'image, elles provoquent une augmentation brusque de l'intensité de l'image ce qui a pour effet de perturber les algorithmes de détection ou de suivi 2D/3D, de localisation de caméra ou encore de reconstruction 3D. 
-\begin{figure}[!ht]
-   \centering	   
-        \subfigure[]
-	  { 
-  		 \includegraphics[width=0.477\linewidth]{real_example}
-        }
-        \subfigure[]
-	  {
-  		 \includegraphics[width=0.47\linewidth]{specu_closeup}
-        }   	  
-        \subfigure[]
-	  {
-  		 \includegraphics[width=0.47\linewidth]{spot_real}
-        }   	  
-        \subfigure[]
-	  {
-  		 \includegraphics[width=0.47\linewidth]{neon_real}
-        } 
-   \caption{Nous observons qu'une spécularité présente une forme elliptique. Nous la prédisons en projetant une quadrique virtuelle fixe incluant les propriétés de lumière et de matériau. Cette figure présente des exemples de reconstruction de quadrique (ellipsoïde jaune) pour deux types de lumière (ampoule (c) et néon (d)) et de matériaux (table en fer (c) et plan de travail d'une cuisine (d)). Une fois notre modèle reconstruit, nous l'utilisons pour prédire les spécularités pour des points de vue inconnus en la projetant sous forme d'ellipse (en bleu). (b) illustre un gros plan de la prédiction dans les séquences respectives.}
-   \label{fig:real_data}
-  \vspace{-1.6em}
-\end{figure}
+
 Cependant, si on les considère comme des primitives de localisation, leur présence apportent des informations pertinentes permettant une meilleure estimation de la profondeur d'une scène et donc de sa géométrie permettant d'améliorer la localisation de caméra \cite{lagger20083d, meilland2011real, silveira2007real}, la reconstruction 3D \cite{fleming2004specular, savarese2004reflections} et l'analyse de matériaux d'une scène \cite{chang20093d, netz2013recognition, netz2013recognitionpami, shroff2011finding}. En réalité augmentée (RA) ou en infographie, ces primitives permettent d'augmenter significativement le réalisme du rendu des applications \cite{csongei2014global, gruber2014efficient, hachisuka2008progressive, jachnik2012realtime, jarosz2008beam, knorr2014real, rohmer2014interactive, sato1999acquiring}. Il a été montré dans les études de \cite{blake1990does} que les spécularités jouent un rôle important dans la perception de la profondeur et du relief d'un objet. Afin d'améliorer le plus possible ces applications, il est intéressant de pouvoir prédire les spécularités dans une scène pour un point de vue donné.
 
-Par observation de la forme de la spécularité sur une surface planaire, il semble intéressant de modéliser cet élément par une ellipse. De plus, nous savons qu'une ellipse est issue de la projection d'une quadrique sur un plan. À partir de ces éléments, il est naturel de se demander s'il est possible de reconstruire une quadrique fixe dont la projection correspond aux spécularités pour chaque point de vue. Dans ce cas, ce modèle représenterait un lien entre le phénomène photométrique des spécularités (lumières et matériaux) et la géométrie multi-vues \cite{Hartley2004}.
+Nous avons observé empiriquement que la forme de la spécularité sur une surface planaire peut être modélisée par une ellipse. De plus, nous savons qu'une ellipse est issue de la projection d'une quadrique sur un plan. À partir de ces éléments, il est naturel de se demander s'il est possible de reconstruire une quadrique fixe dont la projection correspond aux spécularités pour chaque point de vue. Dans ce cas, ce modèle représenterait un lien entre le phénomène photométrique des spécularités (lumières et matériaux) et la géométrie multi-vues \cite{Hartley2004}.
 
-Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAterial Specularity} (JOLIMAS) permettant de prédire facilement la position et la forme des spécularités pour de nouveaux points de vue comme illustré à la figure \ref{fig:real_data}. Ce modèle est composé d'une quadrique qui inclue les propriétés des lumières et des matériaux de la scène. Cette quadrique est reconstruite à partir de chaque ellipse associée à une spécularité observée sur une surface planaire, pour un point de vue donné. Dans ce chapitre, nous présentons les différents modèles physiques utilisés en général en vision par ordinateur et analysons leur capacité à prédire le phénomène complexe des spécularités. Nous travaillons essentiellement sur des surfaces planaires car il est facile de retrouver ce type de surface dans une scène comme exploité dans \cite{buteau2015poster, jachnik2012realtime}. L'extension de ce modèle pour des surfaces plus complexes requiert une étude plus approfondie.
+Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAterial Specularity} (JOLIMAS) permettant de prédire facilement la position et la forme des spécularités pour de nouveaux points de vue comme illustré à la figure \ref{fig:real_data}. Ce modèle est composé d'une quadrique qui inclue les propriétés des lumières et des matériaux de la scène. Cette quadrique est reconstruite à partir de chaque ellipse associée à une spécularité observée sur une surface planaire, pour un point de vue donné. Dans ce chapitre, nous présentons les différents modèles physiques utilisés en général en vision par ordinateur et analysons leur capacité à prédire le phénomène complexe des spécularités. Nous travaillons essentiellement sur des surfaces planaires car il est facile de retrouver ce type de surface dans une scène comme exploité dans \cite{buteau2015poster, jachnik2012realtime}. L'extension de ce modèle pour des surfaces plus complexes requiert une étude plus approfondie et fera l'objet des chapitres \ref{chapitre:dual_jolimas} et \ref{chapitre:modele_general}.
 
- Notre modèle est présenté dans la section \ref{sec:approche_proposee_primal}. Son estimation est développée dans la section \ref{sec:model_estimation} en comparant différentes approches de l'état de l'art. Notre modèle et sa capacité à prédire les spécularités ont été testés sur des séquences de synthèse et réelles comprenant des sources de lumière de type ampoule et néon dans la section \ref{sec:results}. Nous illustrons également la capacité de notre modèle à gérer plusieurs sources de lumières et des lumières à état changeant (allumées et éteintes) dans le chapitre \ref{chapitre:RA}.
+ Notre modèle est présenté dans la section \ref{sec:approche_proposee_primal}. Son estimation est développée dans la section \ref{sec:model_estimation} en comparant différentes approches de l'état de l'art. Notre modèle et sa capacité à prédire les spécularités ont été testés sur des séquences de synthèse et réelles comprenant des sources de lumière de type ampoule et néon dans la section \ref{sec:resultats_experimentaux}. Nous illustrons également la capacité de notre modèle à gérer plusieurs sources de lumières et des lumières à état changeant (allumées et éteintes) dans le chapitre \ref{chapitre:RA}.
 
 % =============================================================================
 \section{Approche proposée} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,16 +34,15 @@ Une démonstration de notre approximation de la spécularité, observée sur une sur
   \includegraphics[width=\linewidth]{main_schema.pdf}
    \caption{Lien entre le modèle physique (lumière et matériaux) et la géométrie multi-vues (notre modèle empirique). À partir de plusieurs points de vue, une quadrique est reconstruite à partir de spécularités de forme elliptique. Cette quadrique virtuelle projetée sur chaque point de vue correspond aux spécularités.}
   \label{fig:dessin}
-  \vspace{-1.3em}
 \end{figure}
 
 % =============================================================================
 \section{Motivation théorique} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:motivation_theorique_primal} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
-
+Dans cette section, nous mettons en évidence l'utilisation des modèles classiques d'illumination locale comme Phong et Blinn-Phong comme base théorique de notre modèle. En effet, dans ces modèles, afin d'assurer un rendu rapide et cohérent, de nombreuses approximation sont réalisées sur l'interaction lumière/matériaux. Ces approximations sont intéressantes à étudier car elles fournissent une fondation intéressante pour l'abstraction des paramètres physiques liés à la l'apparition de la spécularité de notre modèle. L'objectif de cette section est de montrer que notre hypothèse de spécularité de forme conique (et plus spécifiquement elliptique) est cohérente et se retrouve dans également dans les modèles d'illumination locale.
 \subsection{Modèles de Phong et Blinn-Phong}
-Nous utilisons le modèle d'illumination de Phong \cite{phong1975illumination} qui est est à la base de nombreuses modèle de BRDF \cite{hughes2012calculating}. Nous n'utilisons par le modèle de Phong pour reconstruire notre modèle JOLIMAS mais plutôt comme un moyen théorique pour développer certaines de ses propriétés fondamentales. Ce modèle d'illumination divise l'image en 3 composantes : diffuse, ambiante et spéculaire. Des modèles plus récents comme celui de Blinn-Phong \cite{blinn1977models}, Ward \cite{ward1994radiance}, Cook-Torrance \cite{cook1982reflectance} diffèrent majoritairement dans le calcul du terme spéculaire. Ces modèles proposent également une estimation de la rugosité qui correspond à la micro géométrie d'une surface et est un élément important dans la perception et le réalisme d'un matériau. Même si le modèle de Phong est considéré comme obsolète dans les méthodes de rendu photo-réaliste mais il convient bien l'approximation effectuée dans notre étude.
+Nous utilisons le modèle d'illumination de Phong \cite{phong1975illumination} qui est à la base de nombreuses modèle de BRDF \cite{hughes2012calculating}. Nous n'utilisons pas le modèle de Phong pour reconstruire notre modèle JOLIMAS mais plutôt comme un moyen théorique pour développer certaines de ses propriétés fondamentales. Ce modèle d'illumination divise l'image en 3 composantes : diffuse, ambiante et spéculaire. Des modèles plus récents comme celui de Blinn-Phong \cite{blinn1977models}, Ward \cite{ward1994radiance}, Cook-Torrance \cite{cook1982reflectance} diffèrent majoritairement dans le calcul du terme spéculaire. Ces modèles proposent également une estimation de la rugosité qui correspond à la micro géométrie d'une surface et est un élément important dans la perception et le réalisme d'un matériau. Même si le modèle de Phong est considéré comme obsolète dans les méthodes de rendu photo-réaliste, il convient bien pour expliciter l'approximation effectuée dans notre étude de part sa simplicité analytique.
 
 La fonction d'intensité du modèle de Phong \cite{phong1975illumination} d'un point 3D sur une surface est donnée par la formule :
 \begin{equation}
@@ -73,7 +51,7 @@ La fonction d'intensité du modèle de Phong \cite{phong1975illumination} d'un poi
  \end{aligned}
     \label{eq:phong}
 \end{equation}
-avec \mbox{$\hat{\mathbf{R}}(\mathbf{P}) = -\mathop{\mu}(\mathbf{R} - \mathbf{P})$} la direction normalisée d'un rayon réfléchi de lumière $\setlength\arraycolsep{2pt} \mathbf{L} = \begin{bmatrix}L_X & L_Y & L_Z \end{bmatrix}^\top$ tel que $\setlength\arraycolsep{2pt} \mathbf{R} = \begin{bmatrix}L_X & L_Y & -L_Z \end{bmatrix}^\top$, $\hat{\mathbf{L}}$ et $\hat{\mbf{V}}$ la direction normalisée du point de vue orientée vers la source de lumière $\mathbf{L}$ et le capteur \mbox{$\setlength\arraycolsep{2pt} \mathbf{V} = \begin{bmatrix}V_X & V_Y & V_Z \end{bmatrix}^\top$}, $n$ la brillance de la surface, $k_s$, $k_a$ et $k_d$ le ratio de réflexion des termes spéculaire, ambiant et diffus de la lumière incidente, $\hat{\mbf{N}}$ la normale de la surface $S$ et $i_s$, $i_a$ et $i_d$ l'intensité entrante sur la surface pour les termes spéculaire, ambiant et diffus.
+avec \mbox{$\hat{\mathbf{R}}(\mathbf{P}) = -\mathop{\mu}(\mathbf{R} - \mathbf{P})$} la direction normalisée d'un rayon réfléchi de lumière \mbox{$\setlength\arraycolsep{2pt} \mathbf{L} = \begin{bmatrix}L_X & L_Y & L_Z \end{bmatrix}^\top$} tel que $\setlength\arraycolsep{2pt} \mathbf{R} = \begin{bmatrix}L_X & L_Y & -L_Z \end{bmatrix}^\top$, $\hat{\mathbf{L}}$ et $\hat{\mbf{V}}$ la direction normalisée du point de vue orientée vers la source de lumière $\mathbf{L}$ et le capteur \mbox{$\setlength\arraycolsep{2pt} \mathbf{V} = \begin{bmatrix}V_X & V_Y & V_Z \end{bmatrix}^\top$}, $n$ la brillance de la surface, $k_s$, $k_a$ et $k_d$ le ratio de réflexion des termes spéculaire, ambiant et diffus de la lumière incidente, $\hat{\mbf{N}}$ la normale de la surface $S$ et $i_s$, $i_a$ et $i_d$ l'intensité entrante sur la surface pour les termes spéculaire, ambiant et diffus.
 
 Notre repère monde est choisi tel que la surface $S \subset \mathbb{R}^3$ correspond au plan $(\vec{X}\vec{Y})$ et $S = \{\vec{P} \in \mathbb{R}^3 | \vec{P}_Z = 0\}$. Nous pouvons paramétrer $S$ par le point $\setlength\arraycolsep{2pt} \mathbf{P} = \begin{bmatrix}P_X  & P_Y & P_Z\end{bmatrix}^\top$. 
 
@@ -98,7 +76,7 @@ En multipliant l'équation \eqref{eq:phong_tau} $\| \mathbf{R} - \mathbf{P} \| \|
 \big( ( \mathbf{R} - \mathbf{P})^\top (\mathbf{V} - \mathbf{P}) \big)^2 - \tau^2 \| \mathbf{R} - \mathbf{P} \|^2 \|  \mathbf{V} - \mathbf{P}\|^2 = 0.
 \end{equation*}
 
-En développant le terme spéculaire Eq.\ref{eq:phong} et en rassemblant les monômes de même degré, on obtient :
+En développant le terme spéculaire à l'équation \eqref{eq:phong} et en rassemblant les monômes de même degré, on obtient :
 \begin{flalign*}
 (d^\circ 4) \text{    }& (1 - \tau^2)|| \mathbf{P} ||^4 \\ 
 (d^\circ 3) \text{    }&   2(\tau^2 - 1)(\mathbf{R} + \mathbf{V})^\top\mathbf{P}||\mathbf{P}||^2 \\
@@ -237,7 +215,7 @@ Le pipeline de la méthode proposée est divisé en plusieurs étapes :
 \item Reconstruction de quadrique \cite{cross1998quadric}
 \item Prédiction de spécularité par projection de quadrique
 \end{itemize}
-Notre processus de détection de spécularité est divisée en 3 étapes. Dans un premier temps, afin de gérer le bruit dans l'image et le contexte lumineux dynamique; par la suite, un seuillage automatique est réalisée fondé sur une valeur moyenne de luminance. Afin de k davantage les mauvaises détections, la méthode utilise un critère d'intensité de gradient afin de discriminé les surfaces spéculaires des textures blanches détectées à tort. Cette méthode assume que l'intensité d'une spécularité est isotropique et décroissante à partir du point d'intensité maximale. Le processus de calcul d'ellipse englobante utilise une image en niveau de gris en sortie du processus de détection de spécularité afin de fournir les ellipses d'entrées pour le processus de reconstruction de quadrique. Le détail de notre méthode de détection est détaillée dans l'annexe \ref{annexe:specularity_detection}
+Notre processus de détection de spécularité est divisée en 3 étapes. Dans un premier temps, afin de gérer le bruit dans l'image et le contexte lumineux dynamique; par la suite, un seuillage automatique est réalisé par l'intermédiaire d'une valeur moyenne de luminance. Afin de réduire davantage les mauvaises détections, la méthode utilise un critère d'intensité de gradient afin de discriminer les surfaces spéculaires des textures blanches détectées à tort. Cette méthode assume que l'intensité d'une spécularité est isotropique et décroissante à partir du point d'intensité maximale. Le processus de calcul d'ellipse englobante utilise une image en niveau de gris en sortie du processus de détection de spécularité afin de fournir les ellipses d'entrées pour le processus de reconstruction de quadrique. Le détail de notre méthode de détection est détaillée dans l'annexe \ref{annexe:specularity_detection}.
 
 \subsection{Reconstruction de quadrique par la méthode de Cross}
 Nous utilisons l'approche de \cite{cross1998quadric} qui reconstruit une quadrique duale $\mathtt{Q}^*$ à partir de plusieurs coniques duales $\mathtt{C}^*$ sous forme finie en linéarisant la relation linéaire :
@@ -245,7 +223,7 @@ Nous utilisons l'approche de \cite{cross1998quadric} qui reconstruit une quadriq
 	\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top = \mathtt{C}^*.
 	\label{eq:conicdual}
 \end{equation}
-La vectorisation de l'équation \ref{eq:conicdual} est donnée dans l'appendice \ref{sec:vectorization_appendix}. Par vectorisation de $\mathtt{Q}^*$ et $\mathtt{C}^*$ en $\vect{Q}^*_v$ et $\vect{C}^*_v$, nous posons Eq.\ref{eq:linearsystem} avec $\mathtt{C}$ nos spécularités modélisées en ellipses et $\mathtt{Q}$ notre modèle de prédiction représentée en quadrique pour $n$ points de vue tel que $n \geq 3$. Nous construisons le système :
+La vectorisation de l'équation \eqref{eq:conicdual} est donnée dans l'appendice \ref{sec:vectorization_appendix}. Par vectorisation de $\mathtt{Q}^*$ et $\mathtt{C}^*$ en $\vect{Q}^*_v$ et $\vect{C}^*_v$, nous posons l'équation \eqref{eq:linearsystem} avec $\mathtt{C}$ nos spécularités modélisées en ellipses et $\mathtt{Q}$ notre modèle de prédiction représentée en quadrique pour $n$ points de vue tel que $n \geq 3$. Nous construisons le système :
 \begin{equation*}
  \begin{aligned}
        \mathtt{M}\mathtt{w} = 0 \Leftrightarrow,
@@ -285,7 +263,7 @@ Afin d'évaluer la pertinence et la précision de notre modèle, deux expériences s
 \subsection{Validation du modèle sur des données de synthèse}
 \label{sec:validation_synt}
 
-Dans cette section, nous détaillons la validation de notre approximation de quadrique sur des données de synthèse. La caméra utilisée a une distance focale de $50mm$ avec le point principal centré dans l'image. La taille des pixels est de $0.45 \times 0.45mm$ pour une résolution de $1000\times 1000$. Notre scène est constituée d'un plan réfléchissant $20\times20cm$ où l'on observe une spécularité en mouvement. Nous sélectionnons aléatoirement les points de vue et la position de la source de lumière au dessus du plan. À partir des modèles d'illumination de Phong et Blinn-Phong pour tout $\tau \in [0,1]$, 100 quadriques sont estimées par le biais de 100 points de vue. Nous calculons la distance géométrique entre les termes diffus et spéculaire combinés avec la projection de quadrique associée au point de vue au sens de notre distance Ellipse/Point.
+Dans cette section, nous détaillons la validation de notre approximation de quadrique sur des données de synthèse. La caméra utilisée a une distance focale de $50mm$ avec le point principal centré dans l'image. La taille des pixels est de $0.45 \times 0.45mm$ pour une résolution de $1000\times 1000$ pixels. Notre scène est constituée d'un plan réfléchissant $20\times20cm$ où l'on observe une spécularité en mouvement. Nous sélectionnons aléatoirement les points de vue et la position de la source de lumière au dessus du plan. À partir des modèles d'illumination de Phong et Blinn-Phong pour tout $\tau \in [0,1]$, 100 quadriques sont estimées par le biais de 100 points de vue. Nous calculons la distance géométrique entre les termes diffus et spéculaire combinés avec la projection de quadrique associée au point de vue au sens de notre distance Ellipse/Point.
 \begin{figure}[!ht]
    \centering	 
    \subfigure[Point light]
@@ -311,6 +289,28 @@ Nous évaluons notre modèle JOLIMAS sur des séquences réelles avec trois sources 
 \end{equation}
 
 La précision de notre modèle JOLIMAS est évaluée sur des données réelles afin de quantifier la capacité de prédiction de spécularités de notre approche. Nous utilisons notre distance 2D ellipse/point pour évaluer notre résultat de prédiction avec la vérité terrain. Afin de calculer la vérité terrain, nous avons manuellement annoté les spécularités sur les séquences. Nos résultats sont illustrés sur la table \ref{fig:real_res}, la figure \ref{fig:real_data} et la figure \ref{fig:real_data2}.
+\begin{figure}[!ht]
+   \centering	   
+        \subfigure[]
+	  { 
+  		 \includegraphics[width=0.477\linewidth]{real_example}
+        }
+        \subfigure[]
+	  {
+  		 \includegraphics[width=0.47\linewidth]{specu_closeup}
+        }   	  
+        \subfigure[]
+	  {
+  		 \includegraphics[width=0.47\linewidth]{spot_real}
+        }   	  
+        \subfigure[]
+	  {
+  		 \includegraphics[width=0.47\linewidth]{neon_real}
+        } 
+   \caption{Nous observons qu'une spécularité présente une forme elliptique. Nous la prédisons en projetant une quadrique virtuelle fixe incluant les propriétés de lumière et de matériau. Cette figure présente des exemples de reconstruction de quadrique (ellipsoïde jaune) pour deux types de lumière (ampoule (c) et néon (d)) et de matériaux (table en fer (c) et plan de travail d'une cuisine (d)). Une fois notre modèle reconstruit, nous l'utilisons pour prédire les spécularités pour des points de vue inconnus en la projetant sous forme d'ellipse (en bleu). (b) illustre un gros plan de la prédiction dans les séquences respectives.}
+   \label{fig:real_data}
+\end{figure}
+
 \begin{table}[h!]
 \caption{Validation empirique de notre modèle et évaluation de sa capacité à prédire la forme des réflexions spéculaires dans les images pour 5 séquences réelles présentées dans les figures \ref{fig:real_data} et \ref{fig:real_data2}. L'erreur moyenne de notre prédiction par spécularité est calculée par notre distance Ellipse/Point entre les ellipses prédites et les contours de spécularités détectées dans l'image. Cette prédiction est évaluée en trois étapes : au moment de l'initialisation, la correction épipolaire et le raffinement non-linéaire. Nous observons une baisse significative de l'erreur pour chaque étape.}
 \centering
@@ -335,6 +335,7 @@ La précision de notre modèle JOLIMAS est évaluée sur des données réelles afin de
 Dans notre contexte, l'initialisation de quadrique n'est pas suffisante à elle seule pour prédire les spécularités de façon précise. Estimer des contours de spécularité précis est difficile en pratique ce qui impacte fortement la qualité de la reconstruction de la quadrique. En ajoutant un processus de correction épipolaire aux contours d'ellipses en entrée produit de meilleurs résultats. En combinant, la correction épipolaire avec le raffinement non-linéaire, nous atteignons une erreur maximale de 62.8 pixels. Pour des séquences réelles, JOLIMAS est précis et fournit une prédiction de spécularité à partir de nouveaux points de vue pour différents types de sources de lumière et en temps réel.
 
 \begin{figure}[!ht]
+    \centering
 	\subfigure[]
 	{
 		\includegraphics[width=0.85\linewidth]{realdata_whiteboard.png}
@@ -362,33 +363,31 @@ Dans notre contexte, l'initialisation de quadrique n'est pas suffisante à elle s
 \label{sec:limite_de_lapproche}
 % ==============
 \subsection{Surfaces miroir et spécularités à forme non-elliptique}
-Dans le cas d'une surface parfaitement spéculaire tel qu'un miroir, nous ne pouvons pas garantir la forme elliptique de la spécularité puisque les sources de lumière peuvent avoir des formes diverses et variées (comme les lumières de plafond polygonales). Nous considérons le cas générale des lumières de type ampoule et néons, ce qui inclue la plupart des sources de lumière que l'on retrouve dans un contexte intérieur. Même pour une surface de faible rugosité, notre méthode est toujours capable de reconstruire un modèle JOLIMAS. Cependant, le cas de surface miroir reste rare et difficile même pour les méthodes de localisation de caméra. Une extension de notre méthode serait d'utiliser quelques idées de \cite{heitz2016real} qui modèle de façon efficace les sources de lumière polygonales. %comme illustré à la figure \ref{fig:polygonal_light}.
-\begin{figure}[!ht]
-	\centering
-	\subfigure[]
-	{
-	    \includegraphics[width=0.43\linewidth]{poly_light1.PNG}
-	}
-	\subfigure[]
-	{
-	    \includegraphics[width=0.43\linewidth]{poly_light2.PNG}
-	}
-	\caption{Exemples de sources de lumière polygonales présentée dans l'approche de \cite{heitz2016real} dans des séquences synthétiques. Ce type de sources de lumière n'est pas géré par le modèle JOLIMAS.}
-\end{figure}
+Dans le cas d'une surface parfaitement spéculaire tel qu'un miroir, nous ne pouvons pas garantir la forme elliptique de la spécularité puisque les sources de lumière peuvent avoir des formes diverses et variées (comme les lumières de plafond polygonales). Nous considérons le cas générale des lumières de type ampoule et néons, ce qui inclue la plupart des sources de lumière que l'on retrouve dans un contexte intérieur. Même pour une surface de faible rugosité, notre méthode est toujours capable de reconstruire un modèle JOLIMAS. 
+%Cependant, le cas de surface miroir reste rare et difficile même pour les méthodes de localisation de caméra.
+ Une extension de notre méthode serait d'utiliser quelques idées de \cite{heitz2016real} qui modèle de façon efficace les sources de lumière polygonales. %comme illustré à la figure \ref{fig:polygonal_light}.
+%\begin{figure}[!ht]
+%	\centering
+%	\subfigure[]
+%	{
+%	    \includegraphics[width=0.43\linewidth]{poly_light1.PNG}
+%	}
+%	\subfigure[]
+%	{
+%	    \includegraphics[width=0.43\linewidth]{poly_light2.PNG}
+%	}
+%	\caption{Exemples de sources de lumière polygonales présentée dans l'approche de \cite{heitz2016real} dans des séquences synthétiques. Ce type de sources de lumière n'est pas géré par le modèle JOLIMAS.}
+%\end{figure}
 
 \subsection{Influence de la rugosité de la surface} 
 \fix{rugosité à rappeler en notion je pense}
-Dans le cas des surfaces à forte rugosité, puisque les normales de la surface varient fortement à un niveau microscopique (la surface parait plane dans l'ensemble), la forme d'une spécularité peut varier de la forme elliptique initiale. Ces variations ne sont pas incluent dans notre modélisation de spécularité et peut affecter la qualité de la reconstruction de quadrique de JOLIMAS. Nous verrons par la suite comment nous avons étudier le lien entre variation de normales et forme de spécularité sur la surface comme dans initié dans l'approche de \cite{blake1988geometry} dans le chapitre \ref{chapitre:modele_general}.
+Dans le cas des surfaces à forte rugosité, puisque les normales de la surface varient fortement à un niveau microscopique (la surface parait plane dans l'ensemble), la forme d'une spécularité peut varier de la forme elliptique initiale. Ces variations ne sont pas incluent dans notre modélisation de spécularité et peut affecter la qualité de la reconstruction de quadrique de JOLIMAS. Nous verrons par la suite la manière dont nous avons étudié le lien entre variation de normales et forme de spécularité sur la surface de façon similaire à l'approche de \cite{blake1988geometry} dans le chapitre \ref{chapitre:modele_general}.
 
-\subsection{Croisements de spécularités}
-Si la caméra observe une scène dans une direction tel que deux sources de lumières ont un alignement similaire, les deux spécularités résultantes peuvent se croiser dans l'image. Ce phénomène met en échec le suivi et donc la labelisation de spécularités. Actuellement, ce problème n'est pas géré dans notre application mais pourrait être adressé si les sources de lumière sont de couleurs différentes. Cependant, pour des sources de lumière similaires (forme et couleur), la seule façon de distinguer clairement les spécularités est d'utiliser une information 3D (reconstruire une source de lumière ponctuelle à partir de deux points de vue par triangulation par exemple) afin de s'assure de la cohérence du mouvement des la spécularité. Dans tous les cas, les images où les spécularités se croisent doivent être exclues de notre reconstruction.
-
-\fix{Parler du formalisme pour le multi plan qui sera résolu par JOLIMAS dual}
 
 %=============================================================================
 \section{Conclusion} 
 \label{sec:conclusion_primal} 
 % ==============
-Dans ce chapitre, nous avons présenté l'introduction de notre modèle de prédiction de spécularité appelé \textit{JOint LIght-MAterial Specularity} (JOLIMAS). Après avoir observé que les spécularité présente une forme elliptique sur une surface plane, nous avons démontré en détail que les modèles de réflexion de Phong et Blinn-Phong pouvaient être utilisés en bases théoriques pour confirmer la pertinence de notre approximation. Nous avons empiriquement validé cette approximation pour des sources de lumières ponctuelles et étendues. En géométrique projective, une projection de quadrique génère une ellipse. En démontrant l'existence d'une quadrique fixe dont la projection est associée au contour d'une spécularité sur un point de vue, nous avons montré un lien entre photométrie (lumières et matériaux) et géométrie multi-vue (quadrique). La quadrique est reconstruite à partir d'ellipses correspond aux contours des spécularités. Ce modèle a été testé sur des données synthétiques et réelles pour des sources de lumière variées en forme et type tel que des lampes de bureau, ampoules et néons. La capacité de prédiction de spécularité de notre modèle nous permet également de détecter les lumières à état changeant (allumées et éteintes) dans un contexte multi-lumières. Nous montrerons dans le chapitre \ref{chapitre:RA} que le modèle JOLIMAS pouvait être utilisé pour améliorer le rendu des application de réalité augmentée. En complément, notre prédiction de spécularité pourrait améliorer grandement les algorithmes de localisation de caméra. Pour des applications d'infographie, le calcul du terme spéculaire de façon plus localisée pourrait optimiser le rendu par l'intermédiaire de notre procédé de prédiction. 
-Les contributions évoquées dans ce chapitre ont fait l'objet d'une publication dans une conférence internationale :  ISMAR \citeyearpar{morgand2016geometric}, 2 conférences nationales : deux articles à ORASIS \citeyearpar{morgand2015reconstruction}, RFIA \citeyearpar{morgand2015modele} et un brevet accepté en juin 2016. \fix{ajouter aux refs} Le détecteur de spécularité évoqué dans les annexes a fait l'objet d'une publication dans une conférence internationale \cite{morgand2014generic}.
+Dans ce chapitre, nous avons présenté notre modèle de prédiction de spécularité appelé \textit{JOint LIght-MAterial Specularity} (JOLIMAS). Notre modèle repose sur l'observation que les spécularité présentent une forme elliptique sur une surface plane. Nous avons démontré en détail que les modèles de réflexion de Phong et Blinn-Phong pouvaient être utilisés en bases théoriques pour confirmer la pertinence de notre approximation. Nous avons empiriquement validé cette approximation pour des sources de lumières ponctuelles et étendues. En géométrique projective, une projection de quadrique génère une ellipse. En démontrant l'existence d'une quadrique fixe dont la projection est associée au contour d'une spécularité sur un point de vue, nous avons montré un lien entre photométrie (lumières et matériaux) et géométrie multi-vue (quadrique). La quadrique est reconstruite à partir d'ellipses correspond aux contours des spécularités. Ce modèle a été testé sur des données synthétiques et réelles pour des sources de lumière variées en forme et type tel que des lampes de bureau, ampoules et néons.  
+Les contributions évoquées dans ce chapitre ont fait l'objet d'une publication dans une conférence internationale :  ISMAR \citeyearpar{morgand2016geometric}, 2 conférences nationales : deux articles à ORASIS \citeyearpar{morgand2015reconstruction}, RFIA \citeyearpar{morgand2015modele} et un brevet accepté en juin 2016. Le détecteur de spécularité évoqué dans les annexes a fait l'objet d'une publication dans une conférence internationale \cite{morgand2014generic}.
 Le chapitre suivant \ref{chapitre:dual_jolimas} évoque l'extension de notre modèle JOLIMAS pour des surfaces courbes. 

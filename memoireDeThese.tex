@@ -176,25 +176,25 @@
 \usepackage{relsize}
 \usepackage{stmaryrd}
 
-\begingroup
-\catcode`[=\active \catcode`]=\active
+%\begingroup
+%\catcode`[=\active \catcode`]=\active
 
-% Define a meaning for active [ and ]
-\gdef[{\llbracket} \gdef]{\rrbracket}
-%\gdef[{[} \gdef]{]}
-
-% Now take care of the \delcode of [ and ] for \left and \right
-% First a temporary macro
-\def\getdelim#1#2#3#4\relax{"#4}
-% Use the temporary macro to get the right delcodes out of
-% the meaning of \llbracket and \rrbracket
-\global\delcode`[=\expandafter\getdelim\llbracket\relax
-\global\delcode`]=\expandafter\getdelim\rrbracket\relax
-\endgroup
-
-% make [ and ] math active
-\mathcode`\[="8000
-\mathcode`\]="8000
+%% Define a meaning for active [ and ]
+%\gdef[{\llbracket} \gdef]{\rrbracket}
+%%\gdef[{[} \gdef]{]}
+%
+%% Now take care of the \delcode of [ and ] for \left and \right
+%% First a temporary macro
+%\def\getdelim#1#2#3#4\relax{"#4}
+%% Use the temporary macro to get the right delcodes out of
+%% the meaning of \llbracket and \rrbracket
+%\global\delcode`[=\expandafter\getdelim\llbracket\relax
+%\global\delcode`]=\expandafter\getdelim\rrbracket\relax
+%\endgroup
+%
+%% make [ and ] math active
+%\mathcode`\[="8000
+%\mathcode`\]="8000
 
 
 % End user command.
