@@ -362,7 +362,7 @@ Lorsque les points de vue de caméra s'étendent sur un ensemble d'images où la po
 
 Une image est considérée comme image clé lorsqu'elle répond à deux critères : estimation correcte de l'ellipse correspondante due à une bonne détection de la spécularité et bonne contrainte épipolaire.
 
-\paragraph{Qualité de détection et correspondance d'ellipse de la spécularité} A l'aide de la distance de \ref{sec:jaccard}, nous considérons l'image courante comme image clé si l'ellipse estimée recouvre une aire proche de l'aire de la spécularité détectée. En pratique, $90\%$ de recouvrement est suffisant pour obtenir une bonne correspondance. Ce processus est illustré à la figure \ref{fig:specularity_quality}.
+\paragraph{Qualité de détection et correspondance d'ellipse de la spécularité} A l'aide de la distance de \ref{sec:jaccard}, nous considérons l'image courante comme image clé si l'ellipse estimée recouvre une aire proche de l'aire de la spécularité détectée. En pratique, $90\%$ de recouvrement est suffisant pour obtenir une bonne correspondance. %Ce processus est illustré à la figure \ref{fig:specularity_quality}.
 \paragraph{Répartition des tangentes épipolaire.} Afin de s'assurer que notre contrainte épipolaire est efficace, il est nécessaire d'avoir les tangentes épipolaires pour chaque ellipse réparties autour de celle-ci.
 \begin{figure}[!ht]
 	\centering
