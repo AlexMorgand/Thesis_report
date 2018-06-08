@@ -62,9 +62,8 @@ Le champ de vision d'une caméra est défini par l'ensemble de qu'une caméra peut 
 \label{fig:synt_mirror}
 \end{figure}
 
-
 %===============================================================================
-\section{Approche proposée} %%%%%%%%%%
+\section{Approche proposée - Représentation canonique pour la reconstruction 3D de quadrique} %%%%%%%%%%
 \label{sec:our_approach}										  %%%%%%%%%%
 %===============================================================================
 \subsection{Utilisation de la courbure gaussienne}
@@ -74,18 +73,45 @@ Le champ de vision d'une caméra est défini par l'ensemble de qu'une caméra peut 
 {
     \includegraphics[width=\linewidth]{canonical_jolimas.pdf}
 }
-\caption{\fix{quelque chose de mieux ?}Illustration de notre modèle canonique JOLIMAS. Pour chaque poses de caméra réelles ($\Pi_1$, $\Pi_2$ et $\Pi_3$), nous créons des poses de caméra virtuelles ($\Pi_{s, 1}$, $\Pi_{s, 2}$ et $\Pi_{s, 3}$) calculées à partir des points d'intensité maximale de chaque spécularités. En synthétisant la forme des spécularités sur le plan tangent aux points d'intensité maximale, nous sommes capable de reconstruire une quadrique localisée près de la source de lumière $\mbf{L}$ invariant à la courbure de la surface.}
+\caption{Illustration de notre modèle canonique JOLIMAS. Pour chaque poses de caméra réelles ($\Pi_1$, $\Pi_2$ et $\Pi_3$), nous créons des poses de caméra virtuelles ($\Pi_{s, 1}$, $\Pi_{s, 2}$ et $\Pi_{s, 3}$) calculées à partir des points d'intensité maximale de chaque spécularités. En synthétisant la forme des spécularités sur le plan tangent aux points d'intensité maximale, nous sommes capable de reconstruire une quadrique localisée près de la source de lumière $\mbf{L}$ invariant à la courbure de la surface.}
 \label{fig:canonical}
 \end{figure}
-A partir de la méthode de \cite{healey1988local} qui est une application de \textit{Shape from Specularity} qui consiste à récupérer des informations sur la géométrie d'un objet à partir du mouvement d'une spécularité sur une surface, plusieurs idées sont données dans cette méthode afin de trouver un lien encore courbure locale et forme de spécularité. Ce lien est explicité par la formule:
+A partir de la méthode de \cite{healey1988local} qui est une application de \textit{Shape from Specularity} qui consiste à récupérer des informations sur la géométrie d'un objet à partir du mouvement d'une spécularité sur une surface, plusieurs idées sont données dans cette méthode afin de trouver un lien encore courbure locale et forme de spécularité.
+En effet, de façon similaire à notre approche du modèle JOLIMAS \cite{healey1988local} utilisent un modèle d'illumination locale afin de faire le parallèle entre courbure de la surface et forme de la spécularité. Malgré la qualité des résultats que le modèle de Phong fourni, \cite{healey1988local} précise que les paramètres n'ont pas un sens physique. Afin d'être plus précis, \cite{healey1988local} utilisent le modèle de \cite{torrance1967theory} qui est un modèle développé par des physiciens permettant de donner une formulation plus détaillée sur la composante spéculaire. Ce modèle assume qu'une surface est composée de petites facettes orientées de façon aléatoire et ayant un comportant proche de celui d'un miroir. Ce modèle quantifie également l'occultation des facettes par d'autres facettes adjacentes en utilisant un facteur d'atténuation géométrique. Le modèle spéculaire résultant est décrit par la formule:
+\begin{equation}
+I_S = F D A,
+\label{eq:torrance_sparrow}
+\end{equation}
+avec $F$ le coefficient de Fresnel, $D$ la fonction décrivant la distribution de l'orientation d'une facette et $A$ le facteur géométrique d'atténuation.
+Le coefficient $F$ modélise la quantité de lumière qui est réfléchie par chaque facette. En général, $F$ dépend de l'angle du rayon incident de lumière et d'un indice de réfraction du matériau réfléchissant. Selon \cite{cook1982reflectance}, $F$ doit caractériser la couleur de la spécularité
+afin de synthétiser des images réalistes. La fonction de distribution $D$ décrit l'orientation des micro facettes par rapport la normale moyenne de la surface $\vect{N}$. Dans le cas de Torrance-Sparrow, une distribution gaussienne est utilisée afin de décrire $D$ tel que:
+\begin{equation}
+D = Ke^{-(\alpha/m)^2},
+\label{eq:d_factor}
+\end{equation}
+où $K$ est une constance de normalisation, $m$ un indice de rugosité et $\alpha$ l'angle d'incidence. Ainsi pour un $\alpha$ donné, $D$ est proportionnel
+au nombre de facettes orientées dans la direction du vecteur $vect{H}$ décrivant le vecteur de mi-chemin de \cite{blinn1977models} que nous détaillerons par la suite.
+
+Pour analyser la forme de la spécularité, il n'est pas nécessaire d'avoir tous les paramètres de l'équation \eqref{eq:torrance_sparrow}. $F$ peut être considéré comme constant par rapport au point de vue de l'observateur. De plus, \cite{healey1988local} montrent que le facteur exponentiel présenté à l'équation \eqref{eq:d_factor} varie de façon beaucoup plus rapide que les autres termes. ce qui permet de simplifier l'équation \eqref{eq:torrance_sparrow} en:
+\begin{equation}
+I_S = K'e^{-(\alpha/m)^2},
+\label{eq:torrance_sparrow2}
+\end{equation}
+où $K'$ est une constante.
+\cite{healey1988local} évoque également l'existence d'un point d'intensité maximale tel que l'intensité varie à partir de ce point. En étudiant cette variation d'intensité, il est possible d'en déduire la courbure de la surface. Le lien entre intensité $I_S$ à un point $\vect{P}$ et l'angle d'incidence est donné par la formule:
+\begin{equation}
+| \alpha | = m \sqrt{-ln\frac{I_S}{K'}}.
+\end{equation}
+
+Le lien entre courbure de la surface et angle d'incidence est explicité par la formule:
 \begin{equation}
 \kappa_n = \frac{\mathrm{d} \alpha}{\mathrm{d} s}\Bigr|_{\substack{\mbf{P_B}}},
 \label{eq:curvature_link}
 \end{equation}
-avec $\kappa_n$ la courbure locale dans une direction donnée, $\mathrm{d} \alpha$ un léger changement d'angle de la source de lumière réfléchie et $\mathrm{d} s$ la longueur d'arc sur la surface au point d'intensité maximale $\mbf{P_B}$. L'angle $\alpha$ est définie tel que $\alpha = \text{cos}^{-1}(\hat{\mbf{N}} \cdot \hat{\mbf{H}})$ avec $\hat{\mbf{N}}$ la normale et $\hat{\mbf{H}}$ le vecteur de mi-chemin $\hat{\mbf{H}} = \frac{\hat{\mbf{L}} + \hat{\mbf{V}}}{\| \hat{\mbf{L}} + \hat{\mbf{V}} \|}$ entre le rayon de lumière $\hat{\mbf{L}}$ et le rayon d'observation $\hat{\mbf{V}}$. En pratique l'équation \eqref{eq:curvature_link} n'est pas triviale à calculer pour des surfaces non-paramétriques tel que des maillages. Calculer la longueur d'arc implique de calculer une distance géodésique ce qui peut être couteux en temps de calcul et imprécis pour des arrêtes franches ou des surfaces rugueuses ce qui arrive souvent dans le cas d'un maillage.
+avec $\kappa_n$ la courbure locale dans une direction donnée, $\mathrm{d} \alpha$ un léger changement d'angle de la source de lumière réfléchie et $\mathrm{d} s$ la longueur d'arc sur la surface au point d'intensité maximale $\mbf{P_B}$. L'angle $\alpha$ est définie tel que $\alpha = \text{cos}^{-1}(\hat{\mbf{N}} \cdot \hat{\mbf{H}})$ avec $\hat{\mbf{N}}$ la normale et $\hat{\mbf{H}}$ le vecteur de mi-chemin $\hat{\mbf{H}} = \frac{\hat{\mbf{L}} + \hat{\mbf{V}}}{\| \hat{\mbf{L}} + \hat{\mbf{V}} \|}$ entre le rayon de lumière $\hat{\mbf{L}}$ et le rayon d'observation $\hat{\mbf{V}}$. En pratique l'équation \eqref{eq:curvature_link} n'est pas triviale à calculer pour des surfaces non-paramétriques tel que des maillages. Calculer la longueur d'arc implique de calculer une distance géodésique ce qui peut être coûteux en temps de calcul et imprécis pour des arrêtes franches ou des surfaces rugueuses ce qui arrive souvent dans le cas d'un maillage.
 
 \subsection{Mise en pratique sur un modèle CAO - Notion d'angle limites}
-Afin d'approximer le calcul de la courbure locale, nous calculons les angles limites $\alpha_{max}^i$   à partir des contours de la spécularité ainsi que des normales de la surface associées à ces contours $\hat{\mbf{N}}$ et les vecteurs de mi-chemin $\hat{\mbf{H}}$ avec $i \in  \llbracket0, n\rrbracket$. Le principe de notre approche est que ces angles limites conservent des valeurs identiques pour tout changement courbure locale aux points de contours de la spécularités.
+Afin d'approximer le calcul de la courbure locale, nous définissons une notion d'angles limites. Ceux-ci correspondent aux valeurs d'angles  $\alpha_{max}^i$ tel que pour tout angle supérieur ç cette limite, l'intensité de la spécularité est considérée nulle. Nous calculons ces angles limites $\alpha_{max}^i$ à partir des contours de la spécularité ainsi que des normales de la surface associées à ces points de contours $\hat{\mbf{N}}$ et les vecteurs de mi-chemin $\hat{\mbf{H}}$ avec $i \in  \llbracket0, n\rrbracket$. D'après l'équation \eqref{eq:torrance_sparrow2}, l'intensité de la spécularité n'est influencée que par l'angle $\alpha$. L'intensité associée aux points de contours de la spécularité reste constante par rapport à la courbure appliqué à la surface ce qui implique que ces angles limites conservent des valeurs identiques pour tout changement courbure locale aux points de contours de la spécularités.
 
 \begin{algorithm}
 \caption{Pseudo-algorithme décrivant la transformation de forme de la spécularité sur la surface $S$ en une représentation canonique sur le plan tangent $T_{\mbf{P_B}}(S)$ au point d'intensité maximale $\mbf{P_B}$.}
@@ -103,7 +129,7 @@ Afin d'approximer le calcul de la courbure locale, nous calculons les angles lim
 \end{algorithmic}
 \label{algo:canonic_algo}
 \end{algorithm}
-Dans notre représentation canonique, afin de transformer l'ellipse courante associée à la spécularité, nous calculons le point d'intensité maximale $\mbf{P_B}$ comme expliquée au chapitre précédent \ref{chapitre:dual_jolimas}, et le plan tangent $T_{\mbf{P_B}}(S)$ au point d'intensité maximale. Nous échantillons $n$ vecteurs $v_i \in T_{\mbf{P_B}}(S)$ en commençant au point $\mbf{P_B}$ dans un intervalle de $[0, 2\pi[$. Le choix de $n$ dépend de la taille de la spécularité et de sa forme. En pratique, nous avons fixé une valeur de 36 pour les séquences présentées à la figure \ref{fig:results}. Lorsque nous atteignons les contours externes de la spécularité, nous calculons un angle limite $\alpha_{max}^i$ en utilisant $\hat{\mbf{H}}$ et $\hat{\mbf{N}}$ au point projeté orthogonalement sur la surface $S$. Par la suite, nous utilisons les mêmes vecteurs $v_i$ sur $T_{\mbf{P_B}}(S)$ jusqu'à ce qu'il atteint un point où son angle atteint l'angle $\alpha_{max}^i$ limite associé au vecteur. L'ellipse transformée est calculée en calculant l'ellipse correspondant aux  nouveaux points de contours obtenus. Ce procédé est illustré à la figure \ref{fig:warping}. La procédure est décrite dans l'algorithme \ref{algo:canonic_algo}.
+Dans notre représentation canonique, afin de transformer l'ellipse courante associée à la spécularité, nous calculons le point d'intensité maximale $\mbf{P_B}$ comme expliquée au chapitre précédent \ref{chapitre:dual_jolimas}, et son plan tangent $T_{\mbf{P_B}}(S)$ associé. Nous échantillonnons $n$ vecteurs $v_i \in T_{\mbf{P_B}}(S)$ en commençant au point $\mbf{P_B}$ dans un intervalle de $[0, 2\pi[$. Le choix de $n$ dépend de la taille de la spécularité et de sa forme. En pratique, nous avons fixé une valeur de 36 pour les séquences présentées à la figure \ref{fig:results}. Cette valeur nous a donné empiriquement les meilleurs résultats. Lorsque nous atteignons les contours externes de la spécularité, nous calculons un angle limite $\alpha_{max}^i$ en utilisant $\hat{\mbf{H}}$ et $\hat{\mbf{N}}$ au point projeté orthogonalement sur la surface $S$. Par la suite, nous utilisons les mêmes vecteurs $v_i$ sur $T_{\mbf{P_B}}(S)$ jusqu'à ce qu'il atteint un point où son angle atteint l'angle $\alpha_{max}^i$ limite associé au vecteur. L'ellipse transformée est calculée en calculant l'ellipse correspondant aux  nouveaux points de contours obtenus. Ce procédé est illustré à la figure \ref{fig:warping}. La procédure est décrite dans l'algorithme \ref{algo:canonic_algo}.
 \begin{figure}[!ht]
 \centering
 \subfigure[]
@@ -112,20 +138,13 @@ Dans notre représentation canonique, afin de transformer l'ellipse courante asso
 }
 \subfigure[]
 {
-    \includegraphics[width=\linewidth, height=8cm]{homography.pdf}
+    \includegraphics[width=\linewidth]{homography.pdf}
 }
 \caption{Transformation d'ellipse de sa forme sur la surface courbe $S$ en représentation canonique sur le plan tangent $T_\mathbf{P_B}(S)$ au point d'intensité maximale $\mbf{P_B}$. A partir de l'ellipse correspondante à la spécularité (en bleu), nous appliquons la transformation $\mathtt{M}$ afin d'obtenir l'ellipse corrigée (en vert) dans le plan tangent $T_\mathbf{P_B}(S)$.}
 \label{fig:warping}
 \end{figure}
 
-%===============================================================================
-\section{Représentation canonique pour la reconstruction 3D de quadrique} %%%%%%%%%%
-\label{sec:canonique}												  %%%%%%%%%%
-%===============================================================================
-
-\subsection{Transformation du cas d'une surface courbe en un cas plan}
-
-\subsection{Angles limites et utilisation sur une spécularité}
+A partir de ces ellipses transformée, nous sommes en mesure d'utiliser le même formalisme de reconstruction de quadrique utilisant des caméra virtuelle comme dans la modèle JOLIMAS dual au chapitre \ref{chapitre:dual_jolimas}.
 
 %===============================================================================
 \section{Modifications du processus de prédiction de spécularité} %%%%%%%%%%
@@ -138,6 +157,16 @@ Dans l'étape de prédiction de spécularité, un processus similaire à la section \
 \section{Résultats expérimentaux} %%%%%%%%%%
 \label{sec:resultats_experimentaux_general}												  %%%%%%%%%%
 %===============================================================================
+
+\subsection{Données de synthèse}
+\paragraph{Séquence plan/cylindre.} Afin de tester l'amélioration de notre modèle canonique par rapport au modèle dual, nous avons repris l'expérience testée au chapitre précédent \ref{chapitre:dual_jolimas} qui consistait à faire varier le rayon d'un cylindre pour simuler la transformation d'un plan en cylindre. Nous présentons les résultats à la figure \ref{fig:synt_cylinder}. Nous observons que notre modèle canonique reconstruit seulement à partir des 6 premières images de la surface plane peut suivre les changements de courbure de la surface tout le long de la séquence en conservant une précision constante autour de 3\%. Nore approche précédente duale présente une erreur allant jusqu'à 12\%.
+\begin{figure}[H]
+\centering
+    \includegraphics[width=\linewidth]{dual_vs_canonic.pdf}
+\caption{.}
+\label{fig:synt_cylinder}
+\end{figure}
+
 \paragraph{Séquence ellipsoïde.}
 Afin de tester la validité de notre modèle JOLIMAS canonique sur un exemple simple, nous avons créé une séquence de synthèse comportant un ellipsoïde qui est une forme dont la courbure n'est pas uniforme sur toute la surface. Dans la figure \ref{fig:results_synt}, nous montrons que la prédiction de spécularité de JOLIMAS canonique est bien plus précise que notre approche précédente JOLIMAS dual.
 
@@ -159,22 +188,11 @@ Afin de tester la validité de notre modèle JOLIMAS canonique sur un exemple simp
 \caption{Résultats de prédiction de spécularité pour notre séquence de synthèse d'ellipsoïde. Dans (a) nous montrons que l'ellipsoïde n'est pas uniforme en courbe. Dans (b) et (c), nous montrons une paire d'images de la séquence et le résultat de la prédiction de spécularité pour JOLIMAS dual (b) et JOLIMAS canonique (c). L'image de gauche correspond à la courbure utilisée pour reconstruire notre modèle et celle de droite correspond à une courbure plus importante. Nous constatons que notre modèle JOLIMAS canonique donne de meilleurs résultats pour les deux courbures contrairement à JOLIMAS dual qui reste correct mais améliorable pour la première image mais échoue complètement lorsque la courbure varie.}
 \label{fig:results_synt}
 \end{figure}
-
-\subsection{Données de synthèse}
-\paragraph{Séquence plan/cylindre.} Afin de tester l'amélioration de notre modèle canonique par rapport au modèle dual, nous avons repris l'expérience testée au chapitre précédent \ref{chapitre:dual_jolimas} qui consistait à faire varier le rayon d'un cylindre pour simuler la transformation d'un plan en cylindre. Nous présentons les résultats à la figure \ref{fig:synt_cylinder}. Nous observons que notre modèle canonique reconstruit seulement à partir des 6 premières images de la surface plane peut suivre les changements de courbure de la surface tout le long de la séquence en conservant une précision constante autour de 3\%. Nore approche précédente duale présente une erreur allant jusqu'à 12\%.
-\begin{figure}[H]
-\centering
-    \includegraphics[width=\linewidth]{dual_vs_canonic.pdf}
-\caption{.}
-\label{fig:synt_cylinder}
-\end{figure}
+\fix{Add the concave one ?}
 
 \subsection{Données réelles}
-Dans cette section, nous présentons deux résultats de prédiction de spécularité sur des séquences réelles une réplique de fusée en métal et un livre à couverture brillante.
-
-\fix{Faire le test synthétique de JOLIMAS dual et 3, 4 séquences réelles. Séquence du vase aussi mais avec une seule quadrique.}
-Nous montrons deux exemples de prédiction de spécularité sur une séquence synthétique mais également sur une séquence réelle dans la figure \ref{fig:results}. La reconstruction du JOLIMAS en forme canonique à partir de six images. La prédiction est réalisée pour les images suivantes de la séquence. Nous pouvons observer une amélioration notable de la prédiction en terme de position et forme comparée à notre itération précédente de JOLIMAS dans sa forme duale.
-
+Dans cette section, nous présentons deux résultats de prédiction de spécularité sur des séquences réelles contenant une réplique de fusée en métal et un livre à couverture brillante.
+La reconstruction du JOLIMAS en forme canonique à partir de six images. La prédiction est réalisée pour des images ultérieures à celles utilisées pour la reconstruction. Nous pouvons observer une amélioration notable de la prédiction en terme de position et forme comparée à notre itération précédente de JOLIMAS dans sa forme duale.
 
 \paragraph{Séquence Fusée.}
 Cette séquence a été présenté précédemment dans le chapitre \ref{chapitre:dual_jolimas}. Même si les résultats étaient déjà satisfaisant, la partie centrale de la réplique de fusée n'a pas une courbure constante ce qui a provoque des erreurs dans la prédiction de spécularité du modèle JOLIMAS dual. Nous pouvons observer dans la figure \ref{fig:results} que notre modèle JOLIMAS canonique présente de bien meilleurs résultats en terme de prédiction des spécularités.
@@ -231,40 +249,37 @@ Une fois la carte de profondeur complète, nous utilisons la bibliothèque Point C
 \centering
 \subfigure[]
 {
-    \includegraphics[width=0.3\linewidth]{pc}
+    \includegraphics[width=0.45\linewidth]{pc}
 }
 \subfigure[]
 {
-    \includegraphics[width=0.3\linewidth]{normal}
+    \includegraphics[width=0.45\linewidth]{normal}
 }
 \subfigure[]
 {
-    \includegraphics[width=0.3\linewidth]{normal_map}
+    \includegraphics[width=0.45\linewidth]{normal_raw}
 }
-\caption{Calcul de la carte de normale. A partir du nuage de point de la carte de profondeur (a), nous utilisons la bibliothèque PCL pour calculer les normales à partir des points 3D voisins (b). La carte de normale obtenue est suffisamment précise pour notre application (c).}
+\subfigure[]
+{
+    \includegraphics[width=0.45\linewidth]{normal_map}
+}
+\caption{Calcul de la carte de normale. A partir du nuage de point de la carte de profondeur (a), nous utilisons la bibliothèque PCL pour calculer les normales à partir des points 3D voisins (b). Dans (c), nous illustrons une approche naïve du calcul de la carte de normale à partir de l'image de profondeur (2D) directement au lieu du nuage de point (3D). Nous constatons un bruit assez important sur des surfaces qui sont censées être planes (mur et livre). La carte de normale  (d) obtenue à partir de la PCL est suffisamment précise pour notre application.}
 \label{fig:normal_map}
 \end{figure}
 
+Nous présentons dans la figure \ref{fig:data_kinect}, nos résultats de prédiction de spécularité sur la séquence Kinect de JOLIMAS canonique comparé à JOLIMAS dual. Comme attendu, JOLIMAS dual n'est pas capable de gérer le changement de courbure du livre contrairement à JOLIMAS canonique.
+\begin{figure}[!ht]
+    \includegraphics[width=\linewidth]{result_kinect}
 
-\begin{figure}
-    %\includegraphics[width=0.37\linewidth]{approach_res}
-
-\caption{.}
+\caption{Résultats de prédiction de spécularités sur notre séquence Kinect pour trois images présentant des courbures différentes (pour chaque ligne). Les images de gauche correspondent aux images d'origine. Celles du milieu correspondent aux résultats de prédiction de spécularité de JOLIMAS dual et celles de droites de JOLIMAS canonique.}
 \label{fig:data_kinect}
 \end{figure}
-
-%===============================================================================
-\section{Résultats} %%%%%%%%%%
-\label{sec:resultats_general}												  %%%%%%%%%%
-%===============================================================================
-\subsection{Prédiction de spécularité}
-
 
 %===============================================================================
 \section{Limites de l'approche} %%%%%%%%%%
 \label{sec:limites_approche_general}												  %%%%%%%%%%
 %===============================================================================
-
+Notre nouveau modèle JOLIMAS canonique apport une solution au problème de prédiction de spécularité pour des objets à courbure variable (ellipsoïde, réplique de fusée) ainsi que des objets dont la courbure peut être modifiée en direct (livre que l'on plie au fur et à mesure de la séquence). Les expériences ont pu mettre en avant la relation critique entre qualité de la géométrie (à partir d'un modèle CAO et d'une Kinect V2) et stabilité/précision de la prédiction. Dans le cas de la Kinect, il est très difficile d'obtenir une prédiction sans sautillement provoqué par les approximation de la carte de normale due au bruit des données brutes du capteur profondeur. Il serait intéressant de proposer un algorithme de cohérence temporelle et spatiale permettant de fournir une stabilité optimale même dans les cas difficile. Une interpolation de la courbure de la surface et du changement de forme de la spécularité entre deux images pourrait être une bonne approche intéressante.
 
 %=======================================================================
 \section{Conclusion}					%%%%%%%%%%%%%%%%%%%%%%
