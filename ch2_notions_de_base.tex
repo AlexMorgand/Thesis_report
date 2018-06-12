@@ -332,7 +332,7 @@ Les opérations suivantes sur les images seront utiles par la suite :
 \section{Conique et quadrique} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:conique_et_quadrique} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
-\fix{On peut encore en rajouter ici, à partir de la page 19 de cross + signature de quadriques}.
+%\fix{On peut encore en rajouter ici, à partir de la page 19 de cross + signature de quadriques}.
 
 \subsection{Conique}
 Une conique est une famille de courbes planes générées en prenant toute les sections possibles d'un cône infini avec un plan. La famille des coniques non-dégénérées inclut les paraboles, hyperboles et ellipses. Nous évoquerons les coniques dégénérés par la suite.
@@ -466,7 +466,8 @@ L'enveloppe de la quadrique ou "quadrique duale" est donné de manière similaire 
 
 
 \subsubsection{Quadriques dégénérées}
-Comme pour une conique, une quadrique dégénérée est caractérisée par la singularité de la matrice $\mat{Q}$. Un cylindre, un cône ou une paire de plans (distincts ou confondus) sont des exemples de quadriques dégénérées. La dégénérescence est invariante à la transformation projective \fix{(ce qu'on peut voir dans les signatures d'une quadrique)}. \fix{Images de quadrics dégénérées}. Une quadrique dégénérée a $9 - 1 = 8$ degrés de liberté au maximum (la contrainte de singularité fournit une contrainte unique sur les éléments de $\mat{Q}$). Plusieurs types de quadriques dégénérées sont illustrées à la figure \ref{fig:degen_quadric}.
+Comme pour une conique, une quadrique dégénérée est caractérisée par la singularité de la matrice $\mat{Q}$. Un cylindre, un cône ou une paire de plans (distincts ou confondus) sont des exemples de quadriques dégénérées. La dégénérescence est invariante à la transformation projective (ce qu'on peut voir dans les signatures d'une quadrique). 
+ Une quadrique dégénérée a $9 - 1 = 8$ degrés de liberté au maximum (la contrainte de singularité fournit une contrainte unique sur les éléments de $\mat{Q}$). Plusieurs types de quadriques dégénérées sont illustrées à la figure \ref{fig:degen_quadric}.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\linewidth]{degen_quadric.png}
@@ -814,7 +815,9 @@ avec $S$ l'opérateur de forme correspond à la dérivée négative telle que :
 \begin{equation}
 S(\vect{v}) = -D_{\vect{v}}\vect{N},
 \end{equation}
-avec $\vect{N}$ la normale au point de surface donné. Prenons $x$ un patch régulier (\fix{a définir ?}) du $M$ avec $p = x(u_x, v_y)$ et:
+avec $\vect{N}$ la normale au point de surface donné. Prenons $x$ un patch régulier 
+%(\fix{a définir ?}) 
+du $M$ avec $p = x(u_x, v_y)$ et:
 \begin{equation}
 \vect{v}_{\vect{p}} = a \vect{x}_\vect{u}(u_0, v_0) + b \vect{x}_\vect{v}(u_0, v_0),
 \end{equation}
@@ -1185,8 +1188,8 @@ Cette fonction $f$ évoquée dans les équations \eqref{eq:reflectance_equation} et
  Sans entrer dans trop de détails, selon la précision et la puissance de calcul disponible nous pouvons citer dans les BRDF connues les harmoniques sphériques ou encore les modèles d'illumination locale évoqués précédemment.
 
 
-\fix{Parler de la  Fonction de champ lumineux?}
-\fix{Parler des harmoniques sphériques ?}
+%\fix{Parler de la  Fonction de champ lumineux?}
+%\fix{Parler des harmoniques sphériques ?}
 
 %=============================================================================
 \section{Illumination globale} 
@@ -1207,12 +1210,12 @@ En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant
     }
 \caption{Phénomènes lumineux modélisables par l'illumination globale comme les caustiques (a) et l'inter-réflexion diffuse (b).}
 \end{figure}
-\fix{On peut rajouter plus de détail sur les deux phénomènes - scribe-lecture3}
+%\fix{On peut rajouter plus de détail sur les deux phénomènes - scribe-lecture3}
 
 %=============================================================================
 \subsection{L'équation de rendu}
 \label{sec:rendering_equation}
-Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. L'équation de réflectance est définie par: \fix{ajouter variable l pour la lumière?}
+Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. L'équation de réflectance est définie par: %\fix{ajouter variable l pour la lumière?}
 \begin{equation}
 L_r(\vect{P}, \omega_r) = L_e(\vect{P}, \omega_r) + \sum L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)(\omega_i \cdot \hat{\vect{N}}(\vect{P})),
 \label{eq:reflectance_equation}
@@ -1247,7 +1250,7 @@ L_r(\vect{P}, \omega_r) &= L_e(\vect{P}, \omega_r) + \int_\Omega L_i(\vect{P}, \
 \end{flalign}
 avec $\vect{P'}$ un point d'une autre surface produisant de la radiance sur la surface contenant $\vect{P}$. Nous considérons ainsi les surfaces diffuses comme pouvant potentiellement émettre de la radiance de la même manière qu'une source de lumière, ce qui permet de généraliser l'équation et de décrire le déplacement de la lumière de toute la scène. Une illustration de l'équation de rendu est  visible à la figure \ref{fig:rendering_equation} et \ref{fig:hemisphere}.
 
-Nous n'évoquerons pas ici la résolution de l'équation de rendu. Ce sujet est traité de façon plus longue dans le livre de Hughes \etal \cite{hughes2014computer}.
+Nous n'évoquerons pas ici la résolution de l'équation de rendu. Ce sujet est traité de façon plus longue dans le livre de  \cite{hughes2014computer}.
 
 %=============================================================================
 \section{Modèles d'illumination locale} 
@@ -1261,8 +1264,10 @@ L(\lambda, i, e, g) & = L_i(\lambda, i, e, g) + L_b(\lambda, i, e, g) \\
 \end{flalign*}
 Ce modèle présente deux hypothèses sur le phénomène de réflexion de lumière exprimée par les deux parties de l'équation précédente. La première partie énonce que la radiance totale $L$ de la lumière réfléchie est la somme de deux parties indépendantes: la radiance $L_i$ de la lumière réfléchie par le matériau (de façon diffuse) et $L_b$ la radiance de la lumière directement réfléchie de la surface (composante spéculaire). La deuxième partie énonce que chaque composante de la lumière peut être décomposée en deux parties: composition, une distribution de la puissance spectrale relative $c_i$ et $c_b$ qui dépend de la longueur d'onde mais indépendante de la géométrie et de la magnitude, un facteur d'échelle géométrique $m_i$ ou $m_b$ qui dépend de la géométrie et indépendante de la longueur d'onde. Le modèle de réflectance dichromatique énonce qu'il existe deux processus de réflexion indépendants et qui ont chacun une caractéristique de couleur pour laquelle sa magnitude (et non sa distribution spectrale) varie avec la direction de l'illumination et de l'observateur. Ce modèle est souvent utilisé dans les applications de séparation de composante diffuse et spéculaire à partir d'une image RGB comme dans l'approche de \cite{kim2013specular}.
 Pour des applications de vision par ordinateur, dans un souci d'optimisation et de simplicité, il est préférable d'abstraire certains paramètres comme la puissance spectrale relative, le facteur d'échelle et la longueur d'onde. Par la suite, nous présentons les modèles de réflectance de Phong et Blinn-Phong, qui sont des cas spéciaux du modèle proposé par \cite{shafer1985using}.
+Notons que pour des problèmes d'estimation de l'illumination, il a été montré qu'il existe des limites à ce modèles dû à la saturation dans \cite{lin2017color}.
 
 %https://books.google.fr/books?id=Z-36P9InswAC&pg=PA11&lpg=PA11&dq=dichromatic+model+vs+phong&source=bl&ots=dKtNIYurS-&sig=xz1qcGcSIAYGtSkbo7S3Sn7TUHg&hl=en&sa=X&ved=0ahUKEwiAm8f_i-7ZAhXFJMAKHQ-TBoM4ChDoAQg3MAM#v=onepage&q=dichromatic%20model%20vs%20phong&f=false
+
 
 \subsection{Modèle de Phong et Blinn-Phong}
 La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchi de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.

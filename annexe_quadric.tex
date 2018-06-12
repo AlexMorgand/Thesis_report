@@ -287,7 +287,7 @@ Afin de contraindre d'avantage le raffinement, nous utilisons des variables late
 
 Les paramètres de notre minimisation est la représentation matricielle de la quadrique $\mathtt{Q} \in \mathbb{R}^{4\times4}$ accompagnée des différentes variables latentes appartenant à l'ellipse. Avant le processus de raffinement, ces variables latentes $\mathbf{q}'_{i, j}$ sont estimées  par notre paramétrisation évoqué dans la section \ref{sec:dist_conic_point} pour chaque ellipse $\mathtt{C}_j$ d'indice $j$. La fonction de coût avec les variables latentes est décrite par:
 
-\fix{A t'on la projection inclue dans l'équation ?}
+%\fix{A t'on la projection inclue dans l'équation ?}
 \begin{equation}
 \left\{
 \begin{aligned}
@@ -330,7 +330,7 @@ Une illustration du raffinement d'une quadrique à partir de trois points de vue 
 \label{fig:quadrique_refinement}
 \end{figure}
 Bien que cette minimisation soit fonctionnelle, la forme matricielle de $\mat{Q}$ est plus difficile à optimiser dans l'état que la forme paramétrique de la quadrique (9 degrés de libertés : position 3D, échelle en 3 dimensions et 3 angles). Cela est due au fait que les 10 éléments distincts de la matrice symétrique $\mat{Q}$ (9 en fixant la dernière case correspondant à l'échelle à 1) ne sont pas indépendants. Nous transformons la forme matricielle de $\mat{Q}$ en représentation paramétrique par l'algorithme suivant:
-\begin{algorithm}
+\begin{algorithm}[!ht]
 \caption{Conversion de la forme matricielle de $\mat{Q}$ en forme paramétrique correspondant à neuf degrés de liberté.}
 \begin{algorithmic}[1]
 \Procedure{TransformationQuadriqueEnParametrique}{$\mat{Q}$}
@@ -458,8 +458,8 @@ QD(\mathtt{Q}_1, \mathtt{Q}_2) = \max(GD(\mathtt{Q}_1, \mathtt{Q}_2), GD(\mathtt
 \label{eq:transfo_quad}
 \end{equation}
 
-\section{Résultats}
-\fix{Il faut mettre quelque chose ?}
+%\section{Résultats}
+%\fix{Il faut mettre quelque chose ?}
 
 \section{Vectorisation du système de projection de la quadrique duale}
 \label{sec:vectorization_appendix}

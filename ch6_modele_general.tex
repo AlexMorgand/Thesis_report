@@ -159,7 +159,7 @@ Dans l'étape de prédiction de spécularité, un processus similaire à la section \
 %===============================================================================
 
 \subsection{Données de synthèse}
-\paragraph{Séquence plan/cylindre.} Afin de tester l'amélioration de notre modèle canonique par rapport au modèle dual, nous avons repris l'expérience testée au chapitre précédent \ref{chapitre:dual_jolimas} qui consistait à faire varier le rayon d'un cylindre pour simuler la transformation d'un plan en cylindre. Nous présentons les résultats à la figure \ref{fig:synt_cylinder}. Nous observons que notre modèle canonique reconstruit seulement à partir des 6 premières images de la surface plane peut suivre les changements de courbure de la surface tout le long de la séquence en conservant une précision constante autour de 3\%. Nore approche précédente duale présente une erreur allant jusqu'à 12\%.
+\paragraph{Séquence plan/cylindre.} Afin de tester l'amélioration de notre modèle canonique par rapport au modèle dual, nous avons repris l'expérience testée au chapitre précédent \ref{chapitre:dual_jolimas} qui consistait à faire varier le rayon d'un cylindre pour simuler la transformation d'un plan en cylindre. Nous présentons les résultats à la figure \ref{fig:synt_cylinder}. Nous observons que notre modèle canonique reconstruit seulement à partir des 6 premières images de la surface plane peut suivre les changements de courbure de la surface tout le long de la séquence en conservant une précision constante autour de 3\%. Notre approche précédente duale présente une erreur allant jusqu'à 12\%.
 \begin{figure}[H]
 \centering
     \includegraphics[width=\linewidth]{dual_vs_canonic.pdf}
@@ -188,7 +188,7 @@ Afin de tester la validité de notre modèle JOLIMAS canonique sur un exemple simp
 \caption{Résultats de prédiction de spécularité pour notre séquence de synthèse d'ellipsoïde. Dans (a) nous montrons que l'ellipsoïde n'est pas uniforme en courbe. Dans (b) et (c), nous montrons une paire d'images de la séquence et le résultat de la prédiction de spécularité pour JOLIMAS dual (b) et JOLIMAS canonique (c). L'image de gauche correspond à la courbure utilisée pour reconstruire notre modèle et celle de droite correspond à une courbure plus importante. Nous constatons que notre modèle JOLIMAS canonique donne de meilleurs résultats pour les deux courbures contrairement à JOLIMAS dual qui reste correct mais améliorable pour la première image mais échoue complètement lorsque la courbure varie.}
 \label{fig:results_synt}
 \end{figure}
-\fix{Add the concave one ?}
+%\fix{Add the concave one ?}
 
 \subsection{Données réelles}
 Dans cette section, nous présentons deux résultats de prédiction de spécularité sur des séquences réelles contenant une réplique de fusée en métal et un livre à couverture brillante.
@@ -225,7 +225,7 @@ Afin de reconstruire notre modèle JOLIMAS canonique, il est nécessaire de récupé
 \item Objets réfléchissant les rayons infrarouge comme un miroir ou certaines zones d'une surface spéculaire
 \item Zones occultés dans l'image infrarouge par rapport à l'image couleur dû à la baseline entre les deux caméras. Ces zones correspondent en général aux contours occultant des objets
 \end{itemize}
-Afin de palier ces problèmes nous avons dans un premier temps appliqué un algorithme de restauration d'image (inpainting) appelé méthode de marche rapide (Fast Marching) \cite{telea2004image} sur l'image de profondeur afin de combler les trous potentiels. Dans notre séquence, ces trous sont en général nombreux mais petit ce qui permet de les interpoler avec les informations avoisinantes dans l'image. Nous illustrons ce principe dans la figure \ref{fig:depth_inpainting}.
+Afin de palier ces problèmes nous avons dans un premier temps appliqué un algorithme de restauration d'image (inpainting) appelé méthode de marche rapide (Fast Marching) \cite{telea2004image} sur l'image de profondeur afin de combler les trous potentiels. Pour des zones plus larges, nous pouvons également utiliser les méthodes de \cite{chican2014constrained, bousefsaf2018image}.  Dans notre séquence, ces trous sont en général nombreux mais petit ce qui permet de les interpoler avec les informations avoisinantes dans l'image. Nous illustrons ce principe dans la figure \ref{fig:depth_inpainting}.
 \begin{figure}
 \centering
 \subfigure[]
