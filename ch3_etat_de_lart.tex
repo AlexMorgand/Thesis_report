@@ -26,7 +26,7 @@ Les méthodes dans cette catégorie privilégient la qualité de rendu des applicati
 La tendance actuelle des méthodes d'illumination globale est d'utiliser des méthodes d'apprentissage profond comme \cite{mandl2017learning} en donnant en entrée un objet 3D de géométrie et albédo connus. Le réseau de neurones convolutif utilise les coefficients de la fonction d'harmoniques sphérique calculée afin de généraliser l'illumination de façon immédiate après apprentissage. Cette méthode fournit un résultat à partir d'une seule image mais nécessite une période d'apprentissage de 4 heures par pose et l'illumination apprise se limite à l'objet appris, ce qui limite le panel d'application de la méthode. Quelques méthodes d'illumination globale avec une contrainte temps réel sont illustrées à la figure \ref{fig:global_illumination_sota} et sans contraintes temporelles à la figure \ref{fig:applications_illumi_globale}.
 
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \centering
 \subfigure[Illumination globale avec des lumières polygonales]
 {
@@ -44,7 +44,7 @@ La tendance actuelle des méthodes d'illumination globale est d'utiliser des méth
 
 En conséquence, les méthodes citées ci-dessus ne peuvent pas prédire les spécularités pour de nouveaux points de vue car elles dépendent souvent d'une phase d'initialisation/apprentissage méticuleuse qui requiert beaucoup de puissance de calcul et beaucoup d'images. Ces méthodes ne nous semblent pas adaptées à un contexte temps réel en réalité augmentée.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
 \centering
 \subfigure[Light field]
 {
