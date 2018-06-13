@@ -59,14 +59,15 @@ Dans l'approche de \cite{cross1998quadric}, le calcul d'ellipses est moins propi
 
 Ce problème pourrait affecter la qualité de la reconstruction de quadrique à partir des spécularités. En conséquence, la consistance épipolaire devrait être vérifiée pour chaque vue utilisées pour l'initialisation afin d'obtenir un résultat optimal. Sans correspondance entre les contours d'ellipses, le système linéaire \eqref{eq:linearsystem} peut retourner des résultats incohérents. L'espace dual permet une formulation élégante du problème mais à cause de la nature algébrique des équations, un bruit même léger sur l'estimation des ellipses peut causer de grandes erreurs dans la quadrique reconstruite.
 
-Une ellipse est définie de façon unique à partir de 5 points non-alignés et 5 droites non-colinéaires dans l'espace dual. Pour trois point de vues, chaque ellipse est contrainte par deux paires de droites provenant des autres points de vues ce qui rend le problème d'estimation de la conique duale sous-contrainte. Une des solutions proposées par \cite{reyes2005projective} est d'estimer les lignes épipolaires de façon plus précises à partir des ellipses provenant des autres points de vue et une droite supplémentaire provenant de la tangente d'un point de contour de l'ellipse de l'image actuelle. En utilisant ces 5 lignes, nous pouvons calculer une conique duale unique. Ce procédé est répété pour chaque point de contour et chaque point de vue. L'ellipse corrigée est celle minimisant notre distance ellipse/Point discutée dans la section \ref{sec:dist_conic_point}. Nous pouvons noter que l'efficacité du calcul d'ellipse dépend fortement de la qualité des points de contour de la spécularité.
-Les ellipses obtenues pour chaque point de vues seront utilisées dans le processus de reconstruction car elles respectent les contraintes épipolaires. Ce procédé est itératif, fiable et efficace. Nous illustrons une étape du procédé de correction à la figure \ref{fig:reyes_epipolar}. Dans notre contexte, nous ne pouvons pas nous limiter à seulement trois points de vue. Ainsi, nous incluons un raffinement non-linéaire à partir de au moins trois points de vue afin d'améliorer la reconstruction de quadrique.
 \begin{figure}[!ht]
 \centering
     \includegraphics[width=0.7\linewidth]{reyes_epipolar}
     \caption{Correction épipolaire de \cite{reyes2005projective}. L'ellipse observée (points bleus) est calculée à partir des points de contour (croix noires) de la spécularité. Les quatre droites épipolaires crées à partir des autres points de vue sont représentées en rouge et magenta. Afin d'estimer la conique duale respectant la géométrie épipolaire, une cinquième droite calculée à partir de la tangente d'un point de contours (droite en pointillée en bleu). Nous calculons une ellipse dans l'espace dual pour chaque point de contour et nous choisissons celle (représentée ici) minimisant la distance ellipse/point évoquée à section \ref{sec:dist_conic_point} pour chacun des trois points de vue. Les ellipses obtenues seront utilisées dans le processus de reconstruction d'une quadrique précise à partir d'ellipses épipolairement consistantes.}
 \label{fig:reyes_epipolar}
 \end{figure}
+
+Une ellipse est définie de façon unique à partir de 5 points non-alignés et 5 droites non-colinéaires dans l'espace dual. Pour trois point de vues, chaque ellipse est contrainte par deux paires de droites provenant des autres points de vues ce qui rend le problème d'estimation de la conique duale sous-contrainte. Une des solutions proposées par \cite{reyes2005projective} est d'estimer les lignes épipolaires de façon plus précises à partir des ellipses provenant des autres points de vue et une droite supplémentaire provenant de la tangente d'un point de contour de l'ellipse de l'image actuelle. En utilisant ces 5 lignes, nous pouvons calculer une conique duale unique. Ce procédé est répété pour chaque point de contour et chaque point de vue. L'ellipse corrigée est celle minimisant notre distance ellipse/Point discutée dans la section \ref{sec:dist_conic_point}. Nous pouvons noter que l'efficacité du calcul d'ellipse dépend fortement de la qualité des points de contour de la spécularité.
+Les ellipses obtenues pour chaque point de vues seront utilisées dans le processus de reconstruction car elles respectent les contraintes épipolaires. Ce procédé est itératif, fiable et efficace. Nous illustrons une étape du procédé de correction à la figure \ref{fig:reyes_epipolar}. Dans notre contexte, nous ne pouvons pas nous limiter à seulement trois points de vue. Ainsi, nous incluons un raffinement non-linéaire à partir de au moins trois points de vue afin d'améliorer la reconstruction de quadrique.
 
 \subsection{Distance 2D Ellipse/Point}
 
@@ -189,12 +190,12 @@ A l'opposé des approches de calcul d'ellipse à partir d'un ensemble de points de
    \centering	        
    	  \subfigure[]
    	  {
-   	      \includegraphics[width=0.45\linewidth]{param_conic2.png}
+   	      \includegraphics[width=0.47\linewidth]{param_conic2.png}
    	      \label{fig:decalage_quad}
    	  }       
    	  \subfigure[]
    	  {
-   	      \includegraphics[width=0.45\linewidth]{param_conic3.png}
+   	      \includegraphics[width=0.47\linewidth]{param_conic3.png}
    	      \label{fig:echelle_quad}
    	  }
 \caption{Limitation de la paramétrisation classique d'ellipse à partir de points de contours. Dans (a), nous illustrons le problème de la paramétrisation pour des contours éloignées considérablement de l'ellipse associée. Notre paramétrisation recherche les points de l'ellipse les plus proches des points de contours ce qui provoque une mauvaise répartition des points sur l'ellipse. Dans (b), nous illustrons le problème d'une paramétrisation entre des points contours répartis sur une surface beaucoup plus importante que l'ellipse associée. Ces deux problèmes ont pour impact d'avoir une distance ellipse/point trop faible et incohérente.}
@@ -367,7 +368,7 @@ Une image est considérée comme image clé lorsqu'elle répond à deux critères : es
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=\linewidth]{tangent_criterion.pdf}
-	\caption{\fix{Can you do it with real images ?} Critère utilisant la répartition des tangentes épipolaires afin de sélectionner les images clés. L'objectif est de maximiser l'angle entre chaque droites contenant le centre de l'ellipse et chaque  épipole  à partir de trois images. }
+	\caption{Critère utilisant la répartition des tangentes épipolaires afin de sélectionner les images clés. L'objectif est de maximiser l'angle entre chaque droites contenant le centre de l'ellipse et chaque  épipole  à partir de trois images. }
 	\label{fig:tangent_criterion}
 \end{figure}
 Notre critère est de maximiser l'angle entre les droites contenant l'épipole et le centre de l'ellipse pour chaque épipole. Ce critère est appliqué pour chaque image clés et illustré dans la figure \ref{fig:tangent_criterion}. Nous devons avoir des angles ($\alpha$, $\beta$ et $\gamma$) le plus proche possible de $120^{\circ}$ afin d'assurer une répartition optimale des points de vues permettant une bonne initialisation de la quadrique.
@@ -390,7 +391,7 @@ Notre critère est de maximiser l'angle entre les droites contenant l'épipole et 
 	{
 		\fbox{\includegraphics[width=0.45\linewidth, height=4cm]{proj_with.pdf}}
 	}
-    \caption{\fix{I don't like these but what can I do ? Use real data on real sequences. Display the complete quadric ?} Quadric reconstruction with manually chosen frames (first row) and keyframes (last row). In (a, c), we compared the quadric projections in blue, red and magenta with the ground truth in green. The upper triplet of frame does not constraint efficiently the quadric reconstruction.   The lower triplet has epipolar tangents evenly spread on the conics which will further constraint and improve the reconstruction.}
+    \caption{Comparaison de la qualité de reconstruction de quadrique pour des images choisies manuellement (première ligne) et par notre sélection d'images clés (deuxième ligne). Dans (a, c), nous illustrons les trois ellipses (bleu, rouge et magenta) utilisées pour la reconstruction ainsi que les contraintes épipolaires associées à chacune des ellipses provenant des deux autres points de vue. Nous pouvons observer que dans le cas des images clés, les contraintes épipolaire sont beaucoup plus réparties par rapport aux images sélectionnées manuellement ce qui permet d'améliorer le processus de reconstruction de la quadrique. Les ellipses issues de la projection de la quadrique (en  bleu) pour les points de vues issues des images sélectionnées manuellement (b) et des keyframes (d) sont comparés avec leurs vérités terrain. Dans le cas des keyframes, nous pouvons observer que les ellipses projetées correspondent de manière presque identique à la verité terrain.}
     \label{fig:keyframe_criterion}
 \end{figure}
 
