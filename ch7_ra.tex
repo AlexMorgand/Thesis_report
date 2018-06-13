@@ -19,8 +19,7 @@ Dans \cite{blake1990does}, il a démontré que la perception humaine prend en comp
     \item La réalité diminuée et plus particulièrement lorsqu'une spécularité traverse une zone de l'image à restaurer \cite{kawaidiminished, herling2014high, said2017image}
     \item Synthétiser des points de vue inconnus à partir d'un flux vidéo (où la caméra n'est jamais allé physiquement)
 \end{itemize}
-
-\fix{Liste qui décrit le sommaire}
+Dans ce chapitre, nous détaillons l'ensemble des composants implémentés pour assurer le bon fonctionnement de notre modèle dans un contexte de réalité augmentée large ce qui inclue la gestion des plusieurs sources de lumière simultanément pouvant s'allumer et s'éteindre, la capacité à synthétiser des spécularités ainsi qu'une nouvelle texture pour une application de retexturing et une analyse du temps d'exécution de notre méthode.
 
 %=============================================================================
 \section{Contexte multi-lumières} 
@@ -212,7 +211,6 @@ Si la caméra observe une scène dans une direction tel que deux sources de lumièr
 \label{sec:resultats_ra}
 %===============================================================================
 
-\subsection{Temps d'exécution}
 Dans la table \ref{tab:computation_time}, nous présentons le temps d'exécution de chaque étape de notre méthode incluant la détection de spécularité, le calcul de point d'intensité maximale, la reconstruction de quadrique et le retexturing. Nous calculons les résultats sur un processeur Intel i7  de fréquence 2.70 GHz sur des séquences réelles présentées dans la figure \ref{fig:sequences}. La reconstruction de quadrique prend 76.2 millisecondes en moyenne et est réalisée quand un minimum de 6 images clés est atteint. La quadrique est raffinée pour chaque nouvelle image clé mais prend cette fois ci 15 millisecondes en moyenne car seulement quelques itérations sont nécessaires contrairement au raffinement initial. Notre analyse a été réalisée sans utilisation de GPU ou de parallélisation.
 
 \begin{table}[!ht]
@@ -252,5 +250,4 @@ A partir de notre modèle JOLIMAS, il est possible d'utiliser la quadrique comme 
 \section{Conclusion}
 \label{sec:conclusion_ra}
 %===============================================================================
-
-\fix{La capacité de prédiction de spécularité de notre modèle nous permet également de détecter les lumières à état changeant (allumées et éteintes) dans un contexte multi-lumières. Nous montrerons dans le chapitre \ref{chapitre:RA} que le modèle JOLIMAS pouvait être utilisé pour améliorer le rendu des application de réalité augmentée. En complément, notre prédiction de spécularité pourrait améliorer grandement les algorithmes de localisation de caméra. Pour des applications d'infographie, le calcul du terme spéculaire de façon plus localisée pourrait optimiser le rendu par l'intermédiaire de notre procédé de prédiction.}
+Afin d'assurer le bon fonctionnement de notre modèle dans un contexte de réalité augmentée, plusieurs choses doivent être prises en compte. La possibilité d'avoir plusieurs sources de lumière pouvant potentiellement s'allumer ou s'éteindre. Nous avons également proposé une application de retexturing qui consiste à substituer la texture initiale de la surface en une autre. La difficulté de cette application est de synthétiser la nouvelle texture ainsi que les spécularités cohérentes qui la parcoure. Nous avons illustré nos résultats sur de nombreuses réelles et prouvé que le modèle JOLIMAS est efficace et adapté à un contexte de réalité augmenté.
