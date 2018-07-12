@@ -69,7 +69,7 @@ Ce problème pourrait affecter la qualité de la reconstruction de quadrique à par
 Une ellipse est définie de façon unique à partir de 5 points non-alignés et 5 droites non-colinéaires dans l'espace dual. Pour trois point de vues, chaque ellipse est contrainte par deux paires de droites provenant des autres points de vues ce qui rend le problème d'estimation de la conique duale sous-contrainte. Une des solutions proposées par \cite{reyes2005projective} est d'estimer les lignes épipolaires de façon plus précises à partir des ellipses provenant des autres points de vue et une droite supplémentaire provenant de la tangente d'un point de contour de l'ellipse de l'image actuelle. En utilisant ces 5 lignes, nous pouvons calculer une conique duale unique. Ce procédé est répété pour chaque point de contour et chaque point de vue. L'ellipse corrigée est celle minimisant notre distance ellipse/Point discutée dans la section \ref{sec:dist_conic_point}. Nous pouvons noter que l'efficacité du calcul d'ellipse dépend fortement de la qualité des points de contour de la spécularité.
 Les ellipses obtenues pour chaque point de vues seront utilisées dans le processus de reconstruction car elles respectent les contraintes épipolaires. Ce procédé est itératif, fiable et efficace. Nous illustrons une étape du procédé de correction à la figure \ref{fig:reyes_epipolar}. Dans notre contexte, nous ne pouvons pas nous limiter à seulement trois points de vue. Ainsi, nous incluons un raffinement non-linéaire à partir de au moins trois points de vue afin d'améliorer la reconstruction de quadrique.
 
-\subsection{Distance 2D Ellipse/Point}
+\subsection{Distance 2D ellipse/point}
 
 \subsubsection{Distance de Jaccard}
 \label{sec:jaccard}

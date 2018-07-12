@@ -2,19 +2,15 @@
 
 \section{Notations}
 \label{chapitre:tableNotations}
-
+Dans ce mémoire, nous utilisons des lettres minuscules en gras pour représenter les vecteurs et des lettres majuscules en gras pour représenter les matrices. Les scalaires sont représentés par des lettres minuscules.
 % =============================================================================
 \section*{Mathématiques} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 
 \begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
 
-	$\espace{E}{n}$ & Espace $E$ de dimension $n$ \smallAutoReturn
-	$\matrice{M}$   & Matrice \smallAutoReturn
+	$\mathtt{M}$   & Matrice \smallAutoReturn
 	$\vect{v}$            & Vecteur \smallAutoReturn
-	$[\vect{t}]_\times$     & Matrice antisymétrique créée à partir du vecteur 
-	$\vect{t}$ \smallAutoReturn
-	$\pinv{\matrice{M}}$             & Pseudo-inverse de la matrice $\matrice{M}$ \smallAutoReturn
 	$\hat{\vect{v}}$ &  Vecteur normalisé \smallAutoReturn
 	$\fonction{F}$ & Fonction mathématique \smallAutoReturn
 \end{longtable}
@@ -27,11 +23,11 @@
 \begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
 
 	$\equi$ & Égalité à un facteur non-nul près \smallAutoReturn
-	$\pDD{p}$ & Point 2D \smallAutoReturn
+	$\pDD{p}$ & Point 2D\smallAutoReturn
 	$\pDDHom{p}$ & Coordonnées homogènes du point 2D \smallAutoReturn
-	$\pDD{P}$ & Point 3D dans le repère monde\smallAutoReturn
+	$\pDD{P}$ & Point 3D\smallAutoReturn
 	$\pDDHom{P}$ & Coordonnées homogènes du point 3D \smallAutoReturn
-	$\droite{d}$      & Droite de l'espace \smallAutoReturn
+	$\droite{d}$      & Droite de l'espace tel que $\droite{d} = (a b c)^\top $ est sa représentation homogène \smallAutoReturn
 	$\plan{\pi}$ & Plan de l'espace \smallAutoReturn
 	$\plan{\pi}_\vect{P}$ & Plan tangent au point $\vect{P}$ \smallAutoReturn
 	$\hat{\vect{N}}(\vect{P})$ & Normale au point $\vect{P}$ \smallAutoReturn
@@ -47,10 +43,10 @@
 \begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
 	$\cam{C}$ & Caméra \smallAutoReturn
 	$\mathit{I}$ & Image capturée par la caméra \smallAutoReturn
-	$\matrice{P}$  & Matrice de projection \smallAutoReturn
+	$\mathtt{P}$  & Matrice de projection \smallAutoReturn
 	$\calib{K}$ & Matrice de paramètre intrinsèque de la caméra \smallAutoReturn
-	$\matrice{F}$   & Matrice fondamentale \smallAutoReturn
-	$\matrice{E}$   & Matrice essentielle \smallAutoReturn
+	$\mathtt{F}$   & Matrice fondamentale \smallAutoReturn
+	$\mathtt{E}$   & Matrice essentielle \smallAutoReturn
 	$\mathtt{R}$ & Rotation de la caméra  \smallAutoReturn
 	$\vect{V}$ & Position de la caméra \smallAutoReturn
 	$\mathtt{\Pi}$ & Pose de la caméra \smallAutoReturn
@@ -67,7 +63,7 @@
 	JOLIMAS & JOint LIght-MAterial Specularity \smallAutoReturn
 	RA & Réalité augmentée  \smallAutoReturn
 	RD & Réalité diminuée  \smallAutoReturn
-	SfM & Structure from Motion \smallAutoReturn
+	SfM & Structure-from-Motion \smallAutoReturn
 	SLAM & Simultaneous Localization and Mapping \smallAutoReturn
 	SVD & Singular value decomposition (décomposition en valeurs singulières) \smallAutoReturn
 \end{longtable}
@@ -76,13 +72,12 @@
 
 \begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
 	$x$ & Scalaire \\
-	$\mathtt{R}^n$ & Espace vectoriel de dimension $n$ \\
+	$\mathbb{R}^n$ & Espace vectoriel de dimension $n$ \\
 	$\mathbf{x}$ & Vecteur \\
 	$x_1 \dots$ & Coordonnées \\
 	$\|.\|$ & Norme euclidienne $L^2$ \\
 	$\phantom{|}|.|$ & Norme $L^1$ \\
 	$\wedge$ & Produit vectoriel \\
-	$[x]_{\times}$ & Matrice antisymétrique \\
 	$\mathtt{M}$ & Matrice \\
 	$M_{11} \dots$ & Coefficients \\
 	$\mathtt{M}^\top$ & Transposée \\
@@ -96,6 +91,9 @@
 	$\mu$ & Opération de normalisation \smallAutoReturn
 	$\mathtt{M}^*$ &  Matrice adjointe de $\mathtt{M}$ \smallAutoReturn
 	$\vect{M}_v$ & Matrice vectorisée \smallAutoReturn
+	$[\vect{t}]_\times$     & Matrice antisymétrique créée à partir du vecteur 
+	$\vect{t}$ \smallAutoReturn
+	$\pinv{\mathtt{M}}$             & Pseudo-inverse de la matrice $\mathtt{M}$ \smallAutoReturn
 \end{longtable}
 
 \section*{Images et éléments d'illumination}

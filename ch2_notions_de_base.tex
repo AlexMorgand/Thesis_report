@@ -6,7 +6,7 @@
 \graphicspath{{images/Ch2/}}
 
 \begin{chapeauChapitre}
-	Dans ce chapitre, nous introduisons les notions de base et les notations nécessaires à la compréhension du mémoire. Après avoir présenté les caméras perspectives et géométrie associée, nous rappellerons le formalisme des coniques et quadriques. Par la suite, nous donnerons quelques détails  pour décrire l'interaction lumière/matière, l'illumination locale, globale ainsi qu'un rappel de notion de courbure d'une surface. Nous terminerons par un rappel des plus importantes techniques d'optimisation utilisées. Plus de détails sur ces notions peuvent être trouvés dans le livre de \cite{Hartley2004}.
+	Dans ce chapitre, nous introduisons les notions de base et les notations nécessaires à la compréhension du mémoire. Après avoir présenté les caméras perspectives et la géométrie associée, nous rappellerons le formalisme des coniques et quadriques. Par la suite, nous donnerons quelques détails  pour décrire l'interaction lumière/matière, l'illumination locale, globale ainsi qu'un rappel de notion de courbure d'une surface. Nous terminerons par un rappel des plus importantes techniques d'optimisation utilisées.
 \end{chapeauChapitre}
 
 
@@ -55,22 +55,22 @@ L'espace projectif de dimension 2 est appelé \emph{plan projectif}. Un point de 
 
 L'équation de la droite $\droite{l}$ passant par les points $\pDDjim{h}_1$ et $\pDDjim{h}_2$ est obtenue en calculant leur produit vectoriel :
 \begin{equation}
-	\droite{l} = \pDDjim{h}_1 \times \pDDjim{h}_2.
+	\droite{l} = \pDDjim{h}_1 \wedge \pDDjim{h}_2.
 \end{equation}
 
 Dans l'espace $\espace{P}{2}$, droites et points jouent un rôle équivalent : c'est ce qu'on appelle le \emph{principe de dualité}. En particulier, à partir de l'équation duale de l'équation précédente, il est possible de calculer le point d'intersection de deux droites $\droite{l}_1$ et $\droite{l}_2$ :
 \begin{equation}
-	\pDDjim{h} = \droite{l}_1 \times \droite{l}_2.
+	\pDDjim{h} = \droite{l}_1 \wedge \droite{l}_2.
 \end{equation}
 
 
-\subsection{L'espace projectif 3D}
+\subsection{Espace projectif}
 \label{sec:3projectif}
-Un point $\pTD{Q}$ de $\espace{R}{3}$ aura pour coordonnées homogènes dans $\espace{P}{3}$ le vecteur
-\[\pTD{H}~=~\transpose{(X \ Y \ Z \ W)}.\]
-Dans cet espace de dimension 3, le dual du point $\pTD{Q}$ est le plan $\plan{\Pi}$ d'équation $aX~+~bY~+~cZ~+~d~=~0$ qui est représenté par le vecteur $\plan{\Pi}~=~\transpose{(a \ b \ c \ d)}$. L'appartenance du point $\pTD{Q}$ au plan $\plan{\Pi}$ est alors donnée par la relation :
+Un point $\vect{P}$ de $\espace{R}{3}$ aura pour coordonnées homogènes dans $\espace{P}{3}$ le vecteur
+$\vect{v}~=~\transpose{(X \ Y \ Z \ 1)}.$
+Dans cet espace de dimension 3, le dual du point $\vect{P}$ est le plan $\plan{\Pi}$ d'équation $aX~+~bY~+~cZ~+~d~=~0$ qui est représenté par le vecteur $\plan{\Pi}~=~\transpose{(a \ b \ c \ d)}$. L'appartenance du point $\vect{P}$ au plan $\plan{\Pi}$ est alors donnée par la relation :
 \begin{equation}
-      \transpose{\plan{\Pi}} \pTD{H} = 0.
+      \transpose{\plan{\Pi}} \vect{v} = 0.
 \end{equation}
 
 \section{Caméras perspectives}
@@ -83,11 +83,11 @@ Dans la suite, nous présenterons tout d'abord les différents paramètres caractér
 \subsection{Projection perspective}
 \label{sec:projectionPerspective}
 
-La projection perspective vise à calculer, pour tout point $\mathcal{Q} \in \espace{R}{3}$, la position 2D $\pDD{q}$ de sa projection dans l'image. Basée sur la projection centrale, cette transformation consiste à calculer l'intersection du plan de la \emph{rétine} de la caméra (\ie le capteur) avec le \emph{rayon de projection} de $\mathcal{Q}$. Ce dernier est défini comme étant la droite reliant le point $\mathcal{Q}$ au centre de la caméra (figure \ref{fig:ch2:projectionPerspective}).
+La projection perspective vise à calculer, pour tout point $\vect{P} \in \espace{R}{3}$, la position 2D $\pDD{p}$ de sa projection dans l'image. Basée sur la projection centrale, cette transformation consiste à calculer l'intersection du plan de la \emph{rétine} de la caméra (\ie le capteur) avec le \emph{rayon de projection} de $\vect{P}$. Ce dernier est défini comme étant la droite reliant le point $\vect{P}$ au centre de la caméra (figure \ref{fig:ch2:projectionPerspective}).
 
 Cette projection peut être vue comme un enchaînement de trois transformations géométriques (figure \ref{fig:ch2:projectionPerspective}) :\autoParSpace
 \begin{itemize}
-	\item La première transformation est un changement de repère qui consiste à exprimer les coordonnées de $\mathcal{Q}$ dans le repère lié à la caméra. Ce changement de repère est défini par les \emph{paramètres extrinsèques} de la caméra. Dans la suite du mémoire, en cas d'ambiguïté, les exposant $\monde{W}$ ou  $\cam{C}$ indiqueront le repère dans lequel les coordonnées du point 3D sont exprimées (respectivement monde ou caméra). \autoParSpace
+	\item La première transformation est un changement de repère qui consiste à exprimer les coordonnées de $\vect{P}$ dans le repère lié à la caméra. Ce changement de repère est défini par les \emph{paramètres extrinsèques} de la caméra. Dans la suite du mémoire, en cas d'ambiguïté, les exposant $\monde{W}$ ou  $\cam{C}$ indiqueront le repère dans lequel les coordonnées du point 3D sont exprimées (respectivement monde ou caméra). \autoParSpace
 
 	\item La deuxième transformation est la \emph{projection centrale} du point 3D. Elle revient à passer du point 3D (exprimé dans le repère caméra) au point d'intersection du rayon de projection et du capteur. Les coordonnées 2D du point résultant sont alors exprimées dans le plan de la rétine (en mm). \autoParSpace
 
@@ -104,15 +104,15 @@ Cette projection peut être vue comme un enchaînement de trois transformations gé
 \end{figure}
 
 
-La projection perspective est donc une transformation projective de $\espace{P}{3} \rightarrow \espace{P}{2}$. En pratique, elle sera représentée par une \emph{matrice de projection} $\matrice{P}$ de dimension ($3 \times 4$). La projection perspective s'exprime alors par la relation matricielle suivante :
+La projection perspective est donc une transformation projective de $\espace{P}{3} \rightarrow \espace{P}{2}$. En pratique, elle sera représentée par une \emph{matrice de projection} $\mathtt{P}$ de dimension ($3 \times 4$). La projection perspective s'exprime alors par la relation matricielle suivante :
 \begin{equation}
-		\pDDHom{q} \equi \matrice{P} \pTDHom{Q}[\monde{W}][].
+		\pDDHom{p} \equi \mathtt{P} \pDDHom{P}[\monde{W}][].
 		\label{eq:definitionProjection}
 \end{equation}
 
-La matrice $\matrice{P}$ se décompose selon les trois transformations citées précédemment :
+La matrice $\mathtt{P}$ se décompose selon les trois transformations citées précédemment :
 \begin{equation}
-	      \matrice{P} = \calib{K} \ \begin{pmatrix}
+	      \mathtt{P} = \calib{K} \ \begin{pmatrix}
 							    1 & 0 & 0 & 0 \\
 							    0 & 1 & 0 & 0 \\
                                                             0 & 0 & 1 & 0
@@ -136,7 +136,7 @@ où $\calib{K}$ est la \emph{matrice de calibrage} (de taille $3\times3$) de la c
 Les paramètres extrinsèques d'une caméra caractérisent la pose de celle-ci dans le repère monde. La pose d'une caméra possède six degrés de liberté :
 \begin{itemize}
 		\item La position 3D du centre optique, décrit par le vecteur $\vect{t}~=~\transpose{((\vect{t})_x \ (\vect{t})_y \ (\vect{t})_z)}$.
-		\item L'orientation 3D de la caméra. En pratique, cette orientation sera représentée sous la forme d'une matrice de rotation $\matrice{R}$, cette matrice pouvant être obtenue à partir des trois angles roulis, tangage et lacet $\vect{r}~=~\transpose{(\alpha \ \beta\ \gamma)}$ (voir figure \ref{fig:ch2:roulis_tangage_lacet}).
+		\item L'orientation 3D de la caméra. En pratique, cette orientation sera représentée sous la forme d'une matrice de rotation $\mathtt{R}$, cette matrice pouvant être obtenue à partir des trois angles roulis, tangage et lacet $\vect{r}~=~\transpose{(\alpha \ \beta\ \gamma)}$ (voir figure \ref{fig:ch2:roulis_tangage_lacet}).
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -149,31 +149,31 @@ Les paramètres extrinsèques d'une caméra caractérisent la pose de celle-ci dans 
 
 Les paramètres extrinsèques de la caméra permettent d'établir les changements de repère monde/caméra, à savoir : 
 \begin{align}
-		  \pTDHom{Q}[\cam{C}][] & \equi \begin{pmatrix}
+		  \pDDHom{P}[\cam{C}][] & \equi \begin{pmatrix}
 							\transpose{\mathtt{R}}  & -\transpose{\mathtt{R}} \vect{t} \\
 								0_{1\times3} & 1
-						\end{pmatrix} \pTDHom{Q}[\monde{W}][] \autoReturn  
-		  \pTDHom{Q}[\monde{W}][] & \equi \begin{pmatrix}
+						\end{pmatrix} \pDDHom{P}[\monde{W}][] \autoReturn  
+		  \pDDHom{P}[\monde{W}][] & \equi \begin{pmatrix}
 							\mathtt{R}  & \vect{t} \\
 								0_{1\times3} & 1
-						\end{pmatrix} \pTDHom{Q}[\cam{C}][]
+						\end{pmatrix} \pDDHom{P}[\cam{C}][]
 \end{align}
 
 \paragraph{Projection centrale.}
 %\label{sec:projectionCentrale}
-Lorsqu'on utilise les coordonnées homogènes, la projection centrale d'un point $\mathcal{Q}[][\cam{C}]$ est une fonction linéaire de $\espace{P}{3} \mapsto \espace{P}{2}$ caractérisée par la matrice de dimension $3 \times 4$ :
+Lorsqu'on utilise les coordonnées homogènes, la projection centrale d'un point $\mathcal{P}_{\cam{C}}$ est une fonction linéaire de $\espace{P}{3} \mapsto \espace{P}{2}$ caractérisée par la matrice de dimension $3 \times 4$ :
 \begin{equation}
-		\pDDHom{q}  \equi \begin{pmatrix}
+		\pDDHom{p}  \equi \begin{pmatrix}
 							    1 & 0 & 0 & 0 \\
 							    0 & 1 & 0 & 0 \\
                                                             0 & 0 & 1 & 0
-				                    \end{pmatrix} \pTDHom{Q}[\cam{C}][].
+				                    \end{pmatrix} \pDDHom{P}[\cam{C}][].
 \end{equation}
 
 Dans de nombreuses publications, le changement de repère 3D et la projection centrale sont vus comme une unique projection centrale à partir d'un point 3D dans le repère monde. Cela s'écrit sous forme matricielle :
 \begin{equation}
 	\begin{split}
-		\pDDHom{q} & \equi \begin{pmatrix}
+		\pDDHom{p} & \equi \begin{pmatrix}
 							    1 & 0 & 0 & 0 \\
 							    0 & 1 & 0 & 0 \\
                                                             0 & 0 & 1 & 0
@@ -181,17 +181,17 @@ Dans de nombreuses publications, le changement de repère 3D et la projection cen
 						     \begin{pmatrix}
 							  \transpose{\mathtt{R}}  & -\transpose{\mathtt{R}} \vect{t} \\
 							  0_{1 \times 3} & 1
-							\end{pmatrix} \pTDHom{Q}[\monde{W}][] \autoReturn
+							\end{pmatrix} \pDDHom{P}[\monde{W}][] \autoReturn
 				      & \equi \begin{pmatrix}
 							  \transpose{\mathtt{R}}  & -\transpose{\mathtt{R}} \vect{t}
-							\end{pmatrix} \pTDHom{Q}[\monde{W}][].
+							\end{pmatrix} \pDDHom{P}[\monde{W}][].
 	\end{split}
 \end{equation}
 La projection d'un point exprimé dans le repère monde dans l'image (équation \ref{eq:definitionProjection}) s'écrit donc généralement sous cette forme :
 \begin{equation}
-	      \pDDHom{q} \equi \calib{K} \   \begin{pmatrix}
+	      \pDDHom{p} \equi \calib{K} \   \begin{pmatrix}
 						      \transpose{\mathtt{R}}  & -\transpose{\mathtt{R}} \vect{t} \\
-						\end{pmatrix} \pTDHom{Q}[\monde{W}][].
+						\end{pmatrix} \pDDHom{P}[\monde{W}][].
 \end{equation}
 
 
@@ -218,11 +218,11 @@ Nous retrouvons dans la matrice de calibrage les différents paramètres intrinsèq
 
 Dans le cadre de ce mémoire, nous considérerons à la fois que la matrice de calibrage est connue et que les entrées de nos algorithmes ont été préalablement corrigées en distorsion. En pratique, la distorsion radiale est modélisée en utilisant 5 coefficients. La distorsion tangentielle étant beaucoup plus faible, elle sera négligée dans nos travaux. Pour plus de renseignements sur le calibrage des caméras, nous invitons le lecteur à se référer à l'article de \cite{lavest1998we}.
 
-\subsection{Notion de rétroprojection}
+\subsection{Rétroprojection}
 \label{sec:retroprojection}
-La \emph{rétroprojection} peut être vue comme l'opération inverse de la projection. Son but est d'inférer la position d'un point 3D $\pTD{Q}$ à partir de son observation $\pDD{q}$ dans l'image. Néanmoins, à partir d'une seule image, il est impossible d'obtenir la position exacte du point 3D. En effet, l'utilisation d'une seule caméra ne permet pas de retrouver la profondeur à laquelle se situe ce point. La rétroprojection d'un point de l'image se traduit sous la forme du rayon optique qui passe à la fois par le centre de la caméra $\cam{C}$ et par l'observation $\pDD{q}$. La position du point 3D est donc exprimée à un facteur $\lambda$ près qui reflète la profondeur du point sur ce rayon :
+La \emph{rétroprojection} peut être vue comme l'opération inverse de la projection. Son but est d'inférer la position d'un point 3D $\vect{P}$ à partir de son observation $\pDD{p}$ dans l'image. Néanmoins, à partir d'une seule image, il est impossible d'obtenir la position exacte du point 3D. En effet, l'utilisation d'une seule caméra ne permet pas de retrouver la profondeur à laquelle se situe ce point. La rétroprojection d'un point de l'image se traduit sous la forme du rayon optique qui passe à la fois par le centre de la caméra $\cam{C}$ et par l'observation $\pDD{p}$. La position du point 3D est donc exprimée à un facteur $\lambda$ près qui reflète la profondeur du point sur ce rayon :
 \begin{equation}
-  \pTD{Q}(\lambda) = \lambda \pinv{\mat{P}} \pDDHom{q}
+  \vect{P}(\lambda) = \lambda \pinv{\mat{P}} \pDDHom{p}
   \label{eq:notions:retroprojection}
 \end{equation}
 où $\pinv{\mat{P}}$ désigne la pseudo-inverse de la matrice $\mat{P}$ : 
@@ -230,7 +230,7 @@ où $\pinv{\mat{P}}$ désigne la pseudo-inverse de la matrice $\mat{P}$ :
 	\pinv{\mat{P}}~=~\transpose{\mat{P}}(\mat{P} \transpose{\mat{P}})^{-1}
 	\label{eq:defPseudoInverse}
 \end{equation} 
-de telle sorte que $\mat{P}\pTD{Q}(\lambda) = \lambda (\mat{P}\pinv{\mat{P}}) \pDDHom{q} = \lambda \pDDHom{q}$.
+de telle sorte que $\mat{P}\vect{P}(\lambda) = \lambda (\mat{P}\pinv{\mat{P}}) \pDDHom{p} = \lambda \pDDHom{p}$.
 
 \section{Image}
 \label{sec:notions:images}
@@ -265,9 +265,9 @@ Notons que l'on utilise les crochets pour les coordonnées discrètes et les paren
 Les opérations suivantes sur les images seront utiles par la suite :
 \paragraph{Homographie.} Une homographie décrit une transformation linéaire dans l'espace projectif. L'homographie $\Himg{I}{\mat{H}}$ de l'image $\I$ décrite par la matrice $\mat{H} \in \espace{R}{3\times 3}$ est définie par :
   \begin{equation}
-    \forall \pDD{q}  \in \mathbb{R}^2 \quad\text{t.q.}\quad
+    \forall \pDD{p}  \in \mathbb{R}^2 \quad\text{t.q.}\quad
     \pi(\mat{H}\pDDHom{q}) \in \domimg{I} \quad : \quad
-    \Himg{I}{\mat{H}}(\pDD{q}) = \I\left(\pi(\mat{H}\pDDHom{q})\right).
+    \Himg{I}{\mat{H}}(\pDD{}) = \I\left(\pi(\mat{H}\pDDHom{p})\right).
   \end{equation}
   Deux observations d'une même surface rigide sont toujours liées par une homographie.
 
@@ -277,9 +277,9 @@ Les opérations suivantes sur les images seront utiles par la suite :
     $
     Elle peut donc s'écrire :
     \begin{equation}
-	\forall \pDD{q} \in \mathbb{R}^2 \quad\text{t.q.}\quad
-	\pi(\overline{\mat{H}}\pDD{q}+\vect{t}_{\mat{H}}) \in \domimg{I} \quad : \quad
-	\Himg{I}{\mat{H}}(\pDD{q}) = \I\left(\pi(\overline{\mat{H}}\pDD{q}+\vect{t}_{\mat{H}})\right)
+	\forall \pDD{p} \in \mathbb{R}^2 \quad\text{t.q.}\quad
+	\pi(\overline{\mat{H}}\pDD{p}+\vect{t}_{\mat{H}}) \in \domimg{I} \quad : \quad
+	\Himg{I}{\mat{H}}(\pDD{p}) = \I\left(\pi(\overline{\mat{H}}\pDD{p}+\vect{t}_{\mat{H}})\right)
     \end{equation}
     avec:
     \begin{equation*}
@@ -298,7 +298,7 @@ Les opérations suivantes sur les images seront utiles par la suite :
     
   \paragraph{Translation.} La translation de l'image $\I$ de vecteur $\vect{t} \in \espace{R}{2}$ est notée $\Timg{I}{\vect{t}}$ et définie telle que :
   \begin{equation}
-    \forall \pDD{q} \quad\text{t.q.}\quad(\pDD{q} +\vect{t}) \in \domimg{I} \quad : \quad \Timg{I}{\vect{t}}(\pDD{q} ) = \img{I}(\pDD{q} +\vect{t}).
+    \forall \pDD{p} \quad\text{t.q.}\quad(\pDD{p} +\vect{t}) \in \domimg{I} \quad : \quad \Timg{I}{\vect{t}}(\pDD{p} ) = \img{I}(\pDD{p} +\vect{t}).
   \end{equation}
 
   \paragraph{Convolution.} La convolution, notée $\ast$ est une opération permettant d'appliquer un filtre linéaire à une image. En coordonnées discrètes, une convolution sur l'image $\I$ est définie par une image $\win$ de domaine $\domimg{W}$, appelée \emph{masque} ou \emph{noyau}:
@@ -483,7 +483,7 @@ On peut noter qu'une enveloppe d'une quadrique de rang 1 ou 2 est non-définie ca
 %\fix{A remplir si nécessaire}
 
 % =============================================================================
-\section{Géométrie multivue} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Géométrie multi-vues et reconstruction 3D} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:localisation_reconstruiction} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
 Lorsqu'une même scène est observée par plusieurs vues, il est possible d'estimer le déplacement relatif entre les différentes caméras et de calculer la géométrie 3D de l'environnement observé.  Ce cas de figure peut apparaître dans différentes configurations : \autoParSpace
@@ -511,36 +511,36 @@ La \emph{géométrie épipolaire} décrit les contraintes reliant les observations d
 \end{figure}
 
 \paragraph{Matrice fondamentale.} 
-La \emph{matrice fondamentale} exprime la relation épipolaire dans le cas où les paramètres internes des caméras sont inconnus. Ainsi, pour un point $\pDD{q}[1]$ de l'image de la première caméra, il est possible de calculer la droite $\droite{d}_2$ sur laquelle se situe l'observation correspondante dans la deuxième caméra (figure \ref{fig:ch2:geometrieEpipolaire}) :
+La \emph{matrice fondamentale} exprime la relation épipolaire dans le cas où les paramètres internes des caméras sont inconnus. Ainsi, pour un point $\pDD{p}[1]$ de l'image de la première caméra, il est possible de calculer la droite $\droite{d}_2$ sur laquelle se situe l'observation correspondante dans la deuxième caméra (figure \ref{fig:ch2:geometrieEpipolaire}) :
 \begin{equation}
-		\droite{d}_2 \equi \matrice{F} \pDDHom{q}[1].
+		\droite{d}_2 \equi \mathtt{F} \pDDHom{p}[1].
 \end{equation}
-La droite $\droite{d}_2$ est appelée \emph{droite épipolaire} associée à $\pDD{q}[1]$. De plus, si deux observations $\pDD{q}[1]$ et $\pDD{q}[2]$ correspondent au même point de l'espace, elles vérifient :
+La droite $\droite{d}_2$ est appelée \emph{droite épipolaire} associée à $\pDD{p}[1]$. De plus, si deux observations $\pDD{p}[1]$ et $\pDD{p}[2]$ correspondent au même point de l'espace, elles vérifient :
 \begin{equation}
-		\transpose{\pDDHom{q}[2]} \matrice{F}  \pDDHom{q}[1] = 0.
+		\transpose{\pDDHom{p}[2]} \mathtt{F}  \pDDHom{p}[1] = 0.
 		\label{eq:ch2:matriceFondamentale}
 \end{equation}
 
 
-Cette relation permet d'estimer la matrice fondamentale à partir d'associations 2D entre deux images. En pratique, $\matrice{F}$ peut se calculer à l'aide de 8 points (\cite{hartley1997defense}) ou à partir de 7 points  sous certaines hypothèses (\cite{torr1997development}).
+Cette relation permet d'estimer la matrice fondamentale à partir d'associations 2D entre deux images. En pratique, $\mathtt{F}$ peut se calculer à l'aide de 8 points (\cite{hartley1997defense}) ou à partir de 7 points  sous certaines hypothèses (\cite{torr1997development}).
  
-Dans chacune des images, un point joue un rôle particulier. Il s'agit des deux \emph{épipôles} $\pDD{e}[1]$ et $\pDD{e}[2]$. Ils correspondent à la projection dans l'image du centre optique de l'autre caméra. Les épipôles présentent deux caractéristiques intéressantes. Tout d'abord, elles définissent le noyau de $\matrice{F}$ : $\matrice{F} \pDDHom{e}[i]~=~0, \forall i \in \{1,2\}$. De plus, les épipôles correspondent aux points d'intersection de toutes les droites épipolaires de chacune des images.
+Dans chacune des images, un point joue un rôle particulier. Il s'agit des deux \emph{épipôles} $\pDD{e}[1]$ et $\pDD{e}[2]$. Ils correspondent à la projection dans l'image du centre optique de l'autre caméra. Les épipôles présentent deux caractéristiques intéressantes. Tout d'abord, elles définissent le noyau de $\mathtt{F}$ : $\mathtt{F} \pDDHom{e}[i]~=~0, \forall i \in \{1,2\}$. De plus, les épipôles correspondent aux points d'intersection de toutes les droites épipolaires de chacune des images.
 
 \paragraph{Matrice essentielle.} 
-La \emph{matrice essentielle} $\matrice{E}$ peut être vue comme le cas particulier de la matrice fondamentale dans le cas où le calibrage des caméras ($\calib{K}_1$ et $\calib{K}_2$) est connu, ce qui est le cas qui nous intéresse en particulier. La relation entre matrice essentielle et matrice fondamentale est la suivante :
+La \emph{matrice essentielle} $\mathtt{E}$ peut être vue comme le cas particulier de la matrice fondamentale dans le cas où le calibrage des caméras ($\calib{K}_1$ et $\calib{K}_2$) est connu, ce qui est le cas qui nous intéresse en particulier. La relation entre matrice essentielle et matrice fondamentale est la suivante :
 \begin{equation}
-	 \matrice{E} \equi \transpose{\calib{K}_2} \matrice{F} \calib{K}_1.
+	 \mathtt{E} \equi \transpose{\calib{K}_2} \mathtt{F} \calib{K}_1.
 \end{equation}
 L'équation \eqref{eq:ch2:matriceFondamentale} devient dans ce cas :
 \begin{equation}
-		\transpose{\pDDHom{q}[2]} \left( \invTranspose{\calib{K}_2} \matrice{E} \inv{\calib{K}_1} \right) \pDDHom{q}[1] = 0,
+		\transpose{\pDDHom{p}[2]} \left( \invTranspose{\calib{K}_2} \mathtt{E} \inv{\calib{K}_1} \right) \pDDHom{p}[1] = 0,
 \end{equation}
 où $\invTranspose{\calib{K}_2}$ est la transposée inverse de $\calib{K}_2$. Pour estimer la matrice essentielle, \cite{nister2004efficient} a proposé un algorithme efficace appelé \emph{algorithme des 5 points}. 
 
 \paragraph{Relation entre matrice essentielle et déplacement relatif.}
-En fonction des cas d'étude, la matrice essentielle peut avoir différentes utilisations. En effet, il existe une relation qui lie la matrice essentielle du couple de caméras ($\cam{C}[1]$, $\cam{C}[2]$) au déplacement relatif entre ces caméras. Le déplacement relatif est défini par le couple  $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$. Une formalisation en sera faite à la section~\ref{sec:definitionDeplacementRelatif}. La relation entre $\matrice{E}$, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ s'écrit :
+En fonction des cas d'étude, la matrice essentielle peut avoir différentes utilisations. En effet, il existe une relation qui lie la matrice essentielle du couple de caméras ($\cam{C}[1]$, $\cam{C}[2]$) au déplacement relatif entre ces caméras. Le déplacement relatif est défini par le couple  $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$. Une formalisation en sera faite à la section~\ref{sec:definitionDeplacementRelatif}. La relation entre $\mathtt{E}$, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ s'écrit :
 \begin{equation}
-		\matrice{E} = \antiSym{\vect{t}_{1 \rightarrow 2}} \mathtt{R}_{1 \rightarrow 2},
+		\mathtt{E} = \antiSym{\vect{t}_{1 \rightarrow 2}} \mathtt{R}_{1 \rightarrow 2},
 \end{equation}
 où $\antiSym{\vect{t}}$ est la matrice antisymétrique construite à partir du vecteur $\vect{t}$, à savoir :
 \begin{equation}
@@ -555,22 +555,22 @@ Dès lors, deux cas de figure sont possibles. Si le déplacement entre les caméras
 
 
 \paragraph{Homographies 2D}
-Dans le cas où la scène observée est planaire, la relation qui existe entre deux caméras est définie
+Dans le cas où la scène observée est plane, la relation qui existe entre deux caméras est définie
 par une \emph{homographie} $\mathit{H}$ (ou \emph{transformation projective}) 2D qui représente une transformation linéaire inversible de $\espace{P}{2}$ dans $\espace{P}{2}$ qui conserve l'alignement. Le théorème suivant permet de caractériser de façon matricielle les homographies 2D :  
 %\begin{theorem}
-		  Une fonction $\mathit{H} : \espace{P}{2} \to \espace{P}{2}$ est une homographie si et seulement s'il existe une matrice $\matrice{H}$ de taille $3\times3$ telle que pour tout point $\pDDHom{q}$ de $\espace{P}{2}$, $\mathit{H}(\pDDHom{q}) = \matrice{H} \pDDHom{q}$.
+		  Une fonction $\mathit{H} : \espace{P}{2} \to \espace{P}{2}$ est une homographie si et seulement s'il existe une matrice $\mathtt{H}$ de taille $3\times3$ telle que pour tout point $\pDDHom{q}$ de $\espace{P}{2}$, $\mathit{H}(\pDDHom{q}) = \mathtt{H} \pDDHom{q}$.
 %\end{theorem}
-La matrice $\matrice{H}$ est homogène : elle est définie à un facteur près et possède donc 8 degrés de liberté.
+La matrice $\mathtt{H}$ est homogène : elle est définie à un facteur près et possède donc 8 degrés de liberté.
 
-Un des cas courants d'utilisation des homographies 2D est celui décrit dans la figure~\ref{fig:ch2:homographie2D}. Nous nous plaçons ici dans le cas de deux caméras observant un plan $\plan{\Pi}$ de l'espace. La projection centrale du plan de l'espace au plan image (et réciproquement) définit une homographie 2D (les coordonnées des points 2D étant exprimées dans le repère 2D relatif à chacun des plans). Un résultat intéressant est alors que, pour tout point 3D $\pTD{P}$ appartenant au plan $\plan{\Pi}$, la fonction passant des coordonnées de son observation $\pDD{q}[1]$ dans l'image 1 aux coordonnées de son observation $\pDD{q}[2]$ dans l'image 2 est également une homographie. En effet, la composition de 2 homographies est une homographie. Le lien entre les observations peut donc s'écrire :
+Un des cas courants d'utilisation des homographies 2D est celui décrit dans la figure~\ref{fig:ch2:homographie2D}. Nous nous plaçons ici dans le cas de deux caméras observant un plan $\plan{\Pi}$ de l'espace. La projection centrale du plan de l'espace au plan image (et réciproquement) définit une homographie 2D (les coordonnées des points 2D étant exprimées dans le repère 2D relatif à chacun des plans). Un résultat intéressant est alors que, pour tout point 3D $\vect{P}$ appartenant au plan $\plan{\Pi}$, la fonction passant des coordonnées de son observation $\pDD{p}[1]$ dans l'image 1 aux coordonnées de son observation $\pDD{p}[2]$ dans l'image 2 est également une homographie. En effet, la composition de 2 homographies est une homographie. Le lien entre les observations peut donc s'écrire :
 \begin{equation}
 	\begin{split}
-		\pDDHom{q}[2] & \equi  \matrice{H}_{1 \rightarrow 2} \pDDHom{q}[1] \autoReturn
+		\pDDHom{p}[2] & \equi  \mathtt{H}_{1 \rightarrow 2} \pDDHom{p}[1] \autoReturn
 					    & \equi   \begin{pmatrix}
 								h_{11} & h_{12} & h_{13} \\
 								h_{21} & h_{22} & h_{23} \\
 								h_{31} & h_{32} & h_{33}
-							\end{pmatrix} \pDDHom{q}[1].
+							\end{pmatrix} \pDDHom{p}[1].
 	\end{split}
 \end{equation}
 
@@ -591,42 +591,42 @@ Dans cette section, nous allons présenter l'ensemble des outils mathématiques él
 \label{sec:definitionDeplacementRelatif}
 Le but de cette section est de formaliser la notion de \emph{déplacement relatif} entre deux caméras ainsi que les notations associées. Comme nous l'avons vu précédemment, la pose des caméras peut être vue comme un changement de repère entre le repère monde et les repères attachés aux caméras :
 \begin{align}
-	  \pTDHom{Q}[{\cam{C}[1]}][] & \equi  \begin{pmatrix}
+	  \pTDHom{P}[{\cam{C}[1]}][] & \equi  \begin{pmatrix}
 						\transpose{\mathtt{R}_1}  & -\transpose{\mathtt{R}_1} \vect{t_1} \\
 							0_{1\times3} & 1
-					\end{pmatrix} \pTDHom{Q}[\monde{W}][] \label{eq:poseCam1} \autoReturn
-	\pTDHom{Q}[{\cam{C}[2]}][] & \equi  \begin{pmatrix}
+					\end{pmatrix} \pTDHom{P}[\monde{W}][] \label{eq:poseCam1} \autoReturn
+	\pTDHom{P}[{\cam{C}[2]}][] & \equi  \begin{pmatrix}
 						\transpose{\mathtt{R}_2}  & -\transpose{\mathtt{R}_2} \vect{t_2} \\
 							0_{1\times3} & 1
-					\end{pmatrix} \pTDHom{Q}[\monde{W}][] \label{eq:poseCam2}
+					\end{pmatrix} \pTDHom{P}[\monde{W}][] \label{eq:poseCam2}
 \end{align}
-avec $\pTD{P}[{\cam{C}[1]}][]$ et $ \pTD{P}[{\cam{C}[2]}][]$  les coordonnées de $\pTD{P}$ respectivement dans les repères liés aux caméras $\cam{C}[1]$ et $\cam{C}[2]$ et $\pTD{P}[\monde{W}][]$ ce même point exprimé dans le repère monde. Afin de fixer les notations, nous appellerons $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$ le déplacement relatif entre les caméras, c'est-à-dire la transformation permettant de passer du repère lié à $\cam{C}[1]$ à celui lié à $\cam{C}[2]$ :
+avec $\vect{P}[{\cam{C}[1]}][]$ et $ \vect{P}[{\cam{C}[2]}][]$  les coordonnées de $\vect{P}$ respectivement dans les repères liés aux caméras $\cam{C}[1]$ et $\cam{C}[2]$ et $\vect{P}[\monde{W}][]$ ce même point exprimé dans le repère monde. Afin de fixer les notations, nous appellerons $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$ le déplacement relatif entre les caméras, c'est-à-dire la transformation permettant de passer du repère lié à $\cam{C}[1]$ à celui lié à $\cam{C}[2]$ :
 \begin{equation}
-		\pTDHom{Q}[{\cam{C}[2]}][]  \equi  \begin{pmatrix}
+		\pDDHom{P}[{\cam{C}[2]}][]  \equi  \begin{pmatrix}
 								      \mathtt{R}_{1 \rightarrow 2}  & \vect{t}_{1 \rightarrow 2} \\
 									      0_{1\times3} & 1
-									  \end{pmatrix} \pTDHom{Q}[{\cam{C}[1]}][].	
+									  \end{pmatrix} \pDDHom{P}[{\cam{C}[1]}][].	
 		\label{eq:definitionDeplacementRelatif}
 \end{equation}
 Des équations \eqref{eq:poseCam1} et \eqref{eq:poseCam2}, on peut obtenir le système d'équations suivant :
 \begin{equation}
 \left\{
 		\begin{aligned}
-			 \pTDHom{Q}[\monde{W}][] & \equi \begin{pmatrix} 
+			 \pDDHom{P}[\monde{W}][] & \equi \begin{pmatrix} 
 								\mathtt{R}_1  & \vect{t_1} \\
 									0_{1\times3} & 1
-			  					\end{pmatrix} \pTDHom{Q}[{\cam{C}[1]}][] \autoReturn
- 			\pTDHom{Q}[{\cam{C}[2]}][] & \equi  \begin{pmatrix}
+			  					\end{pmatrix} \pDDHom{P}[{\cam{C}[1]}][] \autoReturn
+ 			\pDDHom{P}[{\cam{C}[2]}][] & \equi  \begin{pmatrix}
  								\transpose{\mathtt{R}_2}  & -\transpose{\mathtt{R}_2} \vect{t_2} \\
  									0_{1\times3} & 1
- 							\end{pmatrix} \pTDHom{Q}[\monde{W}][]
+ 							\end{pmatrix} \pDDHom{P}[\monde{W}][]
 		\end{aligned}
 \right.
 \end{equation}
 d'où
 \begin{equation}
 	\pTDHom{Q}[{\cam{C}[2]}][]  \equi  \begin{pmatrix}
-				    \transpose{\mathtt{R}_{2}} \matrice{R}_{1}  & \transpose{\mathtt{R}_{2}} (\vect{t}_{1} - \vect{t}_{2}) \\
+				    \transpose{\mathtt{R}_{2}} \mathtt{R}_{1}  & \transpose{\mathtt{R}_{2}} (\vect{t}_{1} - \vect{t}_{2}) \\
 					    0_{1\times3} & 1
 					\end{pmatrix} \pTDHom{Q}[{\cam{C}[1]}][].
 \end{equation}
@@ -645,15 +645,15 @@ Le déplacement relatif entre les caméras est donc défini comme suit :
 \label{sec:deplacementAssociations2D2D}
 Lorsque la structure de l'environnement est inconnu, il est tout de même possible de calculer le déplacement relatif entre deux caméras. Cela nécessite d'associer les observations des 2 caméras qui correspondent aux mêmes points 3D de l'environnement. Comme nous l'avons vu précédemment (section \ref{sec:geometrieEpipolaire}), ceci permet de calculer la matrice fondamentale (algorithme des 8 points, \cite{hartley1997defense}) ou essentielle (algorithme des 5 points, \cite{nister2004efficient}). Il est alors possible d'extraire d'une de ces matrices le déplacement inter-caméra $(\mathtt{R}_{1 \rightarrow 2}, \vect{t}_{1 \rightarrow 2})$.
 
-Dans le cas de caméras non-calibrées, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ sont calculés à partir de la matrice fondamentale (\cite{Hartley2004}). Dans ce cas, le déplacement intercaméras ne peut être retrouvé qu'à une transformation projective près. En particulier, ceci induit qu'il est impossible de retrouver les rapports de distance et les angles.
+Dans le cas de caméras non-calibrées, $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$ sont calculés à partir de la matrice fondamentale (\cite{Hartley2004}). Dans ce cas, le déplacement inter-caméras ne peut être retrouvé qu'à une transformation projective près. En particulier, ceci induit qu'il est impossible de retrouver les rapports de distance et les angles.
 
-Le calibrage des caméras étant connu dans notre étude, il est préférable d'utiliser la matrice essentielle. La décomposition en valeurs singulières SVD (\cite{faugeras1993three}) de celle-ci permet en effet d'en extraire quatre couples de solutions possibles pour $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$. Parmi ces 4 couples, on retient le couple permettant de reconstruire les 5 points ayant servi au calcul de $\matrice{E}$ devant les 2 caméras . Le détail de cette décomposition peut être trouvé dans l'article de \cite{nister2004efficient}.
+Le calibrage des caméras étant connu dans notre étude, il est préférable d'utiliser la matrice essentielle. La décomposition en valeurs singulières SVD (\cite{faugeras1993three}) de celle-ci permet en effet d'en extraire quatre couples de solutions possibles pour $\mathtt{R}_{1 \rightarrow 2}$ et $\vect{t}_{1 \rightarrow 2}$. Parmi ces 4 couples, on retient le couple permettant de reconstruire les 5 points ayant servi au calcul de $\mathtt{E}$ devant les 2 caméras . Le détail de cette décomposition peut être trouvé dans l'article de \cite{nister2004efficient}.
 
 Dans le cas calibré, le déplacement relatif entre les 2 caméras (et donc toute la structure 3D sous-jacente) est défini à un facteur près. En effet, dans le cas du calcul du déplacement par associations 2D/2D, le facteur d'échelle de la scène (c'est-à-dire sa métrique) n'est pas observable. En pratique, cette échelle est donc fixée arbitrairement. 
 
 Notons également que seul le déplacement relatif est défini mais pas la pose des caméras dans le repère monde. En effet, aucune information de localisation absolue n'est fournie de sorte que les deux caméras obtenues sont positionnées à une rotation et une translation près dans le monde. Ainsi, si le déplacement relatif est défini à un facteur près, la pose absolue des caméras est définie à 7 degrés près. Une transformation 3D possédant ces 7 degrés de liberté est appelée \emph{similitude} et peut être représentée par la matrice homogène suivante :
 \begin{equation}
-	  \matrice{S}  \equi \begin{pmatrix}
+	  \mathtt{S}  \equi \begin{pmatrix}
 							s \mathtt{R} & \vect{t} \\
 							0_{1 \times 3}  & 1
 						\end{pmatrix},
@@ -681,7 +681,7 @@ Dans un but de robustesse et de précision des calculs numériques, la notion de t
 \label{sec:calculDePose2D3D}
 Une fois la structure de l'environnement partiellement connue, il est possible de calculer la pose d'une caméra tiers à partir d'associations réalisées entre les observations 2D de son image et la position 3D de 3 points de l'environnement. De nombreuses méthodes ont été proposées pour résoudre ce problème. Une comparaison de certaines de ces méthodes peut être trouvée dans l'article de \cite{haralick1994review}. Plus récemment, \cite{lepetit2009epnp} ont proposé une nouvelle approche plus performante (en temps de calcul et en précision) du calcul de pose.
 
-L'utilisation d'associations 2D/3D plutôt que 2D/2D présente plusieurs avantages. Tout d'abord, il est à noter que le calcul de pose 2D/3D est beaucoup plus rapide que le calcul de pose 2D/2D (l'estimation de la matrice essentielle étant une étape coûteuse). De plus, nous avons vu précédemment que l'extraction des paramètres à partir de la matrice essentielle ne permet pas d'estimer le facteur d'échelle et donc en particulier la norme de la translation entre les différentes caméras. Avec l'approche 2D/3D, le facteur d'échelle peut être estimé à partir de l'observation de la distance entre les différents points de l'espace. Enfin, \cite{tardif2008monocular} ont montré que l'utilisation de l'approche 2D/3D offre un calcul plus précis de la position de la caméra.
+L'utilisation d'associations 2D/3D plutôt que 2D/2D présente plusieurs avantages. Nous avons vu précédemment que l'extraction des paramètres à partir de la matrice essentielle ne permet pas d'estimer le facteur d'échelle et donc en particulier la norme de la translation entre les différentes caméras. Avec l'approche 2D/3D, le facteur d'échelle peut être estimé à partir de l'observation de la distance entre les différents points de l'espace. Enfin, \cite{tardif2008monocular} ont montré que l'utilisation de l'approche 2D/3D offre un calcul plus précis de la position de la caméra.
 
 
 %=============================================================================
@@ -691,11 +691,11 @@ L'utilisation d'associations 2D/3D plutôt que 2D/2D présente plusieurs avantages
 Dans l'étude métrique des courbes du plan et de l'espace, la courbure mesure la manière dont une courbe, ou arc géométrique, s'éloigne localement d'une ligne droite. Elle évalue le rapport entre la variation de la direction de la tangente à la courbe et un déplacement d'une longueur infinitésimale sur celle-ci : plus ce rapport est important, plus la courbure est importante. En langage imagé, la courbure indique de combien il faut tourner le volant d'une voiture pour aborder un virage (volant tourné modérément pour une courbure faible et fortement pour une courbure forte).
 Plus précisément, si $\f{f}$ est une courbe régulière de classe $\mat{C}^k$ avec $k \geq 2$, \textit{e.g} une courbe paramétrée par une fonction dérivable au moins deux fois, dont la dérivée première n'est jamais nulle et dont la dérivée seconde est continue. On sait que $\f{f}$ possède localement une paramétrisation normale, c'est-à-dire qu'au voisinage d'un point $\vect{M}$, il existe une fonction $\f{g}$ paramétrisant $\f{f}$ et telle que $\|\f{g} '\| = 1$. Si $\f{g}(s) = \vect{M}$, la courbure de $\f{f}$ au point $\vect{M}$ est :
 \begin{equation}
-    \gamma = \|\f{g}''(s)\| \gamma = \|\f{g}''(s)\|
+    \gamma = \|\f{g}''(s)\|
 \end{equation}
 Si la courbure au point $\vect{M}$ est non nulle, son inverse donne le rayon du cercle osculateur, c'est-à-dire le rayon du cercle s'approchant au plus près de la courbe au point $\vect{M}$.
 Dans le cas d'une courbe plane orientée, dans un plan orienté, on peut définir une courbure algébrique, qui indique non seulement l'intensité de l'incurvation mais aussi sa direction. Pour reprendre l'image de la route, dans un plan orienté selon le sens trigonométrique, une courbure algébrique positive indique qu'il faut tourner le volant à gauche pour aborder le tournant. La courbure algébrique est liée à l'orientation de la courbe, c'est-à-dire son sens de parcours : si pour un conducteur, il faut tourner à gauche pour aborder un tournant, pour les voitures roulant en sens inverse, il faut tourner à droite pour aborder ce même virage.
-Si $\f{g}$ est une paramétrisation normale de $\f{f}$, pour tout $s$, il existe un vecteur unitaire $vect{n}(s)$ tel que $(\f{g}'(s), n(s))$ soit une base orthonormée directe du plan, et il existe une fonction réelle $\gamma$ telle que, pour tout $s$, $\f{g}''(s) = \gamma(s)n(s)$. La valeur $\gamma(s)$ est la courbure algébrique de l'arc orienté au point $\vect{M} = \f{g}(s)$. La valeur absolue de la courbure algébrique donne la courbure géométrique. Dans le cas d'une courbe gauche (c'est-à-dire non plane), il n'est pas possible de définir de courbure algébrique.
+Si $\f{g}$ est une paramétrisation normale de $\f{f}$, pour tout $s$, il existe un vecteur unitaire $\vect{n}(s)$ tel que $(\f{g}'(s), n(s))$ soit une base orthonormée directe du plan, et il existe une fonction réelle $\gamma$ telle que, pour tout $s$, $\f{g}''(s) = \gamma(s)n(s)$. La valeur $\gamma(s)$ est la courbure algébrique de l'arc orienté au point $\vect{M} = \f{g}(s)$. La valeur absolue de la courbure algébrique donne la courbure géométrique. Dans le cas d'une courbe gauche (c'est-à-dire non plane), il n'est pas possible de définir de courbure algébrique.
 
 \paragraph{Cas d'un cercle}
 Quand on se déplace sur un cercle de rayon $R$ d'une longueur $\Delta S$, la tangente au cercle change de direction. Les tangentes au point de départ et au point d'arrivée font un angle de $\Delta \alpha$. Cet angle correspond à l'angle au centre entre le point d'arrivée et le point de départ. On a ainsi la relation :
@@ -763,9 +763,9 @@ La sinuosité décrit la courbure de plusieurs arcs reliés avec des points d'infle
 
 %https://www.ma.utexas.edu/users/m408m/Display13-4-3.shtml
 
-\subsection{Première et seconde formes fondamentales}
+\subsection{Première et deuxième formes fondamentales}
 \paragraph{Première forme fondamentale.}
-En géométrie différentielle, la première forme est le produit interne sur l'espace tangent d'une surface dans un espace euclidien de dimension trois. Elle permet le calcul de propriétés de courbure et de métrique d'une surface telles que la longueur et l'aire. La première forme fondamentale est notée:
+En géométrie différentielle, la première forme fondamentale est le produit interne sur l'espace tangent d'une surface dans un espace euclidien de dimension trois. Elle permet le calcul de propriétés de courbure et de métrique d'une surface telles que la longueur et l'aire. La première forme fondamentale est notée:
 \begin{equation*}
     \RN{1}(x, y) = \langle x, y \rangle.
 \end{equation*}
@@ -784,13 +784,13 @@ F & G
 \end{pmatrix}y
 \end{equation*}
 
-\paragraph{Seconde forme fondamentale.}
-En géométrie différentielle, la seconde forme fondamentale est une forme quadratique sur le plan tangent d'une surface lisse dans l'espace euclidien de dimension trois et noté généralement $\RN{2}$. La seconde forme fondamentale permet de définir les courbures principales.
+\paragraph{Deuxième forme fondamentale.}
+En géométrie différentielle, la deuxième forme fondamentale est une forme quadratique sur le plan tangent d'une surface lisse dans l'espace euclidien de dimension trois et noté généralement $\RN{2}$. La deuxième forme fondamentale permet de définir les courbures principales.
 Soit $X(u, v)$ une surface paramétrique dans $\mathbb{R}^3$. Cette paramétrisation permet de définir un ensemble de vecteurs normaux $\vect{n}$:
 \begin{equation*}
 \vect{n} = \frac{X_u \times X_v}{|X_u \times X_v|}.
 \end{equation*}
-La seconde forme fondamentale est écrite généralement telle que:
+La deuxième forme fondamentale est écrite généralement telle que:
 \begin{equation*}
 \RN{2} = Ldu^2 + 2Mdudv + Ndv^2,
 \end{equation*}
@@ -841,7 +841,7 @@ Supposons que la surface soit donnée par une équation $z = f(x, y)$ où $f$ est u
 
 
 \paragraph{Formes fondamentales}
-Soit une surface paramétrée au moyen de deux paramètres $u$ et $v$, et soit $\mathtt{I} = Edu^{2} + 2Fdudv + Gdv^{2}$ la première forme fondamentale, $\mathbb{II} = Ldu^{2} + 2Mdudv + Ndv^{2}$ la seconde forme fondamentale. Alors la courbure de Gauss vaut :
+Soit une surface paramétrée au moyen de deux paramètres $u$ et $v$, et soit $\mathtt{I} = Edu^{2} + 2Fdudv + Gdv^{2}$ la première forme fondamentale, $\mathbb{II} = Ldu^{2} + 2Mdudv + Ndv^{2}$ la deuxième forme fondamentale. Alors la courbure de Gauss vaut :
 \begin{equation}
 \mathcal{K} = \frac{\text{det } \RN{2}}{\text{det } \RN{1}} = \frac{LN - M^2}{EG - F^2}
 \end{equation}
@@ -907,14 +907,21 @@ où $\mat{A}$ est connue. Résoudre le système revient à estimer le noyau de $\mat
 
 
 \subsection{Méthodes non linéaires}
-Lorsque la fonction est non linéaire, il est possible de résoudre le problème posé en utilisant une méthode itérative. Soit une fonction $\cost{}(\x)$ à minimiser, en partant d'un jeu de paramètres $\x_n$, chaque itération produit un incrément $\Delta \x_n$ tel que $\x_{n+1} = \x_n + \Delta\x_n$ soit plus proche de la solution recherchée. Ces méthodes font toutes l'hypothèse que la fonction $\cost{}$ est convexe. Dans le cas contraire, il est toujours possible d'utiliser ces méthodes avec une bonne initialisation mais sans garantie de convergence vers le minimum global. Voici les méthodes principalement utilisées en vision par ordinateur: 
+Lorsque la fonction de coût est non linéaire, il est possible de résoudre le problème posé en utilisant une méthode itérative. Soit une fonction $\cost{}(\x)$ à minimiser, en partant d'un jeu de paramètres $\x_n$, chaque itération produit un incrément $\Delta \x_n$ tel que $\x_{n+1} = \x_n + \Delta\x_n$ soit plus proche de la solution recherchée. Ces méthodes font toutes l'hypothèse que la fonction $\cost{}$ est convexe. Dans le cas contraire, il est toujours possible d'utiliser ces méthodes avec une bonne initialisation mais sans garantie de convergence vers le minimum global. Voici les méthodes principalement utilisées en vision par ordinateur.
 
 \subsubsection{Descente de gradient}
 La descente de gradient est une méthode de résolution du premier ordre. La direction de déplacement choisie est directement liée au gradient de la fonction étudiée:
 \begin{equation}
   \x_{n+1}^\text{(desc. grad.)} = \x_n + \alpha \grad \cost{}(\x_n).
 \end{equation}
-La longueur de pas $\alpha$ est généralement fixée à 1. L'avantage de cette approche est qu'elle converge efficacement même si le jeu de paramètres initial est éloigné du minimum recherché.
+La longueur du pas $\alpha$ est cruciale pour garantir la convergence en un nombre d'itérations le plus petit possible. Comme illustré dans la figure \ref{fig:gradient_learning}, un pas trop important engendre une divergence du procédé de minimisation et un pas trop petit permet de converger (de façon sûre dans le cas d'un problème convexe) mais pour un nombre d'itération trop élevé.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\linewidth]{gradient_learning}
+	\caption{Influence de la longueur du pas $\alpha$ sur la convergence de la méthode de descente de gradient. Dans (a), nous montrons qu'un pas trop élevé provoque une divergence et dans (b), qu'un pas trop petit converge mais pour un nombre d'itération élevé.}
+	\label{fig:gradient_learning}
+\end{figure}
+ L'avantage de cette approche est qu'elle converge efficacement même si le jeu de paramètres initial est éloigné du minimum recherché.
 
 \subsubsection{Newton}
 \label{sec:notions:newton}
@@ -1007,7 +1014,7 @@ La fonction de coût normalisée s'écrit dans ce cas:
 \end{equation}
 où $\vect{f}(\x) = \transpose{(\f{f_1},\dots,\f{f_m})}$ et $\|.\|_{\Cov}$ désigne la norme de Mahalanobis. Si les termes sont indépendants, alors la matrice de covariance est diagonale et les moindres carrés généralisés sont équivalents aux moindres carrés pondérés.
 
-\subsubsection{Optimisation robuste}
+\subsection{Optimisation robuste}
 \label{sec:notions:robust}
 Les moindres carrés sont souvent utilisés pour optimiser les paramètres d'un modèle relativement à des données en entrée. Si ces données sont imparfaites et contiennent des données non conformes au modèle (on parle de données aberrantes), ces dernières peuvent grandement perturber une minimisation aux moin\-dres carrés: la contribution de chaque résidu étant critique, les grands résidus ont une influence disproportionnée. Pour pallier à ce problème, il existe des méthodes pour supprimer explicitement les données non conformes au modèle \citep[RANSAC]{fischler1981random} mais nous nous concentrons ici sur les méthodes implicites utilisant des estimateurs robustes, ou \emph{M-estimateurs}. 
 
@@ -1159,7 +1166,7 @@ En infographie, nous nous intéressons particulièrement au phénomène macroscopiqu
 
 L'interaction d'une source de lumière (feu, lampe, soleil, \ldots) avec une surface peut être modélisée de différentes façons selon le besoin. Pour les besoins d'un jeu vidéo ou d'une application de réalité augmentée où la notion d'images par seconde est importante, il est préférable d'avoir une représentation de lumière simplifiée et une interaction avec l'environnement, et plus particulièrement les matériaux, rapide et relativement réaliste. Dans ces cas-là, l'ajout de réflexions spéculaires et d'ombres simples suffit pour ajouter du réalisme. Nous utilisons en général des modèles d'illumination locale pour ces cas-là.
 
- Pour des applications photo-réalistes où le temps de calcul n'est pas primordial, des modèles plus complexes peuvent être utilisés pour modéliser des phénomènes de lumière comme les caustiques, les inter-réflexions ou encore la diffraction de la lumière. Les méthodes d'illumination globale plus réalistes mais aussi plus importantes en complexité sont plus adaptées à cette situation. Ces méthodes  mesurent de façon méthodique la fonction bidirectionnelle de distribution de la reflectance ou en anglais \textit{Bidirectional réflectance Distribution Function} (BRDF) sur l'ensemble des points de vue et des points de surface de la scène.
+ Pour des applications photo-réalistes où le temps de calcul n'est pas primordial, des modèles plus complexes peuvent être utilisés pour modéliser des phénomènes de lumière comme les caustiques, les inter-réflexions ou encore la diffraction de la lumière. Les méthodes d'illumination globale plus réalistes mais aussi plus importantes en complexité sont plus adaptées à cette situation. Ces méthodes  mesurent de façon méthodique la fonction bidirectionnelle de distribution de la réflectance ou en anglais \textit{Bidirectional réflectance Distribution Function} (BRDF) sur l'ensemble des points de vue et des points de surface de la scène.
  
 Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisant un moteur de rendu photo-réaliste V-RAY\footnote{\url{https://www.chaosgroup.com/}} et un moteur de jeux vidéo  Unreal-engine\footnote{\url{https://www.unrealengine.com/en-US/what-is-unreal-engine-4}}.
 \begin{figure}[H]
@@ -1180,9 +1187,9 @@ Ces deux catégories sont illustrées à la figure  \ref{fig:rendering} en utilisan
 %=============================================================================
 
 \subsection{Phénomène de réflexion spéculaire}
-Un des phénomènes lumineux les plus visibles par un l'\oe{}il humain ou une caméra est la réflexion spéculaire. Elle se caractérise par une réflexion quasi-totale de la lumière dans une direction principale (comportement proche de celui d'un miroir) sur une surface réfléchissante comme une plaque de métal, du plastique ou encore du bois ciré. Une \textbf{réflexion spéculaire (appelée également spécularité)} est dépendante du point de vue d'observation. Ce type de réflexion est sous-associée au phénomène de \textbf{réflexion diffuse} où la réflexion se produit dans toutes les directions et qui est ainsi indépendant du point de vue d'observation. Effectuer une séparation efficace de ces deux composantes représente un des problèmes photométriques les plus complexes. Un détail plus complet d'une méthode de détection de spécularité est développé en annexe \ref{annexe:specularity_detection}.
+Un des phénomènes lumineux les plus visibles par un l'\oe{}il humain ou une caméra est la réflexion spéculaire. Elle se caractérise par une réflexion quasi-totale de la lumière dans une direction principale (comportement proche de celui d'un miroir) sur une surface réfléchissante comme une plaque de métal, du plastique ou encore du bois ciré. Une \textbf{réflexion spéculaire (appelée également spécularité)} est dépendante du point de vue d'observation. Ce type de réflexion est souvent associé au phénomène de \textbf{réflexion diffuse} où la réflexion se produit dans toutes les directions et qui est ainsi indépendant du point de vue d'observation. Effectuer une séparation efficace de ces deux composantes représente un des problèmes photométriques les plus complexes. Un détail plus complet d'une méthode de détection de spécularité est développé en annexe \ref{annexe:specularity_detection}.
 
-\subsection{Réflectivité bidirectionnelle (BRDF)}
+\subsection{Réflectivité bidirectionnelle}
 Cette fonction $f$ évoquée dans les équations \eqref{eq:reflectance_equation} et \eqref{eq:rendering_equation} caractérise la réflexion d'une surface. Elle prend en entrée une direction de la lumière incidente $\omega_i$ et une direction réfléchie $\omega_r$ et indique le ratio de la radiance sortant suivant $\omega_r$ en fonction de l'irradiance incidente de la surface suivant la direction $\omega_i$. Cette fonction prend généralement en entrée 4 paramètres représentant $\omega_i$ et $\omega_r$ en coordonnées sphériques.
 
  Sans entrer dans trop de détails, selon la précision et la puissance de calcul disponible nous pouvons citer dans les BRDF connues les harmoniques sphériques ou encore les modèles d'illumination locale évoqués précédemment.
@@ -1213,14 +1220,14 @@ En ne considérant que l'illumination locale, de nombreux effets lumineux, jouant
 %\fix{On peut rajouter plus de détail sur les deux phénomènes - scribe-lecture3}
 
 %=============================================================================
-\subsection{L'équation de rendu}
+\paragraph{L'équation de rendu}
 \label{sec:rendering_equation}
-Une façon précise de modéliser le trajet de la lumière et d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. L'équation de réflectance est définie par: %\fix{ajouter variable l pour la lumière?}
+Une façon précise de modéliser le trajet de la lumière est d'étudier une fonction appelée l'équation de réflectance et plus généralement l'équation de rendu et comment elle peut être résolue. L'équation de réflectance est définie par: %\fix{ajouter variable l pour la lumière?}
 \begin{equation}
 L_r(\vect{P}, \omega_r) = L_e(\vect{P}, \omega_r) + \sum L_i(\vect{P}, \omega_i)f(\vect{P}, \omega_i, \omega_r)(\omega_i \cdot \hat{\vect{N}}(\vect{P})),
 \label{eq:reflectance_equation}
 \end{equation}
-avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ dans la direction $\omega_r$ causée par la radiance incidence $L_i$ des sources de lumière dans la direction $\omega_i$, $f$ la fonction bidirectionnelle de distribution de la reflectance (BRDF) qui donne la proportion de lumière réfléchie de $\omega_i$ à $\omega_r$ au point $\vect{P}$ et $L_e$ la radiance émise. Une version simplifiée de cette équation est illustrée à la figure \ref{fig:reflectance_equation}.
+avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ dans la direction $\omega_r$ causée par la radiance incidence $L_i$ des sources de lumière dans la direction $\omega_i$, $f$ la fonction bidirectionnelle de distribution de la réflectance (BRDF) qui donne la proportion de lumière réfléchie de $\omega_i$ à $\omega_r$ au point $\vect{P}$ et $L_e$ la radiance émise. Une version simplifiée de cette équation est illustrée à la figure \ref{fig:reflectance_equation}.
 
 \begin{figure}[H]
 \centering
@@ -1239,7 +1246,7 @@ avec $L_r$ la radiance réfléchie à partir d'un point de la surface $\vect{P}$ da
         \includegraphics[width=0.3\linewidth]{hemisphere}
         \label{fig:hemisphere}
     }
-\caption{Illustration du calcul de l'équation de reflectance et de rendu.}
+\caption{Illustration du calcul de l'équation de réflectance et de rendu.}
 \end{figure}
 
 Cette formulation est trop simpliste car elle ne prend en compte que les sources de lumière directe et non les portions de lumière réfléchie des autres surfaces proches. Au lieu de prendre en compte la somme des sources de lumière, il est plus naturel de prendre en compte un panel d'angles et d'intégrer la fonction de réflectance sur ce panel d'angles tel que:
@@ -1269,8 +1276,8 @@ Notons que pour des problèmes d'estimation de l'illumination, il a été montré qu
 %https://books.google.fr/books?id=Z-36P9InswAC&pg=PA11&lpg=PA11&dq=dichromatic+model+vs+phong&source=bl&ots=dKtNIYurS-&sig=xz1qcGcSIAYGtSkbo7S3Sn7TUHg&hl=en&sa=X&ved=0ahUKEwiAm8f_i-7ZAhXFJMAKHQ-TBoM4ChDoAQg3MAM#v=onepage&q=dichromatic%20model%20vs%20phong&f=false
 
 
-\subsection{Modèle de Phong et Blinn-Phong}
-La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets; la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchi de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
+\subsection{Modèles de Phong et Blinn-Phong}
+La physique expliquant la réflexion de la lumière sur une surface est extrêmement complexe. En conséquence, le pipeline classique des moteurs graphiques repose sur une stratégie d'approximation  classique appelée le modèle de réflective (ou illumination) de \cite{phong1975illumination} qui propose une simulation efficace de la réflexion à un coût très faible. Dans le modèle de Phong, un matériau est décrit par trois composantes distinctes décrivant la réflexion: la composante ambiante $I_a$ (une quantité de lumière constante permettant de décrire de façon grossière l'inter-réflexion par les autres objets); la composante diffuse $I_d$ représentant la lumière réfléchie de façon omnidirectionnelle et ne dépendant pas de la position de l'observateur; la composante spéculaire $I_s$ qui est maximale quand le point de vue de l'utilisateur coïncide avec le rayon réfléchi de la lumière. L'image finale $I$ est obtenue en additionnant ces trois composantes comme illustré à la figure \ref{fig:phong_sum}.
 
 
 \begin{figure}[H]

@@ -4,17 +4,17 @@
 \graphicspath{{images/Ch3/}}
 
 \begin{chapeauChapitre}
-	Comme évoqué dans le chapitre \ref{chapitre:etat_de_lart} état de l'art, à l'opposé des méthodes d'illumination locale et d'illumination globale, il est intéressant de considérer la lumière comme un élément géométrique car le comportement d'une spécularité est très similaire à celui d'un objet réfléchi dans un miroir. Nous explorons cette piste dans ce chapitre par un exemple relativement simple (une surface planaire) mais permettant de mettre en évidence nos premières hypothèses et le principe général de notre modèle géométrique pour la prédiction de spécularités.
+	Comme évoqué dans le chapitre \ref{chapitre:etat_de_lart} état de l'art, à l'opposé des méthodes d'illumination locale et d'illumination globale, il est intéressant de considérer la lumière comme un élément géométrique car le comportement d'une spécularité est très similaire à celui d'un objet réfléchi dans un miroir. Nous explorons cette piste dans ce chapitre par un exemple relativement simple (une surface plane) mais permettant de mettre en évidence nos premières hypothèses et le principe général de notre modèle géométrique pour la prédiction de spécularités.
 \end{chapeauChapitre}
 
 \section{Introduction}
-Le phénomène photométrique des spécularités est souvent présent dans les images. En effet, ces éléments se manifestent sur une surface lorsque les imperfections de celle-ci sont plus petites que la longueur d'onde incidente. Dans ces conditions, la lumière est complètement réfléchie sous une forme spéculaire (l'angle du rayon de lumière incident avec la normale de la surface à un point de surface donné est égal à l'angle de rayon réfléchi avec la normale) . Si cette lumière réfléchie rencontre l'objectif de la caméra, une spécularité est créée dans l'image. De ce fait, ces éléments sont importants dans plusieurs domaines. En vision par ordinateur et traitement d'image, elles provoquent une augmentation brusque de l'intensité de l'image ce qui a pour effet de perturber les algorithmes de détection ou de suivi 2D/3D, de localisation de caméra ou encore de reconstruction 3D. 
+Le phénomène photométrique des spécularités est souvent présent dans les images. En effet, ces éléments se manifestent sur une surface lorsque la taille des imperfections de celle-ci est inférieure ou de l'ordre de grandeur de la longueur d'onde incidente. C'est pourquoi une surface de métal brut qui diffuse fortement devient parfaitement réfléchissante quand on la polit (on l'abrase jusqu'à ce que la taille des défauts soit comparable à la longueur d'onde de la lumière). Dans ces conditions, la lumière est complètement réfléchie sous une forme spéculaire (l'angle du rayon de lumière incident avec la normale de la surface à un point de surface donné est égal à l'angle de rayon réfléchi avec la normale). Si cette lumière réfléchie rencontre l'objectif de la caméra, une spécularité est créée dans l'image. De ce fait, ces éléments sont importants dans plusieurs domaines. En vision par ordinateur et traitement d'image, elles provoquent une augmentation de l'intensité de l'image ce qui a pour effet de perturber les algorithmes de détection ou de suivi 2D/3D, de localisation de caméra ou encore de reconstruction 3D. 
 
 Cependant, si on les considère comme des primitives de localisation, leur présence apporte des informations pertinentes permettant une meilleure estimation de la profondeur d'une scène et donc de sa géométrie permettant d'améliorer la localisation de caméra \cite{lagger20083d, meilland2011real, silveira2007real}, la reconstruction 3D \cite{fleming2004specular, savarese2004reflections} et l'analyse de matériaux d'une scène \cite{chang20093d, netz2013recognition, netz2013recognitionpami, shroff2011finding}. En réalité augmentée (RA) ou en infographie, ces primitives permettent d'augmenter significativement le réalisme du rendu des applications \cite{csongei2014global, gruber2014efficient, hachisuka2008progressive, jachnik2012realtime, jarosz2008beam, knorr2014real, rohmer2014interactive, sato1999acquiring}. Il a été montré dans les études de \cite{blake1990does} que les spécularités jouent un rôle important dans la perception de la profondeur et du relief d'un objet. Afin d'améliorer le plus possible ces applications, il est intéressant de pouvoir prédire les spécularités dans une scène pour un point de vue donné.
 
-Nous avons observé empiriquement que la forme de la spécularité sur une surface planaire peut être modélisée par une ellipse. De plus, nous savons qu'une ellipse est issue de la projection d'une quadrique sur un plan. À partir de ces éléments, il est naturel de se demander s'il est possible de reconstruire une quadrique fixe dont la projection correspond aux spécularités pour chaque point de vue. Dans ce cas, ce modèle représenterait un lien entre le phénomène photométrique des spécularités (lumières et matériaux) et la géométrie multi-vues \cite{Hartley2004}.
+Nous avons observé empiriquement que la forme de la spécularité sur une surface plane peut être modélisée par une ellipse. De plus, nous savons qu'une ellipse est issue de la projection d'une quadrique sur un plan. À partir de ces éléments, il est naturel de se demander s'il est possible de reconstruire une quadrique fixe dont la projection correspond aux spécularités pour chaque point de vue. Dans ce cas, ce modèle représenterait un lien entre le phénomène photométrique des spécularités (lumières et matériaux) et la géométrie multi-vues \cite{Hartley2004}.
 
-Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAterial Specularity} (JOLIMAS) permettant de prédire facilement la position et la forme des spécularités pour de nouveaux points de vue comme illustré à la figure \ref{fig:real_data}. Ce modèle est composé d'une quadrique qui inclut les propriétés des lumières et des matériaux de la scène. Cette quadrique est reconstruite à partir de chaque ellipse associée à une spécularité observée sur une surface planaire, pour un point de vue donné. Dans ce chapitre, nous présentons les différents modèles physiques utilisés en général en vision par ordinateur et analysons leur capacité à prédire le phénomène complexe des spécularités. Nous travaillons essentiellement sur des surfaces planaires car il est facile de retrouver ce type de surface dans une scène, comme exploité dans \cite{buteau2015poster, jachnik2012realtime}. L'extension de ce modèle à des surfaces plus complexes requiert une étude approfondie qui fera l'objet des chapitres \ref{chapitre:dual_jolimas} et \ref{chapitre:modele_general}.
+Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAterial Specularity} (JOLIMAS) permettant de prédire facilement la position et la forme des spécularités pour de nouveaux points de vue comme illustré à la figure \ref{fig:real_data}. Ce modèle est composé d'une quadrique qui inclut les propriétés des lumières et des matériaux de la scène. Cette quadrique est reconstruite à partir de chaque ellipse associée à une spécularité observée sur une surface plane, pour un point de vue donné. Dans ce chapitre, nous présentons les différents modèles physiques utilisés en général en vision par ordinateur et analysons leur capacité à prédire le phénomène complexe des spécularités. Nous travaillons essentiellement sur des surfaces planes car il est facile de retrouver ce type de surface dans une scène, comme exploité dans \cite{buteau2015poster, jachnik2012realtime}. L'extension de ce modèle à des surfaces plus complexes requiert une étude approfondie qui fera l'objet des chapitres \ref{chapitre:dual_jolimas} et \ref{chapitre:modele_general}.
 
  Notre modèle est présenté dans la section \ref{sec:approche_proposee_primal}. Son estimation est développée dans la section \ref{sec:model_estimation} en comparant différentes approches de l'état de l'art. Notre modèle et sa capacité à prédire les spécularités ont été testés sur des séquences de synthèse et réelles comprenant des sources de lumière de type ampoule et néon dans la section \ref{sec:resultats_experimentaux}. Nous illustrons également la capacité de notre modèle à gérer plusieurs sources de lumière et des lumières à état changeant (allumées et éteintes) dans le chapitre \ref{chapitre:RA}.
 
@@ -22,11 +22,11 @@ Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAte
 \section{Approche proposée} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:approche_proposee_primal} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
-Nous partons de l'observation qu'une spécularité présente une forme ellipse sur une surface planaire.  Si une ellipse correspond à la projection perspective d'une quadrique, existe-il une quadrique fixe dans l'espace dont la projection perspective correspond aux spécularités ? Dans ce cas, un modèle faisant abstraction des paramètres physiques liés à l'apparition de la spécularité peut être obtenu.
+Nous partons de l'observation qu'une spécularité présente une forme elliptique sur une surface plane.  Si une ellipse correspond à la projection perspective d'une quadrique, existe-il une quadrique fixe dans l'espace dont la projection perspective correspond aux spécularités ? Dans ce cas, un modèle faisant abstraction des paramètres physiques liés à l'apparition de la spécularité peut être obtenu.
 
-Nous proposons un modèle empirique incluant les propriétés des sources de lumière et des matériaux en reconstruisant une quadrique issue des ellipses appliquées aux spécularités pour chaque point de vue comme illustré sur la figure \ref{fig:dessin}. Nous assumons des surfaces planaires non-Lambertiennes où chaque spécularité est associée à une source de lumière. Notre étude se concentre sur ce modèle permettant de prédire les spécularités provenant de n'importe quel type de lumière.
+Nous proposons un modèle empirique incluant les propriétés des sources de lumière et des matériaux en reconstruisant une quadrique issue des ellipses appliquées aux spécularités pour chaque point de vue comme illustré sur la figure \ref{fig:dessin}. Nous assumons des surfaces planes non-Lambertiennes où chaque spécularité est associée à une source de lumière. Notre étude se concentre sur ce modèle permettant de prédire les spécularités provenant de n'importe quel type de lumière.
 
-Une démonstration de notre approximation de la spécularité, observée sur une surface planaire, par une ellipse est détaillée dans les sections suivantes. Nous évaluerons empiriquement cette hypothèse dans la section \ref{sec:validation}.
+Une démonstration de notre approximation de la spécularité, observée sur une surface plane, par une ellipse est détaillée dans les sections suivantes. Nous évaluerons empiriquement cette hypothèse dans la section \ref{sec:validation}.
 
 \begin{figure}[!ht]
    \centering	  
@@ -52,14 +52,14 @@ La fonction d'intensité du modèle de \cite{phong1975illumination} d'un point 3D 
 \end{equation}
 avec \mbox{$\hat{\mathbf{R}}(\mathbf{P}) = -\mathop{\mu}(\mathbf{R} - \mathbf{P})$} la direction normalisée d'un rayon réfléchi de lumière \mbox{$\setlength\arraycolsep{2pt} \mathbf{L} = \begin{bmatrix}L_X & L_Y & L_Z \end{bmatrix}^\top$} tel que $\setlength\arraycolsep{2pt} \mathbf{R} = \begin{bmatrix}L_X & L_Y & -L_Z \end{bmatrix}^\top$, $\hat{\mathbf{L}}$ et $\hat{\mbf{V}}$ la direction normalisée du point de vue orientée vers la source de lumière $\mathbf{L}$ et le capteur \mbox{$\setlength\arraycolsep{2pt} \mathbf{V} = \begin{bmatrix}V_X & V_Y & V_Z \end{bmatrix}^\top$}, $n$ la brillance de la surface, $k_s$, $k_a$ et $k_d$ le ratio de réflexion des termes spéculaire, ambiant et diffus de la lumière incidente, $\hat{\mbf{N}}$ la normale de la surface $S$ et $i_s$, $i_a$ et $i_d$ l'intensité entrante sur la surface pour les termes spéculaire, ambiant et diffus.
 
-Notre repère monde est choisi tel que la surface $S \subset \mathbb{R}^3$ correspond au plan $(\vec{X}\vec{Y})$ et $S = \{\vec{P} \in \mathbb{R}^3 | \vec{P}_Z = 0\}$. Nous pouvons paramétrer $S$ par le point $\setlength\arraycolsep{2pt} \mathbf{P} = \begin{bmatrix}P_X  & P_Y & P_Z\end{bmatrix}^\top$. 
+Notre repère monde est choisi tel que la surface $S \subset \mathbb{R}^3$ correspond au plan $(\vect{X}\vect{Y})$ et $S = \{\vect{P} \in \mathbb{R}^3 | P_Z = 0\}$. Nous pouvons paramétrer $S$ par le point $\setlength\arraycolsep{2pt} \mathbf{P} = \begin{bmatrix}P_X  & P_Y & P_Z\end{bmatrix}^\top$. 
 
-\subsection{Le terme spéculaire}
-Au point $\vec{P}$, la composante spéculaire $I_s$ est donnée par l'équation :
+\subsection{Terme spéculaire}
+Au point $\vect{P}$, la composante spéculaire $I_s$ est donnée par l'équation :
 \begin{equation}
 	I_s(\mathbf{P}) = \max(0,(\hat{\mathbf{R}}(\mathbf{P}) \cdot \hat{\mathbf{V}}(\mathbf{P}))^n).
 \end{equation}
-Nous voulons analyser les isocontours d'une spécularité sur une surface $S$ et pour un point de vue $\vec{V}$, une source de lumière $\vec{L}$ et $\vec{R} = \stk(\vec{L}_X, \vec{L}_Y, -\vec{L}_Z)$. Nous partons d'une formulation plus simple du modèle de réflexion exprimé par :
+Nous voulons analyser les isocontours d'une spécularité sur une surface $S$ et pour un point de vue $\vect{V}$, une source de lumière $\vect{L}$ et $\vect{R}$. Nous partons du modèle de réflexion exprimé par :
 \begin{equation}
 \tilde{I}_s(\mathbf{P}) = - \mu(\mathbf{R} - \mathbf{P})^\top \mu(\mathbf{V} - \mathbf{P}).
 \label{eq:simple_phong}
@@ -88,7 +88,7 @@ Pour $\tau = 1$, les monômes de degré 3 et 4 disparaissent tel que les termes re
 \begin{equation}
 \mathbf{\tilde{P}}^\top \mathtt{Q} \mathbf{\tilde{P}} = 0,
 \end{equation}
-où $\tilde{\mathbf{P}} \overset{\mathrm{def}}{=\joinrel} \mathop{\text{stk}}(\mathbf{P}, 1)$ sont les coordonnées homogènes de $\vec{P}$. La matrice $\mathtt{Q} \in \mathtt{R}^{4 \times 4}$ est symétrique et définie par :
+où $\tilde{\mathbf{P}} \overset{\mathrm{def}}{=\joinrel} \begin{bmatrix} \mathbf{P} & 1 \end{bmatrix}^\top$ sont les coordonnées homogènes de $\vect{P}$. La matrice $\mathtt{Q} \in \mathtt{R}^{4 \times 4}$ est symétrique et définie par :
 \begin{equation*}
 \mathtt{Q} = \begin{bmatrix}
 [\mathbf{R} - \mathbf{V}]^2_\times & [\mathbf{V}\times \mathbf{R}]_\times (\mathbf{V} - \mathbf{R}) \\
@@ -100,7 +100,7 @@ Nous observons que la somme des termes de degrés 3 et 4 donne:
 (1 - \tau^2) ||\mbf{P} ||^2 \mbf{P}^\top(\mbf{P} - 2\mbf{R} - 2\mbf{V}).
 \end{equation}
 
-\subsubsection{Le point d'intensité maximale}
+\subsubsection{Point d'intensité maximale}
 A la valeur d'intensité maximale $\tau = 1$, les monômes de degrés 3 et 4 disparaissent. Les termes restants forment une équation quadratique qui peut être réécrite de la manière suivante:
 \begin{equation}
 \mathbf{\tilde{P}}^\top \mathtt{J} \mathbf{\tilde{P}} = 0,
@@ -144,11 +144,11 @@ le contour de la spécularité est donné par la conique :
 -\frac{1}{2}(\mathbf{\bar{R}} + \mathbf{\bar{V}})^\top & \mathbf{R}^\top \mathbf{V}
 \end{bmatrix},
 \end{equation*}
-avec  $\mathbf{\bar{R}} \overset{\mathrm{def}}{=\joinrel} \mathop{\text{stk}}(\mathbf{R}_X, \mathbf{R}_Y)$ et $\mathbf{\bar{V}} \overset{\mathrm{def}}{=\joinrel} \mathop{\text{stk}}(\mathbf{V}_X, \mathbf{V}_Y)$ correspondent aux projections orthographiques de $\mathbf{R}$ et $ \mathbf{V}$ sur $S$ respectivement. $\mathtt{C}$ représente un cercle pour $\tau = 0$.
+avec  $\mathbf{\bar{R}} \overset{\mathrm{def}}{=\joinrel} \setlength\arraycolsep{2pt} \begin{bmatrix} R_X, R_Y\end{bmatrix}^\top$ et $\mathbf{\bar{V}} \overset{\mathrm{def}}{=\joinrel} \setlength\arraycolsep{2pt} \begin{bmatrix} V_X, V_Y  \end{bmatrix}^\top$ correspondent aux projections orthographiques de $\mathbf{R}$ et $ \mathbf{V}$ sur $S$ respectivement. $\mathtt{C}$ représente un cercle pour $\tau = 0$.
 
-En observant le cercle  $\mathtt{C}$ sur le plan image de la caméra de centre optique $\vec{V}$, une conique est obtenue et plus particulièrement une ellipse si la spécularité est contenue entièrement dans le plan image.
+En observant le cercle  $\mathtt{C}$ sur le plan image de la caméra de centre optique $\vect{V}$, une conique est obtenue et plus particulièrement une ellipse si la spécularité est contenue entièrement dans le plan image.
 
-\subsubsection{Les isocontours internes}
+\subsubsection{Isocontours internes}
 Afin d'étudier les contours internes correspondant à une valeur de $\tau \in [0, 1]$ arbitraire, les réflexions spéculaires peuvent être approximées par une ellipse dans le modèle de Phong comme illustré dans la figure \ref{fig:phong_closeup}. Cette approximation a également été testée et validée sur le modèle de \cite{blinn1977models} comme illustré à la figure \ref{fig:blinn_closeup}. Initialement, ce modèle a été défini en tant qu'approximation du modèle de Phong et régulièrement présenté en infographie comme un modèle plus précis en comparaison avec Phong. Ce modèle est aussi  considéré comme physiquement plus cohérent car il vérifie l'équation de Helmholtz \cite{haines2002real}.
 
 Cette démonstration illustre la pertinence et la précision d'une modélisation d'une spécularité par une ellipse. Afin de démontrer davantage cette propriété, une validation empirique sur des données de synthèse est réalisée dans la prochaine section.
@@ -181,7 +181,7 @@ Cette démonstration illustre la pertinence et la précision d'une modélisation d'
 \subsection{Validation empirique de l'hypothèse  du modèle à partir de données simulées}
 \label{sec:validation}
 
-Afin de valider notre approximation de spécularités, nous utilisons la méthode de \cite{fitzgibbon1996buyer} d'estimation d'ellipse pour différentes valeurs de $\tau \in [0, 1]$ sur la partie spéculaire uniquement et ensuite sur la partie diffuse combinée à la partie spéculaire. Dans un contexte RA, les composantes diffuse et spéculaire sont corrélées. Afin de calculer nos données synthétiques, nous générons des images $2000 \times 2000$ en utilisant les modèles d'illumination locale de \cite{phong1975illumination} et \cite{blinn1977models} à partir d'une position aléatoire de source lumineuse et d'une caméra localisées au-dessus de la surface planaire de taille fixe. L'objectif est d'analyser la forme de la spécularité pour une intensité fixe $\tau \in [0, 1]$. Pour chaque valeur de $\tau$, avec un pas de $0.05$ entre chaque valeur, nous lançons 1000 scénarios de position de lumière et de pose de caméra. L'erreur d'estimation de l'ellipse sous forme d'une distance point/point entre les isocontours et l'ellipse correspondante est calculée par la méthode de \cite{sturm2007conic}. Cette distance est calculée pour chaque scénario. La validation empirique de l'estimation d'ellipse est donnée par la figure \ref{fig:final_theoretical} pour des sources de lumière ponctuelles et par la figure \ref{fig:extended_theoritical} pour des sources étendues. En infographie, les sources étendues sont souvent représentées comme un ensemble de sources de lumière ponctuelles \textit{e.g} une ligne pour représenter un néon.
+Afin de valider notre approximation de spécularités, nous utilisons la méthode de \cite{fitzgibbon1996buyer} d'estimation d'ellipse pour différentes valeurs de $\tau \in [0, 1]$ sur la partie spéculaire uniquement et ensuite sur la partie diffuse combinée à la partie spéculaire. Dans un contexte de RA, les composantes diffuse et spéculaire sont corrélées. Afin de calculer nos données synthétiques, nous générons des images $2000 \times 2000$ en utilisant les modèles d'illumination locale de \cite{phong1975illumination} et \cite{blinn1977models} à partir d'une position aléatoire de source lumineuse et d'une caméra localisées au-dessus de la surface plane de taille fixe. L'objectif est d'analyser la forme de la spécularité pour une intensité fixe $\tau \in [0, 1]$. Pour chaque valeur de $\tau$, avec un pas de $0.05$ entre chaque valeur, nous lançons 1000 scénarios de position de lumière et de pose de caméra. L'erreur d'estimation de l'ellipse sous forme d'une distance point/point entre les isocontours et l'ellipse correspondante est calculée par la méthode de \cite{sturm2007conic}. Cette distance est calculée pour chaque scénario. La validation empirique de l'estimation d'ellipse est donnée par la figure \ref{fig:final_theoretical} pour des sources de lumière ponctuelles et par la figure \ref{fig:extended_theoritical} pour des sources étendues. En infographie, les sources étendues sont souvent représentées comme un ensemble de sources de lumière ponctuelles \textit{e.g} une ligne pour représenter un néon.
 
 \begin{figure}[!ht]
    \centering	 
@@ -204,20 +204,20 @@ Cette erreur est calculée sous forme d'un ratio entre la distance géométrique el
 
 \section{Estimation du modèle}
 \label{sec:model_estimation}
-Nous avons montré dans la section \ref{sec:validation} qu'une spécularité observée sur une surface planaire peut être approximée par une ellipse. La contribution principale de notre méthode est de pouvoir représenter chaque lumière par une quadrique $\mathtt{Q}$ associée par les projections (spécularités) sur un plan $S$ pour une matrice de projection donné $\mathtt{\Pi} = \mathtt{K} \begin{bmatrix}\mathtt{R}_{rot} & \mathbf{V} \end{bmatrix}$.
+Nous avons montré dans la section \ref{sec:validation} qu'une spécularité observée sur une surface plane peut être approximée par une ellipse. La contribution principale de notre méthode est de pouvoir représenter chaque lumière par une quadrique $\mathtt{Q}$ associée par les projections (spécularités) sur un plan $S$ pour une matrice de projection donné $\mathtt{\Pi} = \mathtt{K} \begin{bmatrix}\mathtt{R}_{rot} & \mathbf{V} \end{bmatrix}$.
 
 \subsection{Vue globale}
 Le pipeline de la méthode proposée est divisé en plusieurs étapes :
 \begin{itemize}
-\item Detection de spécularité dans les images par notre approche \cite{morgand2014generic}
+\item Detection de spécularité dans les images par notre approche expliquée dans l'annexe \ref{annexe:specularity_detection}
 \item Calcul de l'ellipse enveloppant les spécularités \cite{fitzgibbon1996buyer}
 \item Reconstruction de quadrique \cite{cross1998quadric}
 \item Prédiction de spécularité par projection de quadrique
 \end{itemize}
 Notre processus de détection de spécularité est divisé en 3 étapes. Dans un premier temps, afin de réduire le bruit dans l'image et le contexte lumineux dynamique; par la suite, en réalisant un seuillage automatique par l'intermédiaire d'une valeur moyenne de luminance. Enfin, afin de réduire davantage les mauvaises détections, la méthode utilise un critère d'intensité de gradient afin de discriminer les surfaces spéculaires des textures blanches détectées à tort. Cette méthode assume que l'intensité d'une spécularité est isotropique et décroissante à partir du point d'intensité maximale. Le processus de calcul d'ellipse englobante utilise une image en niveaux de gris en sortie du processus de détection de spécularité afin de fournir les ellipses d'entrée pour le processus de reconstruction de quadrique. Le détail de notre méthode de détection est fourni dans l'annexe \ref{annexe:specularity_detection}.
 
-\subsection{Reconstruction de quadrique par la méthode de Cross}
-Nous utilisons l'approche de \cite{cross1998quadric} qui reconstruit une quadrique duale $\mathtt{Q}^*$ à partir de plusieurs coniques duales $\mathtt{C}^*$ en linéarisant la relation :
+\subsection{Reconstruction de quadrique par la méthode de Cross\etal}
+Nous utilisons l'approche de \cite{cross1998quadric} qui reconstruit une quadrique duale $\mathtt{Q}^*$ à partir de plusieurs coniques duales $\mathtt{C}^*$ en reformulant la relation :
 \begin{equation}
 	\mathtt{\Pi}\mathtt{Q}^*\mathtt{\Pi}^\top = \mathtt{C}^*.
 	\label{eq:conicdual}

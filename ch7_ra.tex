@@ -6,14 +6,14 @@
 
 \begin{chapeauChapitre}
 Après avoir détaillé dans les chapitres précédents les différentes itérations de notre modèle JOLIMAS primal \ref{chapitre:primal_jolimas}, dual \ref{chapitre:dual_jolimas} et canonique \ref{chapitre:modele_general}, nous détaillons ici comment nous avons utilisé les résultats de prédiction de spécularité afin d'obtenir un rendu en réalité augmentée. Nous présentons plusieurs itérations d'une application de retexturing qui consiste à substituer la texture d'une surface à une autre tout en conservant son contexte lumineux comme les variations d'intensité, les spécularités et les ombres.
-De plus, nous détaillons la gestion de contextes complexes comme le multi-lumières, les lumières à état changeant pouvant s'éteindre et s'allumer, le choix des images à utiliser pour la reconstruction et une analyse temporelle du pipeline de retexturing.
+De plus, nous détaillons la gestion de contextes complexes comme le multi-lumières, les lumières à état changeant pouvant s'éteindre et s'allumer, le choix des images à utiliser pour la reconstruction et une analyse du coût du pipeline de retexturing.
 \end{chapeauChapitre}
 
 %===============================================================================
 \section{Introduction}
 \label{sec:introduction_general}
 %===============================================================================
-Dans \cite{blake1990does}, il est démontré que la perception humaine prend en compte les spécularités pour mieux comprendre une scène (géométrie, illumination). Pour ces raisons, la modélisation des sources de lumière et plus particulièrement la prédiction des spécularités peut potentiellement améliorer les applications suivantes:
+Dans \cite{blake1990does}, il a été démontré que la perception humaine prend en compte les spécularités pour mieux comprendre une scène (géométrie, illumination). Pour ces raisons, la modélisation des sources de lumière et plus particulièrement la prédiction des spécularités peut potentiellement améliorer les applications suivantes:
 \begin{itemize}
     \item Le retexturing en réalité augmentée
     \item La réalité diminuée et plus particulièrement lorsqu'une spécularité traverse une zone de l'image à restaurer \cite{kawaidiminished, herling2014high, said2017image}
@@ -93,7 +93,7 @@ Ce dernier point sera abordé dans cette section. Il semble intuitif qu'une sourc
 
 
 %===============================================================================
-\section{Changement de texture sur des objets réels}
+\section{Retexturing sur des objets réels}
 \label{sec:retexturing}
 %===============================================================================
 
@@ -121,7 +121,7 @@ Afin de répondre au problème de cohérence temporelle pour la synthèse de spécula
  \end{figure}
 Afin de synthétiser une spécularité à partir de JOLIMAS, il est nécessaire d'avoir une fonction d'intensité décrivant la variation d'intensité de la spécularité. Nous proposons une approximation basée sur une fonction gaussienne 2D. En effet, une spécularité peut être décrite comme une zone de forte intensité par rapport au reste de l'image. La fonction d'intensité gaussienne suit deux propriétés essentielles de la spécularité : une variation progressive de l'intensité et des isocontours de forme elliptique comme détaillé dans le chapitre \ref{chapitre:primal_jolimas}. La propriété de variation progressive a déjà été exploitée dans la méthode de \cite{kim2013specular} afin de séparer les composantes spéculaires et diffuses dans une image. Notre méthode de retexturing est divisée en trois étapes. 
 
-Premièrement, à partir des spécularités détections dans la séquence, une couleur moyenne de la spécularité est calculée afin de correspondre aux conditions d'illumination. La fonction gaussienne appropriée est calculée sur les canaux rouge, vert et bleu afin de correspondre aux spécularités détectées dans les séquences. 
+Premièrement, à partir des spécularités détectées dans la séquence, une couleur moyenne de la spécularité est calculée afin de correspondre aux conditions d'illumination. La fonction gaussienne appropriée est calculée sur les canaux rouge, vert et bleu afin de correspondre aux spécularités détectées dans les séquences. 
 
 Deuxièmement, afin de synthétiser les spécularités sur la texture associée à la surface, deux homographies sont calculées: $\mathtt{H}_2$ qui correspond à la transformation des points de la texture jusqu'aux points de la surface et $\mathtt{H}_1$ qui transforme le cercle unitaire en notre conique prédite (la conique est d'abord transformée par $\mathtt{H}_2^{-1}$). 
 
@@ -154,7 +154,7 @@ A cause du manque de méthodes pour la modélisation géométrique de spécularité co
 Dans la section suivante, nous montrons comment nous avons généralisé ce processus pour tous types de surfaces et amélioré le rendu en calculant le terme diffus afin de rajouter des effets d'ombre.
 
 
-\subsection{Deuxième approche : Retexturing pour tous types de surfaces}
+\subsection{Deuxième approche : retexturing pour tous types de surfaces}
 \begin{figure}[!ht]
    \centering	
         \includegraphics[width=\linewidth]{retext_pipeline.pdf}
@@ -254,4 +254,4 @@ A partir de notre modèle JOLIMAS, il est possible d'utiliser la quadrique comme 
 \section{Conclusion}
 \label{sec:conclusion_ra}
 %===============================================================================
-Afin d'assurer le bon fonctionnement de notre modèle dans un contexte de réalité augmentée, plusieurs choses doivent être prises en compte. D'abord, la possibilité d'avoir plusieurs sources de lumière et le fait que ces lumières peuvent potentiellement s'allumer ou s'éteindre. Nous avons également proposé une application de retexturing qui consiste à transformer la texture initiale de la surface en une autre. La difficulté de cette application est de synthétiser la nouvelle texture ainsi que les spécularités cohérentes qui la parcourent. Nous avons illustré nos résultats sur de nombreuses séquences réelles et prouvé que le modèle JOLIMAS est efficace et adapté à un contexte de réalité augmentée.
+Afin d'assurer le bon fonctionnement de notre modèle dans un contexte de réalité augmentée, plusieurs choses doivent être prises en compte. D'abord, la possibilité d'avoir plusieurs sources de lumière et le fait que ces lumières peuvent potentiellement s'allumer ou s'éteindre. Nous avons également proposé une application de retexturing qui consiste à transformer la texture initiale de la surface en une autre. La difficulté de cette application est de synthétiser la nouvelle texture ainsi que les spécularités cohérentes qui la parcourent. Nous avons illustré nos résultats sur de nombreuses séquences réelles et montré que le modèle JOLIMAS est efficace et adapté à un contexte de réalité augmentée.
