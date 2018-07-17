@@ -27,7 +27,7 @@ Dans ce mémoire, nous utilisons des lettres minuscules en gras pour représenter 
 	$\pDDHom{p}$ & Coordonnées homogènes du point 2D \smallAutoReturn
 	$\pDD{P}$ & Point 3D\smallAutoReturn
 	$\pDDHom{P}$ & Coordonnées homogènes du point 3D \smallAutoReturn
-	$\droite{d}$      & Droite de l'espace tel que $\droite{d} = (a b c)^\top $ est sa représentation homogène \smallAutoReturn
+	$\droite{d}$      & Droite de l'espace tel que $\droite{d} = \begin{pmatrix}a & b & c\end{pmatrix}^\top$ est sa représentation en coordonnées homogènes \smallAutoReturn
 	$\plan{\pi}$ & Plan de l'espace \smallAutoReturn
 	$\plan{\pi}_\vect{P}$ & Plan tangent au point $\vect{P}$ \smallAutoReturn
 	$\hat{\vect{N}}(\vect{P})$ & Normale au point $\vect{P}$ \smallAutoReturn
@@ -50,6 +50,8 @@ Dans ce mémoire, nous utilisons des lettres minuscules en gras pour représenter 
 	$\mathtt{R}$ & Rotation de la caméra  \smallAutoReturn
 	$\vect{V}$ & Position de la caméra \smallAutoReturn
 	$\mathtt{\Pi}$ & Pose de la caméra \smallAutoReturn
+	$\thicktilde{\mathtt{\Pi}}$ & Pose de la caméra en représentation virtuelle \smallAutoReturn
+	$\pi(\tilde{\vect{p}})$ & Fonction de \textit{déhomogénisation} tel que $\pi(\tilde{\vect{p}}) = \vect{p}$ \smallAutoReturn
 \end{longtable}
 
 % =============================================================================
@@ -88,7 +90,7 @@ Dans ce mémoire, nous utilisons des lettres minuscules en gras pour représenter 
 	$.$& Produit scalaire \smallAutoReturn
 	$\mathop{\text{vec}}$ & Opération de vectorisation de matrice  \smallAutoReturn
 	$\mathop{\text{vech}}$ &  Opération de vectorisation de matrice symétriques  \smallAutoReturn
-	$\mu$ & Opération de normalisation \smallAutoReturn
+	$\mu$ & Opération de normalisation tel que $\mu(\vect{U}) \overset{\mathrm{def}}{=\joinrel} \frac{\vect{U}}{\| \mb{U} \|}$ \smallAutoReturn
 	$\mathtt{M}^*$ &  Matrice adjointe de $\mathtt{M}$ \smallAutoReturn
 	$\vect{M}_v$ & Matrice vectorisée \smallAutoReturn
 	$[\vect{t}]_\times$     & Matrice antisymétrique créée à partir du vecteur 
@@ -100,7 +102,7 @@ Dans ce mémoire, nous utilisons des lettres minuscules en gras pour représenter 
 
 \begin{longtable}{p{0.1\linewidth} | p{0.8\linewidth}}
 	$I$ & Image \\
-	$I(\mathbf{q})$ & Intensité du pixel $\mathbf{q}$ \\
+	$I(\mathbf{p})$ & Intensité du pixel $\mathbf{q}$ \\
 	$I_s$ & Composante spéculaire de l'image \\
 	$I_d$ & Composante diffuse de l'image \\
 	$I_a$ & Composante ambiante de l'image \\
