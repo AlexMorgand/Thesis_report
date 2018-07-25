@@ -9,7 +9,7 @@ Dans ce chapitre, nous donnons des explications complémentaires sur l'analyse de
 \end{chapeauChapitre}
 
 \subsection{Modèle de Blinn-Phong}
-La fonction d'intensité du modèle de Blinn-Phong d'un point 3D d'une surface $\mathbf{P}$ est donné par :
+La fonction d'intensité du modèle de Blinn-Phong d'un point 3D d'une surface $\mathbf{P}$ est donnée par :
 \begin{equation}
  \begin{aligned}
        I(\mathbf{P}) =  i_a k_a + i_d k_d (\hat{\mathbf{L}}\mathbf{(\mathbf{P})}\cdot \hat{\mathbf{N})} + i_s k_s (\hat{\mathbf{N}} \cdot \hat{\mathbf{H}}(\mathbf{P}))^n,
@@ -30,7 +30,7 @@ Nous développons l'équation \eqref{eq:simpl_blinn_phong} par :
 I_s(\mathbf{P}) \propto \hat{\mathbf{N}}(\mathbf{P})^\top \frac{\mu(\mathbf{L} - \mathbf{P}) + \mu(\mathbf{V} - \mathbf{P})}{||\mu(\mathbf{L} - \mathbf{P}) + \mu(\mathbf{V} - \mathbf{P})||},
 \label{eq:blinn_phong_dev}
 \end{equation}
-D'une façon similaire au modèle de Phong, nous voulons analyser les isocontours d'une spécularité à partir de l'équation \eqref{eq:blinn_phong_dev}.
+D'une façon semblable au modèle de Phong, nous voulons analyser les isocontours d'une spécularité à partir de l'équation \eqref{eq:blinn_phong_dev}.
 
 \subsection{Analyse des contours externes de la spécularité pour $\tau = 0$ pour le modèle de Blinn-Phong}
 Nous résolvons l'équation pour $\tau = 0$ :
@@ -85,7 +85,7 @@ avec $\bar{\mb{V}} = \begin{bmatrix} V_X & V_Y\end{bmatrix}^\top $ et $\bar{\mb{
 
 \subsection{Cas spécial, analyse de $\tau = 1$ pour le modèle de Phong}
 \label{sec:tau_one}
-L'étude du cas  $\tau = 1$ inclue les points aillant une intensité maximale sur la surface $S$. Pour le modèle de Phong, cette étude est intéressant car pour $\tau = 1$, les termes de degré trois et quatre disparaissent. Les termes restant sont :
+L'étude du cas  $\tau = 1$ inclut les points ayant une intensité maximale sur la surface $S$. Pour le modèle de Phong, cette étude est intéressante, car pour $\tau = 1$, les termes de degré trois et quatre disparaissent. Les termes restants sont :
 \begin{flalign*}
 (d^\circ 2) \text{    }& \mathbf{P}^\top [\mb{R} - \mb{V}]^2_\times \mb{P}\\
 (d^\circ 1) \text{    }& 2\mb{P}^\top[\mb{V} \times \mb{R}]_\times (\mb{V} - \mb{R}) \\
@@ -126,10 +126,10 @@ Le premier terme est développé en :
 \begin{equation*}
 (\mb{R} - \mb{V})^\top(\mb{R} \times (\mb{R} \times \mb{V})) = - \mb{V}^\top (\mb{R} \times (\mb{R} \times \mb{V})) = - \mb{V}^\top [\mb{R}]_\times^2 \mb{V}.
 \end{equation*}
-Nous avons vu que le deuxième et le troisième terme (les coefficients associé au degré 0) sont aussi égaux à $\mb{V}^\top [\mb{R}]_\times^2\mb{V}$, ce qui conclue.
+Nous avons vu que le deuxième et le troisième terme (les coefficients associés au degré 0) sont aussi égaux à $\mb{V}^\top [\mb{R}]_\times^2\mb{V}$, ce qui conclue.
 
 \section{Point d'intensité maximale dans une spécularité sous le modèle de Phong}
-Nous souhaitons trouver le point d'intensité maximale d'une spécularité créé par une source de lumière sur une surface plane dont l'intensité est donnée par le modèle de Phong. Sans perte de généralité, nous travaillons en coordonnées monde pour la surface plane de la scène $S \subset \mathbb{R}^3$ soit le plan  $(\vect{XY})$. En détails, $S = \{\vect{P}\text{ } | \text{ } P_Z = 0\}$. Nous pouvons ainsi paramétrer $S$ par un point $\vect{p} \in \mathbb{R}^2$ et définir $\vect{P} = \mathop{\text{stk}}(\vect{p}, 0)$. Au point $\vect{p}$ la composante spéculaire $I_s(\vect{p})$ est donnée par :
+Nous souhaitons trouver le point d'intensité maximale d'une spécularité créé par une source de lumière sur une surface plane dont l'intensité est donnée par le modèle de Phong. Sans perte de généralité, nous travaillons dans le repère monde pour la surface plane de la scène $S \subset \mathbb{R}^3$ soit le plan  $(\vect{XY})$. En détail, $S = \{\vect{P}\text{ } | \text{ } P_Z = 0\}$. Nous pouvons ainsi paramétrer $S$ par un point $\vect{p} \in \mathbb{R}^2$ et définir $\vect{P} = \mathop{\text{stk}}(\vect{p}, 0)$. Au point $\vect{p}$ la composante spéculaire $I_s(\vect{p})$ est donnée par :
 \begin{equation}
 I_s(\vect{p}) = \op{max}(0,\op{cos}(\beta(\vect{p})))^n,
 \end{equation}
@@ -137,7 +137,7 @@ où $\beta$ correspond à l'angle entre la direction d'observation et la direction
 \begin{equation}
 \hat{\vect{p}} =  \underset{\vect{p} \in \mathbb{R}^2}{\text{arg max }} I_s(\vect{p}).
 \end{equation}
-Nous voulons étudier l'existence, la localisation et l'unicité de $\hat{\vect{p}}$. A proprement parlé, nous réalisons une étude du point d'intensité maximale de terme spéculaire de Phong. En pratique, ce terme domine les termes diffus et ambiant, et  $\hat{\vect{p}}$ sera ainsi une bonne approximation du point d'intensité maximale dans les cas incluant la lumière ambiante et la réflexion diffuse.
+Nous voulons étudier l'existence, la localisation et l'unicité de $\hat{\vect{p}}$. À proprement parler, nous réalisons une étude du point d'intensité maximale de terme spéculaire de Phong. En pratique, ce terme domine le termes diffus et ambiant, et  $\hat{\vect{p}}$ sera ainsi une bonne approximation du point d'intensité maximale dans les cas incluant la lumière ambiante et la réflexion diffuse.
 
 
 \section{Notation et contexte}
@@ -149,7 +149,7 @@ Nous définissons à présent les vecteurs de direction plus précisément. L'ensembl
 \section{Résultat principal}
 
 \begin{theorem}
-Pour un point de vue et une source de lumière donnés aux positions  $\vect{V}, \vect{L} \in \mathbb{R}^3$ respectivement, localisés sur le même côté du plan $S$ coïncidant avec le plan $\vect{XY}$ du plan de référence des coordonnées monde, la spécularité créée par le terme spéculaire de Phong a un point d'intensité maximale localisée à $\frac{1}{V_Z + L_Z}\begin{bmatrix}
+Pour un point de vue et une source de lumière donnés aux positions  $\vect{V}, \vect{L} \in \mathbb{R}^3$ respectivement, localisés du même côté du plan $S$ coïncidant avec le plan $\vect{XY}$ du plan de référence dans le repère monde, la spécularité créée par le terme spéculaire de Phong a un point d'intensité maximale localisée à $\frac{1}{V_Z + L_Z}\begin{bmatrix}
 V_ZL_X + V_XL_Z & V_ZL_Y + V_YL_Z & 0
 \end{bmatrix}^\top$ avec une intensité de réflexion de un.
 \end{theorem}
@@ -157,7 +157,7 @@ V_ZL_X + V_XL_Z & V_ZL_Y + V_YL_Z & 0
 La preuve du théorème 1 requiert la proposition suivante.
 
 \begin{prop}
-Pour deux points $\vect{R}, \vect{V} \in \mathbb{R}^3$ et un plan $S$ avec $\vect{R}, \vect{V} \notin S$, l'ensemble des points $\mathcal{P} \subset S$ tel que le vecteur reliant $\vect{R}$ à la projection de la ligne contenant $\vect{P}$ et $\vect{V}$ est l'opposée du vecteur reliant $\vect{V}$ à la projection de la droite contenant $\vect{P}$ et  $\vect{R}$ quand projetée sur $S$ est un point unique $\mathcal{P} = \{\vect{P}\}$ situé à l'intersection de la droite contenant $\vect{R}$ et $\vect{V}$ et $S$. Deux cas spéciaux se produisent : si $\vect{R} = \vect{V}$ alors $\mathcal{P} = \{\vect{P}\text{ } | \text{ } \vect{P} \in S\}$ et si la droite contenant $\vect{R}$ et $\vect{V}$ est parallèle à $S$ alors $\mathcal{P} = \emptyset$.
+Pour deux points $\vect{R}, \vect{V} \in \mathbb{R}^3$ et un plan $S$ avec $\vect{R}, \vect{V} \notin S$, l'ensemble des points $\mathcal{P} \subset S$ tels que le vecteur reliant $\vect{R}$ à la projection de la ligne contenant $\vect{P}$ et $\vect{V}$ est l'opposée du vecteur reliant $\vect{V}$ à la projection de la droite contenant $\vect{P}$ et  $\vect{R}$ quand projetée sur $S$ est un point unique $\mathcal{P} = \{\vect{P}\}$ situé à l'intersection de la droite contenant $\vect{R}$ et $\vect{V}$ et $S$. Deux cas spéciaux se produisent : si $\vect{R} = \vect{V}$ alors $\mathcal{P} = \{\vect{P}\text{ } | \text{ } \vect{P} \in S\}$ et si la droite contenant $\vect{R}$ et $\vect{V}$ est parallèle à $S$ alors $\mathcal{P} = \emptyset$.
 \end{prop}
 \begin{proof}[Preuve du théorème 1]
 Nous reformulons le modèle d'illumination tel que :
@@ -177,12 +177,12 @@ Nous avons $\frac{\partial \mu}{\partial \vect{U}}(\vect{U}) = \frac{\| \vect{U}
 avec $\mathtt{K} \overset{\mathrm{def}}{=\joinrel} \frac{\partial\vect{p}}{\partial p} = \begin{bmatrix}
 1 & 0 & 0 \\
 0 & 1 & 0
-\end{bmatrix}$. Nous observons que $\mathtt{K}\mathbf{Q}$ se projette simplement en un point $\vect{Q} \in \mathbb{R}^3$ sur $S$. Puisque $n > 0$, nous pouvons supprimer le premier terme. Le deuxième terme disparait pour $\vect{R} - \vect{P}$ et $\vect{V} - \vect{P}$ orthogonaux. Ceci peut être facilement vérifié, en analysant la fonction de coût, que les extremum sont des minimums puisqu'ils annulent $\thicktilde{I}_s$ et $I_s$. De plus, le deuxième terme peut être supprimé de l'équation. Nous pouvons multiplier par $\| \vect{R} - \vect{P}\| \| \vect{V} - \vect{P} \|$ pour obtenir :
+\end{bmatrix}$. Nous observons que $\mathtt{K}\mathbf{Q}$ se projette simplement en un point $\vect{Q} \in \mathbb{R}^3$ sur $S$. Puisque $n > 0$, nous pouvons supprimer le premier terme. Le deuxième terme disparait pour $\vect{R} - \vect{P}$ et $\vect{V} - \vect{P}$ orthogonaux. Ceci peut être facilement vérifié, en analysant la fonction de coût, que les extremums sont des minimums puisqu'ils annulent $\thicktilde{I}_s$ et $I_s$. De plus, le deuxième terme peut être supprimé de l'équation. Nous pouvons multiplier par $\| \vect{R} - \vect{P}\| \| \vect{V} - \vect{P} \|$ pour obtenir :
 \begin{flalign*}
 \mathtt{K}\Bigg(\bigg( \mathtt{I} - \frac{(\vect{R} - \vect{P})(\vect{R} - \vect{P})^\top}{\| \vect{R} - \vect{P} \|^2} \bigg) (\vect{V} - \vect{P}) \\
 + \bigg( \mathtt{I} - \frac{(\vect{V} - \vect{P})(\vect{V} - \vect{P})^\top}{\| \vect{V} - \vect{P} \|^2} \bigg) (\vect{R} - \vect{P}) \Bigg) = 0.
 \end{flalign*}
-Cette équation peut être reformulée en une forme plus compacte en utilisant des projecteurs tel que :
+Cette équation peut être reformulée en une forme plus compacte en utilisant des projecteurs tels que :
 \begin{equation}
 \Pi_S\bigg( \overrightarrow{\vect{PV}} - \Pi_{\overrightarrow{\vect{PR}}}(\overrightarrow{\vect{PV}}) + \overrightarrow{\vect{PR}} - \Pi_{\overrightarrow{\vect{PV}}}(\overrightarrow{\vect{PR}}) \bigg) = 0,
 \end{equation}
@@ -190,7 +190,7 @@ et nous obtenons :
 \begin{equation}
 \Pi_S\bigg( \overrightarrow{\vect{PV}}\bigg) + \Pi_S\bigg( \overrightarrow{\vect{PR}}\bigg) =  \Pi_S \bigg(\Pi_{\overrightarrow{\vect{PR}}}(\overrightarrow{\vect{PV}}) \bigg) +  \Pi_S \bigg(\Pi_{\overrightarrow{\vect{PV}}}(\overrightarrow{\vect{PR}}) \bigg).
 \end{equation}
-Nous pouvons enfin appliquer la proposition 1. Notons que  $\vect{V}$ est situé sur la partie positive de $S$ et $\vect{R}$ est un point `virtuel'  qui est situé sur la partie négative de $S$. Puisque aucun des vecteurs $\vect{V}$ et $\vect{R}$ ne sont contenus dans $S$, nous avons nécessairement $\vect{R} \neq \vect{V}$ et la droite contenant $\vect{R}$ et $\vect{V}$ qui ne sont jamais parallèles à $S$. Aucun des cas spéciaux de la proposition 1 ne s'appliquent, et nous concluons que $\vect{P}$ est définie uniquement comme étant l'intersection de $S$ et la droite contenant $\vect{R}$ et $\vect{V}$. Un raisonnement géométrique simple montre que $\vect{P}$ est le point où $\vect{N}$ coïncide avec la bissectrice de l'angle formé par $\vect{R}$, $\vect{P}$ et $\vect{V}$.
+Nous pouvons enfin appliquer la proposition 1. Notons que  $\vect{V}$ est situé sur la partie positive de $S$ et $\vect{R}$ est un point `virtuel'  qui est situé sur la partie négative de $S$. Puisque aucun des vecteurs $\vect{V}$ et $\vect{R}$ ne sont contenus dans $S$, nous avons nécessairement $\vect{R} \neq \vect{V}$ et la droite contenant $\vect{R}$ et $\vect{V}$ qui ne sont jamais parallèles à $S$. Aucun des cas spéciaux de la proposition 1 ne s'applique, et nous concluons que $\vect{P}$ est définie uniquement comme étant l'intersection de $S$ et la droite contenant $\vect{R}$ et $\vect{V}$. Un raisonnement géométrique simple montre que $\vect{P}$ est le point où $\vect{N}$ coïncide avec la bissectrice de l'angle formé par $\vect{R}$, $\vect{P}$ et $\vect{V}$.
 Nous trouvons que $\vect{P} = \vect{R} + \lambda(\vect{V} - \vect{R})$ en utilisant $P_Z = 0$ afin de trouver $\lambda = \frac{R_Z}{R_Z - V_Z}$, et nous obtenons finalement :
 \begin{equation}
 \vect{P} = \begin{bmatrix}
@@ -231,7 +231,7 @@ En utilisant le lemme 1 deux fois sur le premier terme avec $\vect{A} = \vect{R}
 \begin{flalign*}
 \mathtt{K}\Bigg( \| \vect{V} - \vect{P} \|^2  [(\vect{R} - \vect{P}) \times (\vect{V} - \vect{P})]_\times (\vect{R} - \vect{P})  & \\ + \| \vect{R} - \vect{P} \|^2 [(\vect{V} - \vect{P}) \times (\vect{R} - \vect{P})]_\times (\vect{V} - \vect{P})  \Bigg) = 0.
 \end{flalign*}
-où $\vect{A}$, $\vect{B} \in \mathbb{R}^3$, $[\vect{A}]_\times \in \mathbb{R}^{3 \times 3}$ une matrice antisymétrique tel que  $[\vect{A}]_\times \vect{B} = \vect{A} \times \vect{B}$. Puisque $[\vect{A} \times \vect{B}]_\times = -[\vect{B} \times \vect{A}]_\times$ nous avons :
+où $\vect{A}$, $\vect{B} \in \mathbb{R}^3$, $[\vect{A}]_\times \in \mathbb{R}^{3 \times 3}$ une matrice antisymétrique telle que  $[\vect{A}]_\times \vect{B} = \vect{A} \times \vect{B}$. Puisque $[\vect{A} \times \vect{B}]_\times = -[\vect{B} \times \vect{A}]_\times$ nous avons :
 \begin{equation}
 \mathtt{K}[(\vect{R} - \vect{P}) \times (\vect{V} - \vect{P})]_\times (\|\vect{V} - \vect{P} \|^2 (\vect{R} - \vect{P}) - \| \vect{R} - \vect{P} \|^2 (\vect{V} - \vect{P})) = 0.
 \end{equation}
@@ -239,11 +239,11 @@ Nous obtenons un produit de trois facteurs , $f_1$, $f_2$ et $f_3$, deux matrice
 0 & -c_3 & c_2 \\
 c_3 & 0 & -c_1
 \end{bmatrix}$.
-Nous avons ainsi trois cas dépendant de $\op{rank}(\mathtt{K}[\vect{C}]_\times)$. Le cas $(iii)$ $-a$ se produit lorsque $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 2$, ce qui est vérifié si et seulement si $c_3 \neq 0$. $(iii)$ est vérifié si et seulement si :
+Nous avons ainsi trois cas dépendants de $\op{rank}(\mathtt{K}[\vect{C}]_\times)$. Le cas $(iii)$ $-a$ se produit lorsque $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 2$, ce qui est vérifié si et seulement si $c_3 \neq 0$. $(iii)$ est vérifié si et seulement si :
 \begin{equation*}
 (\vect{R} - \vect{P}) \times (\vect{V} - \vect{P}) \propto \| \vect{V} - \vect{P}\|^2(\vect{R} - \vect{P}) - \| \vect{R} - \vect{P}\|^2(\vect{V} - \vect{P}).
 \end{equation*}
-La partie de gauche défini un vecteur qui est orthogonal au plan défini par $\vect{R}$, $\vect{V}$ et l'origine du repère monde est localisé sur $S$ alors que la partie de droite défini un vecteur qui est inclut dans ce plan. Ainsi, $(iii)$ est vérifié si et seulement si les deux parties de l'équation disparaissent ce qui implique que $(i)$ et $(ii)$ sont vérifié en même temps ce qui se produit seulement pour  $\vect{R} = \vect{V}$ et pour tout $\vect{P} \in S$ ce qui vérifie dans ce cas $(ii)$. Le cas $(iii)$ $-b$ se produit lorsque $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 1$, ce qui est vérifié si et seulement si $c_3 = 0$ et $c_1 \neq 0$, $c_2 \neq 0$ ou $c_1c_2 \neq 0$, $c_3 = 0$ ce qui signifie que les deux composantes de $\vect{R} - \vect{P}$ et $\vect{V} - \vect{P}$ sont linéairement dépendants et ainsi que le plan contenant $\vect{R}$, $\vect{V}$ et $\vect{P}$ est orthogonal à $S$ et ainsi contient $\vect{N}$. $(iii)$ est vérifié si :
+La partie de gauche définit un vecteur qui est orthogonal au plan défini par $\vect{R}$, $\vect{V}$ et l'origine du repère monde est localisé sur $S$ alors que la partie de droite définit un vecteur qui est inclus dans ce plan. Ainsi, $(iii)$ est vérifié si et seulement si les deux parties de l'équation disparaissent ce qui implique que $(i)$ et $(ii)$ sont vérifié en même temps ce qui se produit seulement pour  $\vect{R} = \vect{V}$ et pour tout $\vect{P} \in S$ ce qui vérifie dans ce cas $(ii)$. Le cas $(iii)$ $-b$ se produit lorsque $\op{rank}(\mathtt{K}[\vect{C}]_\times) = 1$, ce qui est vérifié si et seulement si $c_3 = 0$ et $c_1 \neq 0$, $c_2 \neq 0$ ou $c_1c_2 \neq 0$, $c_3 = 0$ ce qui signifie que les deux composantes de $\vect{R} - \vect{P}$ et $\vect{V} - \vect{P}$ sont linéairement dépendants et ainsi que le plan contenant $\vect{R}$, $\vect{V}$ et $\vect{P}$ est orthogonal à $S$ et ainsi contient $\vect{N}$. $(iii)$ est vérifié si :
 \begin{equation}
 \vect{N}^\top \big( \| \vect{V} - \vect{P}\|^2 ( \vect{R} - \vect{P}) - \| \vect{R} - \vect{P}\|^2 ( \vect{V} - \vect{P})  \big) = 0.
 \end{equation}
