@@ -4,7 +4,7 @@
 \graphicspath{{images/Ch3/}}
 
 \begin{chapeauChapitre}
-Dans ce chapitre posons les bases de notre modèle géométrique que nous utilisons pour la prédiction des spécularités. A l'opposé des méthodes d'illumination locale et d'illumination globale, il est intéressant de considérer la lumière comme un élément géométrique car le comportement d'une spécularité est très similaire à celui d'un objet réfléchi dans un miroir. Nous explorons cette piste dans ce chapitre par un exemple relativement simple (une surface plane) mais permettant de mettre en évidence nos premières hypothèses et le principe général de notre modèle géométrique.
+Dans ce chapitre, nous posons les bases de notre modèle géométrique que nous utilisons pour la prédiction des spécularités. À l'opposé des méthodes d'illumination locale et d'illumination globale, il est intéressant de considérer la lumière comme un élément géométrique, car le comportement d'une spécularité est très similaire à celui d'un objet réfléchi dans un miroir. Nous explorons cette piste dans ce chapitre par un exemple relativement simple (une surface plane), mais permettant de mettre en évidence nos premières hypothèses et le principe général de notre modèle géométrique.
 \end{chapeauChapitre}
 
 \section{Introduction}
@@ -22,9 +22,9 @@ Nous proposons un modèle empirique que nous avons nommé \textit{JOint LIght-MAte
 \section{Approche proposée} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:approche_proposee_primal} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
-Nous partons de l'observation qu'une spécularité présente une forme elliptique sur une surface plane.  Si une ellipse correspond à la projection perspective d'une quadrique, existe-il une quadrique fixe dans l'espace dont la projection perspective correspond aux spécularités ? Dans ce cas, un modèle faisant abstraction des paramètres physiques liés à l'apparition de la spécularité peut être obtenu.
+Nous partons de l'observation qu'une spécularité présente une forme elliptique sur une surface plane.  Si une ellipse correspond à la projection perspective d'une quadrique, existe-t-il une quadrique fixe dans l'espace dont la projection perspective correspond aux spécularités ? Dans ce cas, un modèle faisant abstraction des paramètres physiques liés à l'apparition de la spécularité peut être obtenu.
 
-Nous proposons un modèle empirique incluant les propriétés des sources de lumière et des matériaux en reconstruisant une quadrique issue des ellipses appliquées aux spécularités pour chaque point de vue comme illustré sur la figure \ref{fig:dessin}. Nous assumons des surfaces planes non-Lambertiennes où chaque spécularité est associée à une source de lumière. Notre étude se concentre sur ce modèle permettant de prédire les spécularités provenant de n'importe quel type de lumière.
+Nous proposons un modèle empirique incluant les propriétés des sources de lumière et des matériaux en reconstruisant une quadrique issue des ellipses appliquées aux spécularités pour chaque point de vue comme illustré sur la figure \ref{fig:dessin}. Nous assumons des surfaces planes non Lambertiennes où chaque spécularité est associée à une source de lumière. Notre étude se concentre sur ce modèle permettant de prédire les spécularités provenant de n'importe quel type de lumière.
 
 Une démonstration de notre approximation de la spécularité, observée sur une surface plane, par une ellipse est détaillée dans les sections suivantes. Nous évaluerons empiriquement cette hypothèse dans la section \ref{sec:validation}.
 
@@ -39,10 +39,10 @@ Une démonstration de notre approximation de la spécularité, observée sur une sur
 \section{Motivation théorique} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \label{sec:motivation_theorique_primal} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % =============================================================================
-Dans cette section, nous mettons en évidence l'utilisation des modèles classiques d'illumination locale comme Phong et Blinn-Phong comme base théorique de notre modèle. En effet, dans ces modèles, afin d'assurer un rendu rapide et cohérent, de nombreuses approximations sont réalisées sur l'interaction lumière/matériau. Ces approximations sont judicieuses à étudier car elles fournissent une fondation intéressante pour l'abstraction des paramètres physiques liés à l'apparition de la spécularité de notre modèle. L'objectif de cette section est de montrer que notre hypothèse de spécularité de forme conique (et plus spécifiquement elliptique) est cohérente.
+Dans cette section, nous mettons en évidence l'utilisation des modèles classiques d'illumination locale comme Phong et Blinn-Phong comme base théorique de notre modèle. En effet, dans ces modèles, afin d'assurer un rendu rapide et cohérent, de nombreuses approximations sont réalisées sur l'interaction lumière/matériau. Ces approximations sont judicieuses à étudier, car elles fournissent une fondation intéressante pour l'abstraction des paramètres physiques liés à l'apparition de la spécularité de notre modèle. L'objectif de cette section est de montrer que notre hypothèse de spécularité de forme conique (et plus spécifiquement elliptique) est cohérente.
 % et se retrouve également dans les modèles d'illumination locale.
 \subsection{Modèles de Phong et Blinn-Phong}
-Nous utilisons le modèle d'illumination de \cite{phong1975illumination} qui est à la base de nombreuses modèle de BRDF \cite{hughes2012calculating}. Nous n'utilisons pas le modèle de Phong pour reconstruire notre modèle JOLIMAS mais plutôt comme un moyen théorique de développer certaines de ses propriétés fondamentales. Ce modèle d'illumination divise l'image en 3 composantes : diffuse, ambiante et spéculaire. Des modèles plus récents comme ceux de \cite{blinn1977models}, \cite{ward1994radiance}, \cite{cook1982reflectance} diffèrent majoritairement dans le calcul du terme spéculaire. Ces modèles proposent également une estimation de la rugosité qui correspond à la micro géométrie d'une surface et est un élément important dans la perception et le réalisme d'un matériau. Même si le modèle de Phong est considéré comme obsolète dans les méthodes de rendu photo-réaliste, il convient bien pour expliciter l'approximation effectuée dans notre étude de par sa simplicité analytique.
+Nous utilisons le modèle d'illumination de \cite{phong1975illumination} qui est à la base de nombreux modèle de BRDF \cite{hughes2012calculating}. Nous n'utilisons pas le modèle de Phong pour reconstruire notre modèle JOLIMAS mais plutôt comme un moyen théorique de développer certaines de ses propriétés fondamentales. Ce modèle d'illumination divise l'image en 3 composantes : diffuse, ambiante et spéculaire. Des modèles plus récents comme ceux de \cite{blinn1977models}, \cite{ward1994radiance}, \cite{cook1982reflectance} diffèrent majoritairement dans le calcul du terme spéculaire. Ces modèles proposent également une estimation de la rugosité qui correspond à la micro géométrie d'une surface et est un élément important dans la perception et le réalisme d'un matériau. Même si le modèle de Phong est considéré comme obsolète dans les méthodes de rendu photo-réaliste, il convient bien pour expliciter l'approximation effectuée dans notre étude de par sa simplicité analytique.
 
 La fonction d'intensité du modèle de \cite{phong1975illumination} d'un point 3D sur une surface est donnée par la formule :
 \begin{equation}
@@ -71,7 +71,7 @@ Dans un premier temps, nous développons Eq.\ref{eq:simple_phong} pour un $\tau$ 
 \label{eq:phong_tau}
 \end{equation}
 $\tilde{I}_s$ est un produit scalaire entre deux vecteurs normalisés, nous avons $-1 \leq \tilde{I}_s \leq 1$. De plus, puisque $P_Z = 0$, $L_Z > 0$ et $V_Z > 0$, $\tilde{I}_s$ > 0, de manière générale, $0 < \tilde{I}_s \leq 1$.
-En multipliant l'équation \eqref{eq:phong_tau} $\| \mathbf{R} - \mathbf{P} \| \| \mathbf{V} - \mathbf{P} \|$, en mettant l'expression au carré et en soustrayant la partie de droite, nous obtenons une quartique à deux variables (en $P_X$ and $P_Y$):
+En multipliant l'équation \eqref{eq:phong_tau} $\| \mathbf{R} - \mathbf{P} \| \| \mathbf{V} - \mathbf{P} \|$, en mettant l'expression au carré et en soustrayant la partie de droite, nous obtenons une quartique à deux variables (en $P_X$ et $P_Y$):
 \begin{equation*}
 \big( ( \mathbf{R} - \mathbf{P})^\top (\mathbf{V} - \mathbf{P}) \big)^2 - \tau^2 \| \mathbf{R} - \mathbf{P} \|^2 \|  \mathbf{V} - \mathbf{P}\|^2 = 0.
 \end{equation*}
@@ -85,7 +85,7 @@ En développant le terme spéculaire à l'équation \eqref{eq:phong} et en rassembla
 &\tau^2 || \mathbf{R}||^2\mathbf{V}^\top + \tau^2 || \mathbf{V}||^2 \mathbf{R}^\top)\mathbf{P}\\
 (d^\circ 0) \text{    } &(\mathbf{R}^\top\mathbf{V})^2 - \tau^2 ||\mathbf{R} ||^2 ||\mathbf{V} ||^2.
 \end{flalign*}
-Pour $\tau = 1$, les monômes de degré 3 et 4 disparaissent tel que les termes restants forment une équation quadratique tel que :
+Pour $\tau = 1$, les monômes de degré 3 et 4 disparaissent tels que les termes restants forment une équation quadratique tels que :
 \begin{equation}
 \mathbf{\tilde{P}}^\top \mathtt{Q} \mathbf{\tilde{P}} = 0,
 \end{equation}
@@ -102,7 +102,7 @@ Nous observons que la somme des termes de degrés 3 et 4 donne:
 \end{equation}
 
 \subsubsection{Point d'intensité maximale}
-A la valeur d'intensité maximale $\tau = 1$, les monômes de degrés 3 et 4 disparaissent. Les termes restants forment une équation quadratique qui peut être réécrite de la manière suivante:
+À la valeur d'intensité maximale $\tau = 1$, les monômes de degrés 3 et 4 disparaissent. Les termes restants forment une équation quadratique qui peut être réécrite de la manière suivante:
 \begin{equation}
 \mathbf{\tilde{P}}^\top \mathtt{J} \mathbf{\tilde{P}} = 0,
 \end{equation}
@@ -114,7 +114,7 @@ où $\tilde{\mathbf{P}} \overset{\mathrm{def}}{=\joinrel} \begin{bmatrix} \mathbf
 \end{bmatrix}
 \end{equation*}
 
-Nous avons montré dans l'appendice \ref{annexe:analysis_phong_blinn} que $\mathop{\text{rang}}(\mathtt{J}) = 2$ et $\mathtt{J}$ est non-négative. Ce qui signifie que $\mathtt{J}$ est une quadrique de classe point ce qui représente une ligne contenant $\mathbf{R}$ et $\mathbf{V}$. Son intersection avec $S$ est définie comme étant le point d'intensité maximale. En conséquence, la spécularité a un point d'intensité maximale bien défini et unique.
+Nous avons montré dans l'appendice \ref{annexe:analysis_phong_blinn} que $\mathop{\text{rang}}(\mathtt{J}) = 2$ et $\mathtt{J}$ est non négative. Ce qui signifie que $\mathtt{J}$ est une quadrique de classe point ce qui représente une ligne contenant $\mathbf{R}$ et $\mathbf{V}$. Son intersection avec $S$ est définie comme étant le point d'intensité maximale. En conséquence, la spécularité a un point d'intensité maximale bien défini et unique.
 
 \subsubsection{Contour externe}
 Pour comprendre en détail la structure du problème, l'Eq.\ref{eq:phong_tau} est résolue pour $\tau = 0$ ce qui révèle la nature du contour externe. En développant le terme spéculaire de Eq.\ref{eq:phong}, on obtient :
@@ -150,7 +150,7 @@ avec  $\mathbf{\bar{R}} \overset{\mathrm{def}}{=\joinrel} \setlength\arraycolsep
 En observant le cercle  $\mathtt{C}$ sur le plan image de la caméra de centre optique $\vect{V}$, une conique est obtenue et plus particulièrement une ellipse si la spécularité est contenue entièrement dans le plan image.
 
 \subsubsection{Isocontours internes}
-Afin d'étudier les contours internes correspondant à une valeur de $\tau \in [0, 1]$ arbitraire, les réflexions spéculaires peuvent être approximées par une ellipse dans le modèle de Phong comme illustré dans la figure \ref{fig:phong_closeup}. Cette approximation a également été testée et validée sur le modèle de \cite{blinn1977models} comme illustré à la figure \ref{fig:blinn_closeup}. Initialement, ce modèle a été défini en tant qu'approximation du modèle de Phong et régulièrement présenté en infographie comme un modèle plus précis en comparaison avec Phong. Ce modèle est aussi  considéré comme physiquement plus cohérent car il vérifie l'équation de Helmholtz \cite{haines2002real}.
+Afin d'étudier les contours internes correspondant à une valeur de $\tau \in [0, 1]$ arbitraire, les réflexions spéculaires peuvent être approximées par une ellipse dans le modèle de Phong comme illustré dans la figure \ref{fig:phong_closeup}. Cette approximation a également été testée et validée sur le modèle de \cite{blinn1977models} comme illustré à la figure \ref{fig:blinn_closeup}. Initialement, ce modèle a été défini en tant qu'approximation du modèle de Phong et régulièrement présenté en infographie comme un modèle plus précis en comparaison avec Phong. Ce modèle est aussi  considéré comme physiquement plus cohérent, car il vérifie l'équation de Helmholtz \cite{haines2002real}.
 
 Cette démonstration illustre la pertinence et la précision d'une modélisation d'une spécularité par une ellipse. Afin de démontrer davantage cette propriété, une validation empirique sur des données de synthèse est réalisée dans la prochaine section.
 
@@ -197,7 +197,7 @@ Afin de valider notre approximation de spécularités, nous utilisons la méthode d
         \label{fig:extended_theoritical}	
     }   
      
-\caption{Validation empirique à partir de données synthétiques pour (a) des sources de lumière ponctuelles et (b) des sources de lumière étendues. Notre hypothèse de spécularités de forme elliptique est testée sur les modèles d'illumination de Phong (P) et de Blinn-Phong (BP) pour différentes valeurs de $\tau \in [0, 1]$. Cette hypothèse est testée pour le terme spéculaire dans un premier temps et en combinant les termes spéculaire et diffus combinés.}
+\caption{Validation empirique à partir de données synthétiques pour (a) des sources de lumière ponctuelles et (b) des sources de lumière étendues. Notre hypothèse de spécularités de forme elliptique est testée sur les modèles d'illumination de Phong (P) et de Blinn-Phong (BP) pour différentes valeurs de $\tau \in [0, 1]$. Cette hypothèse est testée pour le terme spéculaire dans un premier temps et en combinant le terme spéculaire et le terme diffus combinés.}
 \label{fig:empirical}
 \end{figure}
 
@@ -249,7 +249,7 @@ avec
  \end{aligned}
     \label{eq:linearsystem}
 \end{equation}
-avec la matrice $\mathtt{B}_i \in \mathbb{R}^{6 \times 10}$. La solution de ce système linéaire est illustré par l'équation \ref{eq:linearsystem} qui est calculée par décomposition en valeurs singulières (SVD) de $\mathtt{M}$. $\alpha_i$ correspond à l'échelle pour l'image d'indice $i$ telle que : $ \alpha_i  \mbf{C}_{i, v}^* = \mathtt{B}_i \mbf{Q}_{i, \mathtt{v}}^*$. Le processus de reconstruction de la quadrique est illustré à la figure \ref{fig:dessin}. Cependant, le système \eqref{eq:linearsystem} est relativement sensible aux erreurs du calcul des ellipses en entrée. Afin d'assurer la qualité des ellipses en entrée utilisées pour la reconstruction, nous utilisons un procédé de correction épipolaire des ellipses en entrée. Cette correction assure que les ellipses respectent la contrainte épipolaire avant le procédé initial de reconstruction de quadrique. Afin d'améliorer la reconstruction de quadrique, un raffinement non-linéaire est proposé.
+avec la matrice $\mathtt{B}_i \in \mathbb{R}^{6 \times 10}$. La solution de ce système linéaire est illustrée par l'équation \ref{eq:linearsystem} qui est calculée par décomposition en valeurs singulières (SVD) de $\mathtt{M}$. $\alpha_i$ correspond à l'échelle pour l'image d'indice $i$ telle que : $ \alpha_i  \mbf{C}_{i, v}^* = \mathtt{B}_i \mbf{Q}_{i, \mathtt{v}}^*$. Le processus de reconstruction de la quadrique est illustré à la figure \ref{fig:dessin}. Cependant, le système \eqref{eq:linearsystem} est relativement sensible aux erreurs du calcul des ellipses en entrée. Afin d'assurer la qualité des ellipses en entrée utilisées pour la reconstruction, nous utilisons un procédé de correction épipolaire des ellipses en entrée. Cette correction assure que les ellipses respectent la contrainte épipolaire avant le procédé initial de reconstruction de quadrique. Afin d'améliorer la reconstruction de quadrique, un raffinement non-linéaire est proposé.
 
 
 
@@ -263,7 +263,7 @@ Afin d'évaluer la pertinence et la précision de notre modèle, deux expériences s
 \subsection{Validation du modèle sur des données de synthèse}
 \label{sec:validation_synt}
 
-Dans cette section, nous détaillons la validation de notre approximation de quadrique sur des données de synthèse. La caméra utilisée a une distance focale de $50mm$ avec le point principal centré dans l'image. La taille des pixels est de $0.45 \times 0.45mm$ pour une résolution de $1000\times 1000$ pixels. Notre scène est constituée d'un plan réfléchissant de $20\times20cm$ où l'on observe une spécularité en mouvement. Nous sélectionnons aléatoirement les points de vue et la position de la source de lumière au-dessus du plan. À partir des modèles d'illumination de Phong et Blinn-Phong pour tout $\tau \in [0,1]$, 100 quadriques sont estimées par le biais de 100 points de vue. Nous calculons la distance géométrique entre les termes diffus et spéculaire combinés avec la projection de quadrique associée au point de vue au sens de notre distance Ellipse/Point.
+Dans cette section, nous détaillons la validation de notre approximation de quadrique sur des données de synthèse. La caméra utilisée a une distance focale de $50mm$ avec le point principal centré dans l'image. La taille des pixels est de $0.45 \times 0.45mm$ pour une résolution de $1000\times 1000$ pixels. Notre scène est constituée d'un plan réfléchissant de $20\times20cm$ où l'on observe une spécularité en mouvement. Nous sélectionnons aléatoirement les points de vue et la position de la source de lumière au-dessus du plan. À partir des modèles d'illumination de Phong et Blinn-Phong pour tout $\tau \in [0,1]$, 100 quadriques sont estimées par le biais de 100 points de vue. Nous calculons la distance géométrique entre le terme diffus et le terme spéculaire combinés avec la projection de quadrique associée au point de vue au sens de notre distance Ellipse/Point.
 \begin{figure}[!ht]
    \centering	 
    \subfigure[Source ponctuelle]
@@ -274,7 +274,7 @@ Dans cette section, nous détaillons la validation de notre approximation de quad
    {
           \includegraphics[width=\linewidth]{final_synth_extended.pdf}
    }	  
-\caption{Validation de notre modèle en mesurant l'erreur de prédiction sur des données synthétiques pour une source de lumière ponctuelle (a) et une source de lumière étendue (b). A partir de 100 points de vues, une quadrique fixe est reconstruite et sa projection est comparée avec les contours de la spécularité pour chaque point de vue en utilisant notre distance Ellipse/Point. Cette erreur est normalisée en fonction de la dimension de la scène.}
+\caption{Validation de notre modèle en mesurant l'erreur de prédiction sur des données synthétiques pour une source de lumière ponctuelle (a) et une source de lumière étendue (b). À partir de 100 points de vue, une quadrique fixe est reconstruite et sa projection est comparée avec les contours de la spécularité pour chaque point de vue en utilisant notre distance Ellipse/Point. Cette erreur est normalisée en fonction de la dimension de la scène.}
 \label{fig:quadric_therical}
 \end{figure}
 Comme illustré à la figure \ref{fig:quadric_therical}, notre approximation par quadrique est efficace pour la prédiction de spécularité pour tout $\tau \in [0, 1]$ pour les modèles de Phong et Blinn-Phong avec respectivement $0.3\%$ et $0.45\%$ d'erreur en moyenne en fonction de la taille de la scène.
@@ -332,7 +332,7 @@ La précision de notre modèle JOLIMAS est évaluée sur des données réelles afin de
   \end{tabular}
   \label{fig:real_res}
 \end{table}
-Dans notre contexte, l'initialisation de quadrique n'est pas suffisante à elle seule pour prédire les spécularités de façon précise. Estimer des contours de spécularité précis est difficile en pratique ce qui impacte fortement la qualité de la reconstruction de la quadrique. En ajoutant un processus de correction épipolaire aux contours d'ellipses en entrée produit de meilleurs résultats. En combinant, la correction épipolaire avec le raffinement non-linéaire, nous atteignons une erreur maximale de 62.8 pixels. Pour des séquences réelles, JOLIMAS est précis et fournit une prédiction de spécularité à partir de nouveaux points de vue pour différents types de sources de lumière et en temps réel.
+Dans notre contexte, l'initialisation de quadrique n'est pas suffisante à elle seule pour prédire les spécularités de façon précise. Estimer des contours de spécularité précis est difficile en pratique ce qui impacte fortement la qualité de la reconstruction de la quadrique. En ajoutant un processus de correction épipolaire aux contours d'ellipses en entrée produit de meilleurs résultats. En combinant la correction épipolaire avec le raffinement non-linéaire, nous atteignons une erreur maximale de 62.8 pixels. Pour des séquences réelles, JOLIMAS est précis et fournit une prédiction de spécularité à partir de nouveaux points de vue pour différents types de sources de lumière et en temps réel.
 
 \begin{figure}[!ht]
     \centering
@@ -354,7 +354,7 @@ Dans notre contexte, l'initialisation de quadrique n'est pas suffisante à elle s
 		\includegraphics[width=0.85\linewidth]{realdata_kitchen.png}
 		\label{fig:realdata_kitchen}
 	}
-\caption{Résultats de prédiction de spécularité sur quatre séquences réelles. Dans (a), un tableau blanc est illuminé par une lampe fluorescente, dans (b) un livre est illuminé par une lampe de bureau, dans (c) une table en bois est illuminée à la fois par une lampe et un néon et dans (d) un comptoir de cuisine est illuminé par deux lampes de bureau et un néon. Notre quadrique est projetée perspectivement sur les différents plans afin de correspondre aux spécularités dans l'image (ellipses bleues). Nous calculons également le symétrique de la quadrique à partir des normales des plans (tableau blanc, table en bois, comptoir de cuisine et couverture de livre) afin de montrer le rapport entre la quadrique de JOLIMAS (en jaune) et les sources de lumière. On remarque que le symétrique de la quadrique est très proche de la position des sources de lumière.}
+\caption{Résultats de prédiction de spécularité sur quatre séquences réelles. Dans (a), un tableau blanc est illuminé par une lampe fluorescente, dans (b) un livre est illuminé par une lampe de bureau, dans (c), une table en bois est illuminée à la fois par une lampe et un néon et dans (d), un comptoir de cuisine est illuminé par deux lampes de bureau et un néon. Notre quadrique est projetée perspectivement sur les différents plans afin de correspondre aux spécularités dans l'image (ellipses bleues). Nous calculons également le symétrique de la quadrique à partir des normales des plans (tableau blanc, table en bois, comptoir de cuisine et couverture de livre) afin de montrer le rapport entre la quadrique de JOLIMAS (en jaune) et les sources de lumière. On remarque que le symétrique de la quadrique est très proche de la position des sources de lumière.}
 	\label{fig:real_data2}
 \end{figure}
 
